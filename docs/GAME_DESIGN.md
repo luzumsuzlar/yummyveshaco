@@ -26,4 +26,11 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 - Pati, çarpma, kilit ve başarı sesleri
 - Dokunmatik nişan ve titreşim geri bildirimi
 - Sabit öğretici bölüm ve ardından bölüm seçimi
-- Güvenli geçit, bomba topu ve hareketli delikler gibi çeşitler
+- Güvenli geçit ve bomba topu gibi yeni oyun öğeleri
+
+## İlerleyen bölümler: hareketli delikler
+
+- Başlangıç bölümlerinde delikler sabit kalır; oyuncu önce temel nişan ve zamanlamayı öğrenir.
+- İlerleyen bölümlerde delikler yatay, dikey veya önceden okunabilen kısa rotalarda hareket edebilir.
+- Hareket düzenleri adil ve tahmin edilebilir olmalı; zorluk sürprizden değil doğru anı seçmekten gelmelidir.
+- Yumi'nin sabotajı ile hareketli delikler aynı anda devreye girdiğinde hızları dengelenerek oyuncuya tepki süresi bırakılmalıdır.
