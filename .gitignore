@@ -1,0 +1,15 @@
+# Godot tarafından üretilen dosyalar
+.godot/
+*.tmp
+*.translation
+
+# İşletim sistemi / editör
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dışa aktarılan yapılar
+builds/
+exports/
+
