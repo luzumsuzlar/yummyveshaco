@@ -17,6 +17,13 @@ const LEVELS := [
 		"sequence": [0, 1, 2],
 		"yumi_speed": 72.0,
 		"yumi_active": false,
+		"move_directions": 2,
+		"turn_min": 2.4,
+		"turn_max": 3.6,
+		"vertical_range": 0.0,
+		"pause_chance": 0.04,
+		"dash_chance": 0.0,
+		"deflection_range": 120.0,
 		"moving_holes": false,
 		"intro": "Sıradaki sembolü aynı işaretli deliğe gönder.",
 	},
@@ -25,6 +32,13 @@ const LEVELS := [
 		"sequence": [2, 0, 1, 2],
 		"yumi_speed": 142.0,
 		"yumi_active": true,
+		"move_directions": 4,
+		"turn_min": 0.9,
+		"turn_max": 1.8,
+		"vertical_range": 42.0,
+		"pause_chance": 0.09,
+		"dash_chance": 0.04,
+		"deflection_range": 220.0,
 		"moving_holes": false,
 		"intro": "Yumi hazırlanırken uçuşta tekrar tıkla: Şako HAV! desin.",
 	},
@@ -33,11 +47,19 @@ const LEVELS := [
 		"sequence": [0, 2, 1, 0, 2],
 		"yumi_speed": 162.0,
 		"yumi_active": true,
+		"move_directions": 8,
+		"turn_min": 0.45,
+		"turn_max": 1.15,
+		"vertical_range": 62.0,
+		"pause_chance": 0.14,
+		"dash_chance": 0.16,
+		"deflection_range": 360.0,
 		"moving_holes": true,
 		"intro": "Delikler hareket ediyor. Atış anını seç ve havlamanı sakla.",
 	},
 ]
 
+var rng := RandomNumberGenerator.new()
 var hole_positions: Array[Vector2] = []
 var sequence: Array[int] = []
 var level_index := 0
@@ -53,6 +75,7 @@ var ball_position := LAUNCH_POS
 var ball_velocity := Vector2.ZERO
 var ball_type := 0
 var ball_swatted := false
+var ball_deflected_by_yumi := false
 var shot_delay := 0.0
 
 var bark_available := false
@@ -62,6 +85,10 @@ var bark_target_x := 576.0
 var yumi_position := Vector2(300.0, 345.0)
 var yumi_direction := 1.0
 var yumi_speed := 100.0
+var yumi_velocity := Vector2.RIGHT
+var yumi_move_timer := 0.0
+var yumi_pause_timer := 0.0
+var yumi_dash_timer := 0.0
 var yumi_warning_timer := 0.0
 var yumi_warning_started := false
 var yumi_swipe_flash := 0.0
@@ -81,6 +108,7 @@ var overlay_button: Button
 
 
 func _ready() -> void:
+	rng.randomize()
 	for x_position in HOLE_BASE_X:
 		hole_positions.append(Vector2(float(x_position), HOLE_Y))
 	build_interface()
@@ -178,6 +206,7 @@ func start_level(new_level_index: int = level_index) -> void:
 	ball_position = LAUNCH_POS
 	ball_velocity = Vector2.ZERO
 	ball_swatted = false
+	ball_deflected_by_yumi = false
 	bark_available = false
 	bark_flash = 0.0
 	shot_delay = 0.35
@@ -185,9 +214,14 @@ func start_level(new_level_index: int = level_index) -> void:
 	yumi_position = Vector2(300.0, 345.0)
 	yumi_direction = 1.0
 	yumi_speed = float(config["yumi_speed"])
+	yumi_velocity = Vector2.RIGHT * yumi_speed
+	yumi_move_timer = 0.0
+	yumi_pause_timer = 0.0
+	yumi_dash_timer = 0.0
 	yumi_warning_timer = 0.0
 	yumi_warning_started = false
 	yumi_swipe_flash = 0.0
+	choose_yumi_direction(true)
 	status_label.text = str(config["intro"])
 	status_label.add_theme_color_override("font_color", Color("fff3cf"))
 	overlay.hide()
@@ -275,6 +309,7 @@ func launch_ball() -> void:
 	ball_velocity = direction * 520.0
 	ball_active = true
 	ball_swatted = false
+	ball_deflected_by_yumi = false
 	bark_available = true
 	yumi_warning_timer = 0.0
 	yumi_warning_started = false
@@ -315,14 +350,90 @@ func update_holes() -> void:
 
 
 func move_yumi(delta: float) -> void:
-	yumi_position.x += yumi_direction * yumi_speed * delta
-	if yumi_position.x > 930.0:
-		yumi_position.x = 930.0
-		yumi_direction = -1.0
-	elif yumi_position.x < 222.0:
+	var config := level_config()
+	var movement_scale := 0.18 if yumi_warning_timer > 0.0 else 1.0
+
+	if yumi_pause_timer > 0.0:
+		yumi_pause_timer = maxf(0.0, yumi_pause_timer - delta)
+		yumi_velocity = yumi_velocity.move_toward(Vector2.ZERO, yumi_speed * delta * 7.0)
+		if yumi_pause_timer == 0.0:
+			choose_yumi_direction(true)
+	else:
+		yumi_move_timer = maxf(0.0, yumi_move_timer - delta)
+		var was_dashing := yumi_dash_timer > 0.0
+		yumi_dash_timer = maxf(0.0, yumi_dash_timer - delta)
+		if was_dashing and yumi_dash_timer == 0.0 and yumi_velocity.length() > 0.0:
+			yumi_velocity = yumi_velocity.normalized() * yumi_speed
+		if yumi_move_timer == 0.0:
+			choose_yumi_direction()
+
+	yumi_position += yumi_velocity * delta * movement_scale
+
+	var vertical_range := float(config["vertical_range"])
+	var min_y := 348.0 - vertical_range
+	var max_y := 348.0 + vertical_range
+	var hit_boundary := false
+	if yumi_position.x < 222.0:
 		yumi_position.x = 222.0
-		yumi_direction = 1.0
-	yumi_position.y = 348.0 + sin(level_time * 3.0) * 13.0
+		yumi_velocity.x = absf(yumi_velocity.x)
+		hit_boundary = true
+	elif yumi_position.x > 930.0:
+		yumi_position.x = 930.0
+		yumi_velocity.x = -absf(yumi_velocity.x)
+		hit_boundary = true
+	if vertical_range <= 0.0:
+		yumi_position.y = 348.0
+		yumi_velocity.y = 0.0
+	elif yumi_position.y < min_y:
+		yumi_position.y = min_y
+		yumi_velocity.y = absf(yumi_velocity.y)
+		hit_boundary = true
+	elif yumi_position.y > max_y:
+		yumi_position.y = max_y
+		yumi_velocity.y = -absf(yumi_velocity.y)
+		hit_boundary = true
+	if hit_boundary:
+		yumi_move_timer = minf(yumi_move_timer, 0.35)
+	if absf(yumi_velocity.x) > 5.0:
+		yumi_direction = signf(yumi_velocity.x)
+
+
+func choose_yumi_direction(force_move: bool = false) -> void:
+	var config := level_config()
+	if not force_move and rng.randf() < float(config["pause_chance"]):
+		yumi_pause_timer = rng.randf_range(0.18, 0.48)
+		yumi_move_timer = yumi_pause_timer
+		return
+
+	var directions: Array[Vector2] = [Vector2.LEFT, Vector2.RIGHT]
+	var direction_count := int(config["move_directions"])
+	if direction_count >= 4:
+		directions.append(Vector2.UP)
+		directions.append(Vector2.DOWN)
+	if direction_count >= 8:
+		directions.append(Vector2(-1.0, -1.0).normalized())
+		directions.append(Vector2(1.0, -1.0).normalized())
+		directions.append(Vector2(-1.0, 1.0).normalized())
+		directions.append(Vector2(1.0, 1.0).normalized())
+
+	var selected := directions[rng.randi_range(0, directions.size() - 1)]
+	if yumi_position.x < 300.0 and selected.x < 0.0:
+		selected.x = absf(selected.x)
+	elif yumi_position.x > 852.0 and selected.x > 0.0:
+		selected.x = -absf(selected.x)
+	var vertical_range := float(config["vertical_range"])
+	if vertical_range > 0.0:
+		if yumi_position.y < 348.0 - vertical_range * 0.72 and selected.y < 0.0:
+			selected.y = absf(selected.y)
+		elif yumi_position.y > 348.0 + vertical_range * 0.72 and selected.y > 0.0:
+			selected.y = -absf(selected.y)
+
+	var speed_multiplier := 1.0
+	if rng.randf() < float(config["dash_chance"]):
+		speed_multiplier = 1.48
+		yumi_dash_timer = rng.randf_range(0.20, 0.34)
+	yumi_velocity = selected.normalized() * yumi_speed * speed_multiplier
+	yumi_move_timer = rng.randf_range(float(config["turn_min"]), float(config["turn_max"]))
 
 
 func move_ball(delta: float) -> void:
@@ -346,6 +457,10 @@ func update_yumi_attack(delta: float) -> void:
 	if not bool(level_config()["yumi_active"]) or ball_swatted:
 		return
 
+	if ball_position.distance_to(yumi_position) < 64.0:
+		deflect_ball_from_yumi()
+		return
+
 	if yumi_warning_timer > 0.0:
 		yumi_warning_timer = maxf(0.0, yumi_warning_timer - delta)
 		if yumi_warning_timer == 0.0:
@@ -365,14 +480,28 @@ func update_yumi_attack(delta: float) -> void:
 
 
 func perform_yumi_swipe() -> void:
-	var push_direction := signf(ball_position.x - yumi_position.x)
-	if push_direction == 0.0:
-		push_direction = -yumi_direction
-	ball_velocity.x += push_direction * 330.0
-	ball_velocity.y *= 0.92
+	deflect_ball_from_yumi()
+
+
+func deflect_ball_from_yumi() -> void:
+	var config := level_config()
+	var contact_side := signf(ball_position.x - yumi_position.x)
+	if contact_side == 0.0:
+		contact_side = -1.0 if rng.randf() < 0.5 else 1.0
+	var deflection_range := float(config["deflection_range"])
+	var target_x := ball_position.x
+	target_x += contact_side * rng.randf_range(deflection_range * 0.18, deflection_range * 0.62)
+	target_x += rng.randf_range(-deflection_range * 0.55, deflection_range * 0.55)
+	target_x = clampf(target_x, 90.0, SCREEN_SIZE.x - 90.0)
+	var target_point := Vector2(target_x, HOLE_Y - 8.0)
+	var new_direction := (target_point - ball_position).normalized()
+	var new_speed := clampf(ball_velocity.length() * rng.randf_range(0.92, 1.08), 420.0, 620.0)
+	ball_velocity = new_direction * new_speed
 	ball_swatted = true
+	ball_deflected_by_yumi = true
+	yumi_warning_timer = 0.0
 	yumi_swipe_flash = 0.34
-	status_label.text = "PAT! Yumi topu saptırdı; havlama hâlâ kullanılabilir."
+	status_label.text = "PAT! Top Yumi'den rastgele bir yöne sekti!"
 	status_label.add_theme_color_override("font_color", Color("ffcf5a"))
 
 
@@ -390,6 +519,7 @@ func resolve_hole_hit() -> void:
 		return
 
 	if nearest_hole == ball_type and ball_type == sequence[progress]:
+		var lucky_yumi_goal := ball_deflected_by_yumi
 		progress += 1
 		ball_active = false
 		bark_available = false
@@ -398,10 +528,11 @@ func resolve_hole_hit() -> void:
 		if progress >= sequence.size():
 			finish_game(true)
 		else:
-			status_label.text = progress_hint()
+			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
 			status_label.add_theme_color_override("font_color", Color("86f7a8"))
 	else:
-		register_error("Yanlış delik! Kilitte çatlak oluştu.")
+		var error_message := "Yumi topu yanlış deliğe sektirdi!" if ball_deflected_by_yumi else "Yanlış delik! Kilitte çatlak oluştu."
+		register_error(error_message)
 
 
 func progress_hint() -> String:
@@ -435,7 +566,10 @@ func finish_game(success: bool) -> void:
 		game_state = "success"
 		overlay_title.text = "KİLİT AÇILDI!"
 		overlay_title.add_theme_color_override("font_color", Color("86f7a8"))
-		if level_index < LEVELS.size() - 1:
+		if ball_deflected_by_yumi:
+			overlay_subtitle.text = "Yumi son topu yanlışlıkla doğru deliğe gönderdi! Şako bu yardımı unutmayacak."
+			overlay_button.text = "SONRAKİ BÖLÜM" if level_index < LEVELS.size() - 1 else "BAŞA DÖN"
+		elif level_index < LEVELS.size() - 1:
 			overlay_subtitle.text = "%s tamamlandı. Sıradaki bölüm yeni bir kural ekliyor." % str(level_config()["name"])
 			overlay_button.text = "SONRAKİ BÖLÜM"
 		else:

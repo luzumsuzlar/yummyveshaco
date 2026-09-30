@@ -20,6 +20,8 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 - Oyuncunun her atışta tek bir havlama hakkı vardır. Uçuş sırasında kullanılan havlama topun yönünü düzeltir.
 - Yumi pati atmadan önce kısa ve okunabilir bir uyarı verir. Uyarı sırasında havlamak Yumi'yi irkiltir ve müdahaleyi engeller.
 - İlk bölüm sabit hedeflerle öğretir, ikinci bölüm Yumi'yi etkinleştirir, üçüncü bölüm hareketli delikleri tanıtır.
+- Yumi'nin hareket karmaşıklığı bölümle artar: önce yatay, sonra dört yönlü, daha sonra çapraz yönler, duraklamalar ve kısa atılmalar.
+- Top Yumi'ye temas ettiğinde çarpışma tarafı ve bölüm zorluğuna göre kontrollü-rastgele bir yöne seker. Ortaya çıkan açı doğru deliğe denk gelirse atış geçerli sayılır ve Yumi'nin yanlışlıkla yardım ettiği vurgulanır.
 
 ## Korunan tasarım kararları
 

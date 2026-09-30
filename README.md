@@ -4,7 +4,7 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 
 ## Oynanış
 
-Şako'nun fırlatıcısını yönlendirerek sıradaki sembol topunu aynı sembolü taşıyan deliğe gönder. Her atışta top havadayken bir kez havlayarak yönünü düzeltebilirsin. Yumi pati atmadan önce uyarı verir; doğru anda havlamak Yumi'yi irkiltir.
+Şako'nun fırlatıcısını yönlendirerek sıradaki sembol topunu aynı sembolü taşıyan deliğe gönder. Her atışta top havadayken bir kez havlayarak yönünü düzeltebilirsin. Yumi pati atmadan önce uyarı verir; doğru anda havlamak Yumi'yi irkiltir. Top Yumi'ye çarparsa temas yönü ve bölüm zorluğuna göre rastgele bir açıyla yukarı seker; şanslı bir sekme doğru deliğe de girebilir.
 
 - Nişan: fare veya `A` / `D` / `←` / `→`
 - Atış: `Boşluk`, `Enter` veya sol tık
@@ -16,8 +16,8 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 ## Prototip bölümleri
 
 1. **İlk Atış:** Üç sembollük sabit hedef eğitimi; Yumi yalnızca izler.
-2. **Yumi Sahada:** Yumi pati atmadan önce ünlem işaretiyle uyarır. Havlama karşı hamle olarak kullanılır.
-3. **Kayan Kilit:** Delikler yatay hareket eder; atış zamanlaması önem kazanır.
+2. **Yumi Sahada:** Yumi dört yönde kontrollü-rastgele dolaşır ve pati öncesi ünlem işaretiyle uyarır. Havlama karşı hamle olarak kullanılır.
+3. **Kayan Kilit:** Yumi sekiz yönde daha sık yön değiştirip kısa atılmalar yapar. Delikler de yatay hareket eder.
 
 Duvarlardan pinball tarzı sekme yoktur. Oyun puan toplamaya değil, kilidi doğru sırayla çözmeye odaklanır.
 
