@@ -13,6 +13,14 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 5. Doğru atış diziyi ilerletir. Iska veya yanlış delik bir hata oluşturur.
 6. Üç hata kilidi sıkıştırır. Tam dizi kilidi açar.
 
+## İkinci prototip kararı
+
+- Oyun klasik pinball değildir; duvarlardan sürekli sekme ve yüksek puan kovalamaca döngüsü kullanılmaz.
+- Şako topu doğrudan hedefe fırlatır.
+- Oyuncunun her atışta tek bir havlama hakkı vardır. Uçuş sırasında kullanılan havlama topun yönünü düzeltir.
+- Yumi pati atmadan önce kısa ve okunabilir bir uyarı verir. Uyarı sırasında havlamak Yumi'yi irkiltir ve müdahaleyi engeller.
+- İlk bölüm sabit hedeflerle öğretir, ikinci bölüm Yumi'yi etkinleştirir, üçüncü bölüm hareketli delikleri tanıtır.
+
 ## Korunan tasarım kararları
 
 - İlk 20–30 bölümde zorunlu süre baskısı yoktur.
