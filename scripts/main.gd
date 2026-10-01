@@ -17,6 +17,10 @@ const TYPE_NAMES := ["BALIK", "PATİ", "YUMAK"]
 const TYPE_SYMBOLS := ["◆", "●", "✦"]
 const TYPE_COLORS := [Color("57d9ff"), Color("ff8b74"), Color("b98cff")]
 const TYPE_DARK := [Color("146582"), Color("833b36"), Color("563a84")]
+const INK := Color("54321f")
+const CREAM := Color("fff0d2")
+const KITCHEN_BACKGROUND := preload("res://assets/art/kitchen-background-v1.png")
+const CUPBOARD_ART := preload("res://assets/art/cupboard-v1.png")
 
 const LEVELS := [
 	{
@@ -155,39 +159,39 @@ func _ready() -> void:
 
 
 func build_interface() -> void:
-	title_label = make_label("YUMI & ŞAKO", 30, Color("fff3cf"), Vector2(24, 24), Vector2(420, 40))
-	title_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
+	title_label = make_label("YUMI & ŞAKO", 30, Color("874719"), Vector2(24, 24), Vector2(420, 40))
+	title_label.add_theme_color_override("font_shadow_color", CREAM)
 	title_label.add_theme_constant_override("shadow_offset_x", 2)
 	title_label.add_theme_constant_override("shadow_offset_y", 3)
 
-	level_label = make_label("", 17, Color("8fa8c4"), Vector2(28, 76), Vector2(306, 30))
+	level_label = make_label("", 17, INK, Vector2(28, 76), Vector2(306, 30))
 	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	code_label = make_label("", 18, Color.WHITE, Vector2(28, 114), Vector2(404, 34))
-	time_label = make_label("", 15, Color("a9bbd3"), Vector2(358, 76), Vector2(154, 30))
-	status_label = make_label("", 19, Color("fff3cf"), Vector2(28, 638), Vector2(484, 72))
+	code_label = make_label("", 18, INK, Vector2(28, 114), Vector2(404, 34))
+	time_label = make_label("", 15, INK, Vector2(358, 76), Vector2(154, 30))
+	status_label = make_label("", 19, INK, Vector2(28, 638), Vector2(484, 72))
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	next_label = make_label("", 17, Color("d8e9ff"), Vector2(28, 778), Vector2(156, 64))
-	ability_label = make_label("", 15, Color("86f7a8"), Vector2(354, 778), Vector2(162, 64))
+	next_label = make_label("", 17, INK, Vector2(28, 778), Vector2(156, 64))
+	ability_label = make_label("", 15, INK, Vector2(354, 778), Vector2(162, 64))
 	ability_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	story_label = make_label("", 15, Color("efc08c"), Vector2(28, 154), Vector2(484, 26))
+	story_label = make_label("", 15, INK, Vector2(28, 154), Vector2(484, 26))
 	instruction_label = make_label(
 		"Sürükle, bırak: atış · HAV!: müdahale",
 		14,
-		Color("a9bbd3"),
+		INK,
 		Vector2(24, 940),
 		Vector2(492, 18)
 	)
-	launch_button = make_action_button("AT!", Vector2(28, 870), Vector2(224, 64), Color("57d9ff"))
+	launch_button = make_action_button("AT!", Vector2(28, 870), Vector2(224, 64), Color("c7eef1"))
 	launch_button.pressed.connect(launch_ball)
-	bark_button = make_action_button("HAV!  3/3", Vector2(288, 870), Vector2(224, 64), Color("ffcf5a"))
+	bark_button = make_action_button("HAV!  3/3", Vector2(288, 870), Vector2(224, 64), Color("ffe3a4"))
 	bark_button.pressed.connect(func(): use_bark(last_pointer_position.x))
-	restart_button = make_action_button("↻", Vector2(456, 24), Vector2(56, 48), Color("b2c6df"))
+	restart_button = make_action_button("↻", Vector2(456, 24), Vector2(56, 48), CREAM)
 	restart_button.pressed.connect(func(): start_level(level_index))
 
 	overlay = ColorRect.new()
 	overlay.position = Vector2.ZERO
 	overlay.size = SCREEN_SIZE
-	overlay.color = Color(0.02, 0.03, 0.06, 0.86)
+	overlay.color = Color(0.12, 0.055, 0.025, 0.90)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	overlay.z_index = 20
 	add_child(overlay)
@@ -218,13 +222,14 @@ func make_action_button(text: String, position: Vector2, size: Vector2, color: C
 	button.size = size
 	button.focus_mode = Control.FOCUS_NONE
 	button.add_theme_font_size_override("font_size", 22)
-	button.add_theme_color_override("font_color", Color("16233d"))
-	button.add_theme_color_override("font_hover_color", Color("16233d"))
-	button.add_theme_color_override("font_pressed_color", Color("16233d"))
+	button.add_theme_color_override("font_color", INK)
+	button.add_theme_color_override("font_hover_color", INK)
+	button.add_theme_color_override("font_pressed_color", INK)
+	button.add_theme_color_override("font_disabled_color", Color("856d53"))
 	button.add_theme_stylebox_override("normal", button_style(color))
 	button.add_theme_stylebox_override("hover", button_style(color.lightened(0.15)))
 	button.add_theme_stylebox_override("pressed", button_style(color.darkened(0.12)))
-	button.add_theme_stylebox_override("disabled", button_style(Color("33465e")))
+	button.add_theme_stylebox_override("disabled", button_style(Color("dac5a3")))
 	add_child(button)
 	return button
 
@@ -246,12 +251,15 @@ func make_label(text: String, font_size: int, color: Color, position: Vector2, s
 func button_style(color: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
 	style.bg_color = color
+	style.border_color = Color("b78047")
+	style.set_border_width_all(2)
 	style.corner_radius_top_left = 18
 	style.corner_radius_top_right = 18
 	style.corner_radius_bottom_left = 18
 	style.corner_radius_bottom_right = 18
-	style.shadow_color = Color(0, 0, 0, 0.35)
-	style.shadow_size = 7
+	style.shadow_color = Color(0.24, 0.12, 0.04, 0.30)
+	style.shadow_size = 4
+	style.shadow_offset = Vector2(0, 4)
 	return style
 
 
@@ -308,7 +316,7 @@ func start_level(new_level_index: int = level_index) -> void:
 	launch_button.show()
 	bark_button.show()
 	status_label.text = str(config["intro"])
-	status_label.add_theme_color_override("font_color", Color("fff3cf"))
+	status_label.add_theme_color_override("font_color", INK)
 	overlay.hide()
 	update_holes()
 	update_interface()
@@ -469,7 +477,7 @@ func launch_ball() -> void:
 	status_label.text = "%s topu yolda." % TYPE_NAMES[ball_type]
 	if yumi_is_active() and ball_type == 2:
 		status_label.text = "Yumi: O yumak benim! Ünlemi bekle, gerekirse HAV!"
-	status_label.add_theme_color_override("font_color", TYPE_COLORS[ball_type])
+	status_label.add_theme_color_override("font_color", TYPE_DARK[ball_type])
 
 
 func use_bark(target_x: float) -> void:
@@ -502,7 +510,7 @@ func use_bark(target_x: float) -> void:
 		status_label.text = "HAV! Yumi irkildi; top yeniden yönlendirildi."
 	else:
 		status_label.text = "HAV! Şako topun yönünü düzeltti."
-	status_label.add_theme_color_override("font_color", Color("86f7a8"))
+	status_label.add_theme_color_override("font_color", Color("2c6838"))
 
 
 func update_holes() -> void:
@@ -658,7 +666,7 @@ func advance_ball_segment(delta: float) -> void:
 			wall_flash_position = ball_position
 			ball_velocity.x = -ball_velocity.x
 			status_label.text = "TAK! Duvar sekmesi: %d/2" % wall_bounces
-			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+			status_label.add_theme_color_override("font_color", Color("865315"))
 		if ball_position.y > SCREEN_SIZE.y + 40.0:
 			register_error("Top oyun alanından çıktı!")
 			return
@@ -676,14 +684,14 @@ func update_yumi_attack(delta: float) -> void:
 			else:
 				ball_swatted = true
 				status_label.text = "Yumi ıskaladı!"
-				status_label.add_theme_color_override("font_color", Color("86f7a8"))
+				status_label.add_theme_color_override("font_color", Color("2c6838"))
 		return
 
 	if not yumi_warning_started and ball_position.distance_to(yumi_position) < 178.0:
 		yumi_warning_started = true
 		yumi_warning_timer = float(level_config().get("warning_time", 0.24))
 		status_label.text = "Yumi hazırlanıyor! Şimdi HAV! diyebilirsin."
-		status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+		status_label.add_theme_color_override("font_color", Color("865315"))
 
 
 func yumi_is_active() -> bool:
@@ -717,7 +725,7 @@ func deflect_ball_from_yumi() -> void:
 	yumi_warning_timer = 0.0
 	yumi_swipe_flash = 0.34
 	status_label.text = "PAT! Top Yumi'den rastgele bir yöne sekti!"
-	status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+	status_label.add_theme_color_override("font_color", Color("865315"))
 
 
 func resolve_hole_hit() -> void:
@@ -761,10 +769,10 @@ func resolve_hole_hit() -> void:
 				status_label.text = "Şimdi iki duvar! Her hedefe 2 sekmeyle ulaş. Nişan çizgisini izle."
 			elif level_index == 1 and stage_index == 2:
 				status_label.text = "Yumi uyandı! En az 1 sekme yap; pati uyarısında HAV! kullan."
-			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+			status_label.add_theme_color_override("font_color", Color("865315"))
 		else:
 			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
-			status_label.add_theme_color_override("font_color", Color("86f7a8"))
+			status_label.add_theme_color_override("font_color", Color("2c6838"))
 	else:
 		var error_message := "Yumi topu yanlış deliğe sektirdi!" if ball_deflected_by_yumi else "Yanlış delik! Kilitte çatlak oluştu."
 		register_error(error_message)
@@ -786,7 +794,7 @@ func register_error(message: String) -> void:
 	errors += 1
 	status_flash = 0.5
 	status_label.text = message
-	status_label.add_theme_color_override("font_color", Color("ff746f"))
+	status_label.add_theme_color_override("font_color", Color("a03125"))
 	if errors >= 3:
 		finish_game(false)
 
@@ -865,16 +873,16 @@ func update_interface() -> void:
 		if level_index == 1:
 			story_label.text = "HEDEF: EN AZ %d SEKME + DOĞRU DELİK" % required_wall_bounces()
 		next_label.text = "Sıradaki:\n%s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
-		next_label.add_theme_color_override("font_color", TYPE_COLORS[sequence[progress]])
+		next_label.add_theme_color_override("font_color", TYPE_DARK[sequence[progress]])
 		if stage_rotation > 0.0:
 			ability_label.text = "KASA DÖNÜYOR..."
-			ability_label.add_theme_color_override("font_color", Color("ffcf5a"))
+			ability_label.add_theme_color_override("font_color", Color("865315"))
 		elif ball_active:
 			ability_label.text = "HAV! düğmesi / E" if bark_available else "Bu atışta HAV yok"
-			ability_label.add_theme_color_override("font_color", Color("86f7a8") if bark_available else Color("7b8da4"))
+			ability_label.add_theme_color_override("font_color", Color("2c6838") if bark_available else Color("856d53"))
 		else:
 			ability_label.text = "Kalan HAV: %d/3" % barks_left
-			ability_label.add_theme_color_override("font_color", Color("8fa8c4"))
+			ability_label.add_theme_color_override("font_color", INK)
 		if level_index == 1 and stage_rotation <= 0.0:
 			ability_label.text = "SEKME: %d/2\nKalan HAV: %d" % [wall_bounces if ball_active else 0, barks_left]
 
@@ -895,8 +903,7 @@ func _draw() -> void:
 
 
 func draw_cupboard() -> void:
-	draw_style_box(rounded_box(Color("3b2b27"), 16), Rect2(42, 196, 456, 136))
-	draw_line(Vector2(270, 200), Vector2(270, 326), Color("705044"), 4.0)
+	draw_texture_rect(CUPBOARD_ART, Rect2(32, 184, 476, 158), false)
 	if game_state == "celebrating" or game_state == "success":
 		var opening := clampf(celebration_time / 0.4, 0.0, 1.0)
 		draw_rect(Rect2(154, 400, 232, 102), Color("2c211e"))
@@ -908,23 +915,27 @@ func draw_cupboard() -> void:
 
 
 func draw_background() -> void:
-	draw_rect(Rect2(Vector2.ZERO, SCREEN_SIZE), Color("081326"))
-	draw_circle(Vector2(42, 200), 160, Color("10294a"))
-	draw_circle(Vector2(516, 816), 210, Color("182348"))
-	for y in range(350, 858, 40):
-		draw_line(Vector2(24, y), Vector2(516, y), Color(0.18, 0.28, 0.42, 0.12), 1.0)
-	var wall_color := Color("ffcf5a") if level_index == 1 else Color("294868")
-	draw_line(Vector2(24, 184), Vector2(24, 858), wall_color, 4.0)
-	draw_line(Vector2(516, 184), Vector2(516, 858), wall_color, 4.0)
+	draw_texture_rect(KITCHEN_BACKGROUND, Rect2(Vector2.ZERO, SCREEN_SIZE), false)
+	draw_style_box(button_style(CREAM), Rect2(18, 20, 432, 48))
+	draw_style_box(rounded_box(CREAM, 10), Rect2(24, 156, 492, 26))
+	if game_state == "playing":
+		draw_style_box(button_style(CREAM), Rect2(24, 636, 492, 76))
+		draw_style_box(button_style(CREAM), Rect2(28, 778, 156, 64))
+		draw_style_box(button_style(CREAM), Rect2(354, 778, 162, 64))
+	draw_style_box(rounded_box(CREAM, 8), Rect2(24, 938, 492, 22))
+	var wall_color := Color("e9bb5c") if level_index == 1 else Color("a06a3d")
+	for x in [24.0, 516.0]:
+		draw_line(Vector2(x, 184), Vector2(x, 858), INK, 7.0)
+		draw_line(Vector2(x, 184), Vector2(x, 858), wall_color, 3.0)
 
 
 func draw_lock_panel() -> void:
-	var panel_color := Color("12243e")
+	var panel_color := CREAM
 	if status_flash > 0.0:
-		panel_color = Color("25445a") if errors < 3 else Color("5b2730")
-	draw_style_box(rounded_box(panel_color, 20), Rect2(18, 70, 504, 84))
+		panel_color = Color("fff8e8") if errors < 3 else Color("f4b8a4")
+	draw_style_box(button_style(panel_color), Rect2(18, 70, 504, 84))
 	for index in range(3):
-		var warning_color := Color("ff645f") if index < errors else Color("263a55")
+		var warning_color := Color("bb3830") if index < errors else Color("c5ae89")
 		draw_circle(Vector2(454 + index * 22, 130), 6.0, warning_color)
 
 
@@ -934,10 +945,16 @@ func draw_holes() -> void:
 		var center := hole_positions[index]
 		draw_circle(center + Vector2(0, 7), HOLE_RADIUS + 6.0, Color(0, 0, 0, 0.42))
 		draw_circle(center, HOLE_RADIUS + 5.0, TYPE_COLORS[index])
-		draw_circle(center, HOLE_RADIUS - 7.0, Color("07101e"))
-		draw_arc(center, HOLE_RADIUS - 14.0, 0, TAU, 48, TYPE_DARK[index], 5.0, true)
-		draw_string(font, center + Vector2(-45, 7), TYPE_SYMBOLS[index], HORIZONTAL_ALIGNMENT_CENTER, 90, 31, TYPE_COLORS[index])
-		draw_string(font, center + Vector2(-60, 86), TYPE_NAMES[index], HORIZONTAL_ALIGNMENT_CENTER, 120, 16, Color("dbeaff"))
+		draw_circle(center, HOLE_RADIUS - 5.0, TYPE_DARK[index])
+		draw_circle(center + Vector2(0, 3), HOLE_RADIUS - 10.0, Color("352116"))
+		draw_circle(center + Vector2(0, 5), HOLE_RADIUS - 17.0, Color("241810"))
+		draw_arc(center, HOLE_RADIUS + 2.0, PI, TAU, 32, TYPE_COLORS[index].lightened(0.45), 3.0, true)
+		var badge := center + Vector2(0, -48)
+		draw_circle(badge + Vector2(0, 3), 21, Color("8e572f"))
+		draw_circle(badge, 20, CREAM)
+		draw_type_icon(badge, index, 14, TYPE_DARK[index])
+		draw_style_box(rounded_box(CREAM, 7), Rect2(center + Vector2(-52, 60), Vector2(104, 24)))
+		draw_string(font, center + Vector2(-52, 78), TYPE_NAMES[index], HORIZONTAL_ALIGNMENT_CENTER, 104, 15, INK)
 
 
 func draw_yumi() -> void:
@@ -974,13 +991,15 @@ func draw_yumi() -> void:
 
 	var font := ThemeDB.fallback_font
 	if yumi_warning_timer > 0.0:
+		draw_circle(p + Vector2(0, -108), 22, INK)
 		draw_string(font, p + Vector2(-20, -96), "!", HORIZONTAL_ALIGNMENT_CENTER, 40, 34, Color("ffcf5a"))
 	var yumi_caption := "YUMI · Zzz" if sleeping else "YUMI"
 	if yumi_is_active() and ball_active and ball_type == 2 and not ball_swatted:
 		yumi_caption = "YUMAK BENİM!"
 	if game_state == "celebrating":
 		yumi_caption = "BEN Mİ?" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
-	draw_string(font, p + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, Color("ffd490"))
+	draw_style_box(rounded_box(CREAM, 8), Rect2(p + Vector2(-70, -85), Vector2(140, 24)))
+	draw_string(font, p + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, INK)
 
 
 func draw_shako_launcher() -> void:
@@ -997,11 +1016,14 @@ func draw_shako_launcher() -> void:
 				var segment_end := points[index + 1]
 				var length := segment_start.distance_to(segment_end)
 				for distance in range(12, int(length), 24):
-					draw_circle(segment_start.lerp(segment_end, float(distance) / length), 3.0, Color(1, 0.9, 0.6, 0.45))
+					var dot := segment_start.lerp(segment_end, float(distance) / length)
+					draw_circle(dot, 4.0, CREAM)
+					draw_circle(dot, 2.5, Color("24616b"))
 		else:
 			for step in range(1, 7):
 				var start := LAUNCH_POS + direction * (72.0 + step * 28.0)
-				draw_line(start, start + direction * 13.0, Color(1, 1, 1, 0.28), 3.0, true)
+				draw_line(start, start + direction * 13.0, CREAM, 5.0, true)
+				draw_line(start, start + direction * 13.0, Color("24616b"), 2.0, true)
 
 	draw_line(LAUNCH_POS, muzzle, Color("5d7898"), 30.0, true)
 	draw_circle(muzzle, 18, Color("9db8cf"))
@@ -1041,7 +1063,8 @@ func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
 	var caption := "ŞAKO"
 	if celebrating:
 		caption = "YUMI?!" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
-	draw_string(font, head + Vector2(-48, 55), caption, HORIZONTAL_ALIGNMENT_CENTER, 96, 16, Color("efc08c"))
+	draw_style_box(rounded_box(CREAM, 8), Rect2(head + Vector2(-48, 38), Vector2(96, 24)))
+	draw_string(font, head + Vector2(-48, 55), caption, HORIZONTAL_ALIGNMENT_CENTER, 96, 16, INK)
 
 
 func draw_bark_wave() -> void:
@@ -1058,8 +1081,26 @@ func draw_ball(center: Vector2, type: int) -> void:
 	draw_circle(center + Vector2(2, 4), BALL_RADIUS + 2.0, Color(0, 0, 0, 0.35))
 	draw_circle(center, BALL_RADIUS, TYPE_COLORS[type])
 	draw_arc(center, BALL_RADIUS - 4, 0, TAU, 24, Color(1, 1, 1, 0.55), 2.0, true)
-	var font := ThemeDB.fallback_font
-	draw_string(font, center + Vector2(-18, 7), TYPE_SYMBOLS[type], HORIZONTAL_ALIGNMENT_CENTER, 36, 21, Color("101b31"))
+	draw_type_icon(center, type, 11, TYPE_DARK[type])
+
+
+func draw_type_icon(center: Vector2, type: int, radius: float, color: Color) -> void:
+	if type == 0:
+		var body := PackedVector2Array()
+		for point in [Vector2(-0.7, 0), Vector2(-0.3, -0.65), Vector2(0.5, -0.55), Vector2(1, 0), Vector2(0.5, 0.55), Vector2(-0.3, 0.65)]:
+			body.append(center + point * radius)
+		draw_colored_polygon(body, color)
+		draw_colored_polygon(PackedVector2Array([center + Vector2(-0.5, 0) * radius, center + Vector2(-1.1, -0.6) * radius, center + Vector2(-1.1, 0.6) * radius]), color)
+		draw_circle(center + Vector2(0.55, -0.12) * radius, radius * 0.12, CREAM)
+	elif type == 1:
+		draw_circle(center + Vector2(0, 0.35) * radius, radius * 0.55, color)
+		for toe in [Vector2(-0.65, -0.3), Vector2(-0.22, -0.75), Vector2(0.3, -0.75), Vector2(0.7, -0.25)]:
+			draw_circle(center + toe * radius, radius * 0.26, color)
+	else:
+		draw_circle(center, radius * 0.86, color)
+		for offset in [-0.4, 0.0, 0.4]:
+			draw_line(center + Vector2(-0.55, offset - 0.3) * radius, center + Vector2(0.55, offset + 0.3) * radius, CREAM, maxf(1.0, radius * 0.12), true)
+		draw_arc(center, radius * 0.6, -1.0, 1.4, 16, CREAM, maxf(1.0, radius * 0.1), true)
 
 
 func rounded_box(color: Color, radius: int) -> StyleBoxFlat:

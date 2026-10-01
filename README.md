@@ -38,10 +38,12 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Bu sürüm, ana oyun döngüsünü doğrulamak için dış görsel veya ses paketi kullanmadan hazırlanmıştır. Karakterler ve oyun alanı Godot içinde çizilir. Seçilen sıcak mutfak konsepti henüz oyuna görsel olarak aktarılmadı; bu adım dikey düzen ve dokunmatik kontrol altyapısıdır. Android/iOS paketi hazırlanmadı ve fiziksel telefonda henüz test edilmedi. Sonraki adımlar; mutfak ve karakter görselleri, animasyonlar, sesler ve gerçek cihaz testi.
+Sıcak mutfak arka planı ve ahşap dolap görseli artık oyuna yerleştirildi. Krem renkli paneller ve düğmeler, koyu okunabilir yazılar, balık/pati/yumak simgeleri ve belirgin nişan çizgileri aynı görsel dili izler. Delikler ve düğmeler arka planın parçası değildir; oyun tarafından ayrı çizilir ve hareket ettirilir. Karakterler hâlâ basit geçici çizimlerdir; konseptteki profesyonel karakter görünümü ve animasyonları bu sürümde hazır değildir. Sesler, Android/iOS paketi ve fiziksel telefon testi henüz yapılmadı. Görsel kaynaklar ve üretim yönergeleri `docs/ART_DIRECTION.md` içinde kayıtlıdır.
 
 ## Kontrol testi
 
 Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.
 
 İkinci bölümü doğrudan denemek için Godot çalıştırma komutuna `-- --level=2` eklenebilir. `res://tests/wall_smoke.gd` testi yansıma açısını, hızın korunmasını, sekme sınırını, nişan çizgisini ve 12 gerçek atışlık bölüm akışını doğrular. Otomatik testteki süre gerçek oyuncu süresi değildir.
+
+`res://tests/art_smoke.gd` testi görsellerin yüklenmesini, dolabın alfa kanalını, arayüz sınırlarını ve okunabilir metin renklerini kontrol eder. Görsel QA ayrıca üç bölümün ve sonuç ekranının gerçek Godot çıktılarında yapılır. Yeni bir proje kopyasında önce Godot editörünün görselleri içe aktarması gerekir.

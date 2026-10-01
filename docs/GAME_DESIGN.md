@@ -66,7 +66,7 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 - Parmak oyun alanında sürüklenirken nişan değişir; bırakılınca atış yapılır. Uçuş sırasında başlatılan bir dokunma yeni atış başlatmaz. GUI üzerine veya alan dışına bırakılan ve iptal edilen hareketler atış yapmaz.
 - Havlama düğmesi son oyun alanı hedefini kullanır; düğmeye dokunmak nişanı düğmenin konumuna kaydırmaz. Dokunmanın taklit fare olayı oyun alanında ikinci kez işlenmez.
 - Yumi'nin yatay sınırı 100–440; orta yüksekliği 510'dur. İleri bölümdeki delik salınımı 22 piksele daraltılarak hedefler ekranda tutulur. İlk bölümde delikler uçuş sırasında hâlâ sabittir.
-- Seçilen sıcak ev/mutfak görseli sonraki görsel üretim aşamasının referansıdır. Mahjong tasarım yönü kullanılmaz. Bu sürümde mevcut basit çizimler korunur.
+- Seçilen sıcak ev/mutfak görseli çevre ve arayüzün referansıdır. Mutfak arka planı ve ahşap dolap ayrı görsel katmanlar olarak uygulandı; hedefler renkli yuvarlak çerçeve ve ayrı simge rozetleriyle çizilir. Krem paneller ve koyu metinler kullanılır. Mahjong tasarım yönü yoktur. Karakterlerin basit geçici çizimleri korunur; gerçek karakter görselleri ve animasyonları sıradaki aşamadır.
 
 ## İlerleyen bölümler: hareketli delikler
 
