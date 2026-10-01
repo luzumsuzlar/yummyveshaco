@@ -14,7 +14,8 @@ const TYPE_DARK := [Color("146582"), Color("833b36"), Color("563a84")]
 const LEVELS := [
 	{
 		"name": "1 · İLK ATIŞ",
-		"sequence": [0, 1, 2],
+		"sequence": [0, 1, 2, 0, 2, 0, 1, 2, 1, 2, 0, 1],
+		"stage_size": 4,
 		"yumi_speed": 72.0,
 		"yumi_active": false,
 		"move_directions": 2,
@@ -65,6 +66,9 @@ var sequence: Array[int] = []
 var level_index := 0
 var level_time := 0.0
 var progress := 0
+var stage_index := 0
+var stage_rotation := 0.0
+var stage_from_positions: Array[Vector2] = []
 var errors := 0
 var game_state := "playing"
 
@@ -101,6 +105,7 @@ var status_label: Label
 var instruction_label: Label
 var next_label: Label
 var ability_label: Label
+var time_label: Label
 var overlay: ColorRect
 var overlay_title: Label
 var overlay_subtitle: Label
@@ -125,6 +130,7 @@ func build_interface() -> void:
 	level_label = make_label("", 15, Color("8fa8c4"), Vector2(28, 58), Vector2(210, 40))
 	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	code_label = make_label("", 20, Color.WHITE, Vector2(210, 58), Vector2(760, 40))
+	time_label = make_label("", 15, Color("a9bbd3"), Vector2(1004, 58), Vector2(140, 40))
 	status_label = make_label("", 19, Color("fff3cf"), Vector2(176, 424), Vector2(800, 34))
 	next_label = make_label("", 17, Color("d8e9ff"), Vector2(346, 482), Vector2(460, 28))
 	ability_label = make_label("", 15, Color("86f7a8"), Vector2(396, 509), Vector2(360, 25))
@@ -199,6 +205,9 @@ func start_level(new_level_index: int = level_index) -> void:
 	for value in config["sequence"]:
 		sequence.append(int(value))
 	progress = 0
+	stage_index = 0
+	stage_rotation = 0.0
+	stage_from_positions.clear()
 	errors = 0
 	level_time = 0.0
 	game_state = "playing"
@@ -235,6 +244,7 @@ func _process(delta: float) -> void:
 		return
 
 	level_time += delta
+	stage_rotation = maxf(0.0, stage_rotation - delta)
 	shot_delay = maxf(0.0, shot_delay - delta)
 	status_flash = maxf(0.0, status_flash - delta)
 	yumi_swipe_flash = maxf(0.0, yumi_swipe_flash - delta)
@@ -301,7 +311,7 @@ func update_mouse_aim(pointer_position: Vector2) -> void:
 
 
 func launch_ball() -> void:
-	if game_state != "playing" or ball_active or shot_delay > 0.0:
+	if game_state != "playing" or ball_active or shot_delay > 0.0 or stage_rotation > 0.0:
 		return
 	ball_type = sequence[progress]
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
@@ -346,7 +356,14 @@ func update_holes() -> void:
 		var offset := 0.0
 		if moving:
 			offset = sin(level_time * 1.18 + index * 1.65) * 43.0
-		hole_positions[index] = Vector2(HOLE_BASE_X[index] + offset, HOLE_Y)
+		var slot := (index + stage_index) % hole_positions.size()
+		var destination := Vector2(HOLE_BASE_X[slot] + offset, HOLE_Y)
+		if stage_rotation > 0.0:
+			var fraction := 1.0 - stage_rotation / 1.2
+			var eased := smoothstep(0.0, 1.0, fraction)
+			destination = stage_from_positions[index].lerp(destination, eased)
+			destination.y += sin(fraction * PI) * (58.0 if index % 2 == 0 else -42.0)
+		hole_positions[index] = destination
 
 
 func move_yumi(delta: float) -> void:
@@ -527,6 +544,13 @@ func resolve_hole_hit() -> void:
 		status_flash = 0.38
 		if progress >= sequence.size():
 			finish_game(true)
+		elif int(level_config().get("stage_size", 0)) > 0 and progress % int(level_config()["stage_size"]) == 0:
+			stage_from_positions.assign(hole_positions)
+			stage_index += 1
+			stage_rotation = 1.2
+			shot_delay = 1.2
+			status_label.text = "TAK! Kasa dönüyor. Yeni hedef düzenini incele."
+			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
 		else:
 			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
 			status_label.add_theme_color_override("font_color", Color("86f7a8"))
@@ -537,9 +561,7 @@ func resolve_hole_hit() -> void:
 
 func progress_hint() -> String:
 	if level_index == 0:
-		if progress == 1:
-			return "TAK! Şimdi PATİ topunu ortadaki deliğe gönder."
-		return "Harika! Son sembol YUMAK."
+		return "Parça oturdu! Sıradaki hedef: %s." % TYPE_NAMES[sequence[progress]]
 	if level_index == 1:
 		return "Parça oturdu. Yumi'nin ünlem işaretini izle."
 	return "Parça oturdu. Hareketli hedefin önüne nişan al."
@@ -581,6 +603,7 @@ func finish_game(success: bool) -> void:
 		overlay_title.add_theme_color_override("font_color", Color("ff746f"))
 		overlay_subtitle.text = "Yumi: 😼     Şako: 😵\nAynı bölümü hemen yeniden deneyebilirsin."
 		overlay_button.text = "TEKRAR DENE"
+	overlay_subtitle.text += "\nGeçen süre: %.1f saniye · Doğru atış: %d/%d" % [level_time, progress, sequence.size()]
 	queue_redraw()
 
 
@@ -596,20 +619,28 @@ func on_overlay_button_pressed() -> void:
 
 func update_interface() -> void:
 	level_label.text = str(level_config()["name"])
+	time_label.text = "SÜRE: %.1f sn" % level_time
 	var code_text := "KİLİT:  "
-	for index in range(sequence.size()):
+	var stage_size := int(level_config().get("stage_size", sequence.size()))
+	var stage_start := stage_index * stage_size
+	if level_index == 0:
+		code_text = "AŞAMA %d/3:  " % (stage_index + 1)
+	for index in range(stage_start, mini(stage_start + stage_size, sequence.size())):
 		if index < progress:
 			code_text += "✓  "
 		elif index == progress and game_state == "playing":
 			code_text += "[%s]  " % TYPE_SYMBOLS[sequence[index]]
 		else:
 			code_text += "%s  " % TYPE_SYMBOLS[sequence[index]]
-	code_label.text = code_text + "     HATA: %d / 3" % errors
+	code_label.text = code_text + "   %d/%d   HATA: %d/3" % [progress, sequence.size(), errors]
 
 	if game_state == "playing" and progress < sequence.size():
 		next_label.text = "Sıradaki: %s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
 		next_label.add_theme_color_override("font_color", TYPE_COLORS[sequence[progress]])
-		if ball_active:
+		if stage_rotation > 0.0:
+			ability_label.text = "KASA DÖNÜYOR..."
+			ability_label.add_theme_color_override("font_color", Color("ffcf5a"))
+		elif ball_active:
 			ability_label.text = "HAVLAMA: HAZIR — tekrar tıkla / E" if bark_available else "HAVLAMA: KULLANILDI"
 			ability_label.add_theme_color_override("font_color", Color("86f7a8") if bark_available else Color("7b8da4"))
 		else:

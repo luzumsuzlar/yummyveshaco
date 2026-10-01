@@ -25,6 +25,8 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 
 ## Korunan tasarım kararları
 
+İlk bölüm artık üç aşamadan oluşur. Her aşamada dört doğru eşleşme gerekir (toplam 12). Dördüncü ve sekizinci eşleşmelerden sonra hedefler 1,2 saniyelik kasa dönüşüyle yeni yuvalarına geçer; geçiş sırasında atış kapalıdır. Yanlış atış ilerlemeyi silmez; üç hata sınırı tüm bölüm için korunur. Geçen süre ölçülür, süre dolması başarısızlık nedeni değildir. Kusursuz otomatik test süresi 15,1 saniyedir; 45–60 saniyelik oyuncu süresi henüz doğrulanmamıştır.
+
 - İlk 20–30 bölümde zorunlu süre baskısı yoktur.
 - Başarısızlık klasik can sisteminden ziyade kilit dayanıklılığıyla anlatılır.
 - Kaybetme ile yeniden deneme arasındaki süre olabildiğince kısadır.
