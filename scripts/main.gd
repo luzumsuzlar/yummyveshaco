@@ -1,11 +1,15 @@
 extends Node2D
 
-const SCREEN_SIZE := Vector2(1152.0, 648.0)
-const HOLE_Y := 172.0
-const HOLE_RADIUS := 54.0
-const HOLE_BASE_X := [310.0, 576.0, 842.0]
-const LAUNCH_POS := Vector2(576.0, 532.0)
-const BALL_RADIUS := 21.0
+const SCREEN_SIZE := Vector2(540.0, 960.0)
+const HOLE_Y := 250.0
+const HOLE_RADIUS := 48.0
+const HOLE_BASE_X := [116.0, 270.0, 424.0]
+const LAUNCH_POS := Vector2(270.0, 790.0)
+const BALL_RADIUS := 18.0
+const YUMI_HOME := Vector2(180.0, 510.0)
+const YUMI_MIN_X := 100.0
+const YUMI_MAX_X := 440.0
+const AIM_AREA := Rect2(24, 172, 492, 686)
 const TYPE_NAMES := ["BALIK", "PATİ", "YUMAK"]
 const TYPE_SYMBOLS := ["◆", "●", "✦"]
 const TYPE_COLORS := [Color("57d9ff"), Color("ff8b74"), Color("b98cff")]
@@ -76,7 +80,9 @@ var errors := 0
 var game_state := "playing"
 
 var aim_angle := 0.0
-var last_pointer_position := Vector2(576.0, 220.0)
+var last_pointer_position := Vector2(270.0, HOLE_Y)
+var active_touch_index := -1
+var touch_can_launch := false
 var ball_active := false
 var ball_position := LAUNCH_POS
 var ball_velocity := Vector2.ZERO
@@ -92,9 +98,9 @@ var celebration_time := 0.0
 var celebration_yumi_start := Vector2.ZERO
 var celebration_shako_position := LAUNCH_POS + Vector2(0, 18)
 var bark_flash := 0.0
-var bark_target_x := 576.0
+var bark_target_x := 270.0
 
-var yumi_position := Vector2(300.0, 345.0)
+var yumi_position := YUMI_HOME
 var yumi_direction := 1.0
 var yumi_speed := 100.0
 var yumi_velocity := Vector2.RIGHT
@@ -119,6 +125,9 @@ var overlay: ColorRect
 var overlay_title: Label
 var overlay_subtitle: Label
 var overlay_button: Button
+var launch_button: Button
+var bark_button: Button
+var restart_button: Button
 
 
 func _ready() -> void:
@@ -131,26 +140,33 @@ func _ready() -> void:
 
 
 func build_interface() -> void:
-	title_label = make_label("YUMI & ŞAKO", 28, Color("fff3cf"), Vector2(0, 14), Vector2(1152, 38))
+	title_label = make_label("YUMI & ŞAKO", 30, Color("fff3cf"), Vector2(24, 24), Vector2(420, 40))
 	title_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
 	title_label.add_theme_constant_override("shadow_offset_x", 2)
 	title_label.add_theme_constant_override("shadow_offset_y", 3)
 
-	level_label = make_label("", 15, Color("8fa8c4"), Vector2(28, 58), Vector2(210, 40))
+	level_label = make_label("", 17, Color("8fa8c4"), Vector2(28, 76), Vector2(306, 30))
 	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	code_label = make_label("", 20, Color.WHITE, Vector2(210, 58), Vector2(760, 40))
-	time_label = make_label("", 15, Color("a9bbd3"), Vector2(1004, 58), Vector2(140, 40))
-	status_label = make_label("", 19, Color("fff3cf"), Vector2(176, 424), Vector2(800, 34))
-	next_label = make_label("", 17, Color("d8e9ff"), Vector2(48, 496), Vector2(342, 28))
-	ability_label = make_label("", 15, Color("86f7a8"), Vector2(770, 496), Vector2(330, 48))
-	story_label = make_label("", 15, Color("efc08c"), Vector2(24, 14), Vector2(360, 30))
+	code_label = make_label("", 18, Color.WHITE, Vector2(28, 114), Vector2(404, 34))
+	time_label = make_label("", 15, Color("a9bbd3"), Vector2(358, 76), Vector2(154, 30))
+	status_label = make_label("", 19, Color("fff3cf"), Vector2(28, 638), Vector2(484, 72))
+	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	next_label = make_label("", 18, Color("d8e9ff"), Vector2(24, 718), Vector2(284, 30))
+	ability_label = make_label("", 15, Color("86f7a8"), Vector2(306, 718), Vector2(210, 38))
+	story_label = make_label("", 15, Color("efc08c"), Vector2(28, 154), Vector2(484, 26))
 	instruction_label = make_label(
-		"Nişan/Atış: Fare + sol tık veya Boşluk     Havlama: Uçuşta tekrar tık / E     Yenile: R",
+		"Sürükle, bırak: atış · HAV!: müdahale",
 		14,
 		Color("a9bbd3"),
-		Vector2(62, 612),
-		Vector2(1028, 22)
+		Vector2(24, 940),
+		Vector2(492, 18)
 	)
+	launch_button = make_action_button("AT!", Vector2(28, 870), Vector2(224, 64), Color("57d9ff"))
+	launch_button.pressed.connect(launch_ball)
+	bark_button = make_action_button("HAV!  3/3", Vector2(288, 870), Vector2(224, 64), Color("ffcf5a"))
+	bark_button.pressed.connect(func(): use_bark(last_pointer_position.x))
+	restart_button = make_action_button("↻", Vector2(456, 24), Vector2(56, 48), Color("b2c6df"))
+	restart_button.pressed.connect(func(): start_level(level_index))
 
 	overlay = ColorRect.new()
 	overlay.position = Vector2.ZERO
@@ -160,13 +176,14 @@ func build_interface() -> void:
 	overlay.z_index = 20
 	add_child(overlay)
 
-	overlay_title = make_label("", 42, Color("fff3cf"), Vector2(206, 180), Vector2(740, 62), overlay)
-	overlay_subtitle = make_label("", 20, Color("d8e9ff"), Vector2(236, 255), Vector2(680, 116), overlay)
+	overlay_title = make_label("", 32, Color("fff3cf"), Vector2(30, 290), Vector2(480, 100), overlay)
+	overlay_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	overlay_subtitle = make_label("", 20, Color("d8e9ff"), Vector2(40, 408), Vector2(460, 210), overlay)
 	overlay_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	overlay_button = Button.new()
 	overlay_button.text = "TEKRAR DENE"
-	overlay_button.position = Vector2(436, 384)
-	overlay_button.size = Vector2(280, 62)
+	overlay_button.position = Vector2(100, 662)
+	overlay_button.size = Vector2(340, 70)
 	overlay_button.add_theme_font_size_override("font_size", 20)
 	overlay_button.add_theme_color_override("font_color", Color("16233d"))
 	overlay_button.add_theme_color_override("font_hover_color", Color("16233d"))
@@ -176,6 +193,24 @@ func build_interface() -> void:
 	overlay_button.pressed.connect(on_overlay_button_pressed)
 	overlay.add_child(overlay_button)
 	overlay.hide()
+
+
+func make_action_button(text: String, position: Vector2, size: Vector2, color: Color) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.position = position
+	button.size = size
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_size_override("font_size", 22)
+	button.add_theme_color_override("font_color", Color("16233d"))
+	button.add_theme_color_override("font_hover_color", Color("16233d"))
+	button.add_theme_color_override("font_pressed_color", Color("16233d"))
+	button.add_theme_stylebox_override("normal", button_style(color))
+	button.add_theme_stylebox_override("hover", button_style(color.lightened(0.15)))
+	button.add_theme_stylebox_override("pressed", button_style(color.darkened(0.12)))
+	button.add_theme_stylebox_override("disabled", button_style(Color("33465e")))
+	add_child(button)
+	return button
 
 
 func make_label(text: String, font_size: int, color: Color, position: Vector2, size: Vector2, parent: Node = self) -> Label:
@@ -234,7 +269,10 @@ func start_level(new_level_index: int = level_index) -> void:
 	bark_flash = 0.0
 	shot_delay = 0.35
 	aim_angle = 0.0
-	yumi_position = Vector2(300.0, 345.0)
+	active_touch_index = -1
+	touch_can_launch = false
+	last_pointer_position = Vector2(LAUNCH_POS.x, HOLE_Y)
+	yumi_position = YUMI_HOME
 	yumi_direction = 1.0
 	yumi_speed = float(config["yumi_speed"])
 	yumi_velocity = Vector2.RIGHT * yumi_speed
@@ -249,6 +287,8 @@ func start_level(new_level_index: int = level_index) -> void:
 	status_label.show()
 	next_label.show()
 	ability_label.show()
+	launch_button.show()
+	bark_button.show()
 	status_label.text = str(config["intro"])
 	status_label.add_theme_color_override("font_color", Color("fff3cf"))
 	overlay.hide()
@@ -261,8 +301,8 @@ func _process(delta: float) -> void:
 	if game_state == "celebrating":
 		celebration_time += delta
 		var run_fraction := smoothstep(0.0, 1.0, clampf((celebration_time - 0.5) / 1.4, 0.0, 1.0))
-		yumi_position = celebration_yumi_start.lerp(Vector2(638, 330), run_fraction)
-		celebration_shako_position = (LAUNCH_POS + Vector2(0, 18)).lerp(Vector2(512, 340), run_fraction)
+		yumi_position = celebration_yumi_start.lerp(Vector2(340, 430), run_fraction)
+		celebration_shako_position = (LAUNCH_POS + Vector2(0, 18)).lerp(Vector2(200, 440), run_fraction)
 		queue_redraw()
 		if celebration_time >= 2.2:
 			game_state = "success"
@@ -285,6 +325,7 @@ func _process(delta: float) -> void:
 		keyboard_direction += 1.0
 	if keyboard_direction != 0.0 and not ball_active:
 		aim_angle = clampf(aim_angle + keyboard_direction * delta * 1.35, -0.78, 0.78)
+		last_pointer_position = Vector2(LAUNCH_POS.x + tan(aim_angle) * (LAUNCH_POS.y - HOLE_Y), HOLE_Y)
 
 	update_holes()
 	move_yumi(delta)
@@ -294,9 +335,31 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
+func _input(event: InputEvent) -> void:
+	# A release over a GUI button must cancel, not leave an old drag armed.
+	if event is InputEventScreenTouch and event.index == active_touch_index and not event.pressed:
+		if event.canceled or not AIM_AREA.has_point(event.position) or game_state != "playing":
+			active_touch_index = -1
+			touch_can_launch = false
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	# GUI buttons use emulated clicks; the playfield handles native touch once.
+	if event is InputEventMouse and event.device == InputEvent.DEVICE_ID_EMULATION:
+		return
+	if event is InputEventScreenTouch:
+		handle_touch(event)
+		return
+	if event is InputEventScreenDrag:
+		if game_state == "playing" and event.index == active_touch_index and AIM_AREA.has_point(event.position):
+			last_pointer_position = event.position
+			if not ball_active:
+				update_mouse_aim(last_pointer_position)
+		return
 	if event is InputEventMouseMotion:
 		var mouse_event := event as InputEventMouseMotion
+		if not AIM_AREA.has_point(mouse_event.position):
+			return
 		last_pointer_position = mouse_event.position
 		if game_state == "playing" and not ball_active:
 			update_mouse_aim(last_pointer_position)
@@ -319,7 +382,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if game_state != "playing" or not event is InputEventMouseButton:
 		return
 	var mouse_button := event as InputEventMouseButton
-	if not mouse_button.pressed:
+	if not mouse_button.pressed or not AIM_AREA.has_point(mouse_button.position):
 		return
 	last_pointer_position = mouse_button.position
 	if mouse_button.button_index == MOUSE_BUTTON_LEFT:
@@ -332,6 +395,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		use_bark(mouse_button.position.x)
 
 
+func handle_touch(event: InputEventScreenTouch) -> void:
+	if game_state != "playing":
+		return
+	if event.pressed:
+		if active_touch_index != -1 or not AIM_AREA.has_point(event.position):
+			return
+		active_touch_index = event.index
+		touch_can_launch = not ball_active
+		last_pointer_position = event.position
+		if not ball_active:
+			update_mouse_aim(last_pointer_position)
+	elif event.index == active_touch_index:
+		active_touch_index = -1
+		var should_launch := touch_can_launch
+		touch_can_launch = false
+		if should_launch and not event.canceled and AIM_AREA.has_point(event.position) and not ball_active:
+			last_pointer_position = event.position
+			update_mouse_aim(last_pointer_position)
+			launch_ball()
+
+
 func update_mouse_aim(pointer_position: Vector2) -> void:
 	var offset: Vector2 = pointer_position - LAUNCH_POS
 	if offset.y < -20.0:
@@ -341,6 +425,7 @@ func update_mouse_aim(pointer_position: Vector2) -> void:
 func launch_ball() -> void:
 	if game_state != "playing" or ball_active or shot_delay > 0.0 or stage_rotation > 0.0:
 		return
+	touch_can_launch = false
 	ball_type = sequence[progress]
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
 	ball_position = LAUNCH_POS + direction * 50.0
@@ -386,7 +471,7 @@ func update_holes() -> void:
 	for index in range(hole_positions.size()):
 		var offset := 0.0
 		if moving:
-			offset = sin(level_time * 1.18 + index * 1.65) * 43.0
+			offset = sin(level_time * 1.18 + index * 1.65) * 22.0
 		var slot := (index + stage_index) % hole_positions.size()
 		var destination := Vector2(HOLE_BASE_X[slot] + offset, HOLE_Y)
 		if stage_rotation > 0.0:
@@ -430,19 +515,19 @@ func move_yumi(delta: float) -> void:
 	yumi_position += yumi_velocity * delta * movement_scale
 
 	var vertical_range := float(config["vertical_range"])
-	var min_y := 348.0 - vertical_range
-	var max_y := 348.0 + vertical_range
+	var min_y := YUMI_HOME.y - vertical_range
+	var max_y := YUMI_HOME.y + vertical_range
 	var hit_boundary := false
-	if yumi_position.x < 222.0:
-		yumi_position.x = 222.0
+	if yumi_position.x < YUMI_MIN_X:
+		yumi_position.x = YUMI_MIN_X
 		yumi_velocity.x = absf(yumi_velocity.x)
 		hit_boundary = true
-	elif yumi_position.x > 930.0:
-		yumi_position.x = 930.0
+	elif yumi_position.x > YUMI_MAX_X:
+		yumi_position.x = YUMI_MAX_X
 		yumi_velocity.x = -absf(yumi_velocity.x)
 		hit_boundary = true
 	if vertical_range <= 0.0:
-		yumi_position.y = 348.0
+		yumi_position.y = YUMI_HOME.y
 		yumi_velocity.y = 0.0
 	elif yumi_position.y < min_y:
 		yumi_position.y = min_y
@@ -477,15 +562,15 @@ func choose_yumi_direction(force_move: bool = false) -> void:
 		directions.append(Vector2(1.0, 1.0).normalized())
 
 	var selected := directions[rng.randi_range(0, directions.size() - 1)]
-	if yumi_position.x < 300.0 and selected.x < 0.0:
+	if yumi_position.x < YUMI_MIN_X + 44.0 and selected.x < 0.0:
 		selected.x = absf(selected.x)
-	elif yumi_position.x > 852.0 and selected.x > 0.0:
+	elif yumi_position.x > YUMI_MAX_X - 44.0 and selected.x > 0.0:
 		selected.x = -absf(selected.x)
 	var vertical_range := float(config["vertical_range"])
 	if vertical_range > 0.0:
-		if yumi_position.y < 348.0 - vertical_range * 0.72 and selected.y < 0.0:
+		if yumi_position.y < YUMI_HOME.y - vertical_range * 0.72 and selected.y < 0.0:
 			selected.y = absf(selected.y)
-		elif yumi_position.y > 348.0 + vertical_range * 0.72 and selected.y > 0.0:
+		elif yumi_position.y > YUMI_HOME.y + vertical_range * 0.72 and selected.y > 0.0:
 			selected.y = -absf(selected.y)
 
 	var speed_multiplier := 1.0
@@ -499,7 +584,7 @@ func choose_yumi_direction(force_move: bool = false) -> void:
 func move_ball(delta: float) -> void:
 	ball_position += ball_velocity * delta
 
-	if ball_position.x < 42.0 + BALL_RADIUS or ball_position.x > SCREEN_SIZE.x - 42.0 - BALL_RADIUS:
+	if ball_position.x < 24.0 + BALL_RADIUS or ball_position.x > SCREEN_SIZE.x - 24.0 - BALL_RADIUS:
 		register_error("Top kilit kanalının dışına çıktı!")
 		return
 
@@ -630,6 +715,8 @@ func register_error(message: String) -> void:
 
 
 func finish_game(success: bool) -> void:
+	active_touch_index = -1
+	touch_can_launch = false
 	ball_active = false
 	bark_available = false
 	yumi_warning_timer = 0.0
@@ -640,6 +727,8 @@ func finish_game(success: bool) -> void:
 		status_label.hide()
 		next_label.hide()
 		ability_label.hide()
+		launch_button.hide()
+		bark_button.hide()
 		story_label.text = "DOLAP AÇILDI! MAMA ZAMANI!"
 		overlay_title.text = "MAMA DOLABI AÇILDI!"
 		overlay_title.add_theme_color_override("font_color", Color("86f7a8"))
@@ -690,7 +779,10 @@ func update_interface() -> void:
 			code_text += "[%s]  " % TYPE_SYMBOLS[sequence[index]]
 		else:
 			code_text += "%s  " % TYPE_SYMBOLS[sequence[index]]
-	code_label.text = code_text + "   %d/%d   HATA: %d/3" % [progress, sequence.size(), errors]
+	code_label.text = code_text + "  %d/%d" % [progress, sequence.size()]
+	launch_button.disabled = game_state != "playing" or ball_active or shot_delay > 0.0 or stage_rotation > 0.0
+	bark_button.disabled = game_state != "playing" or not ball_active or not bark_available
+	bark_button.text = "HAV!  %d/3" % barks_left
 
 	if game_state == "playing" and progress < sequence.size():
 		next_label.text = "Sıradaki: %s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
@@ -699,10 +791,10 @@ func update_interface() -> void:
 			ability_label.text = "KASA DÖNÜYOR..."
 			ability_label.add_theme_color_override("font_color", Color("ffcf5a"))
 		elif ball_active:
-			ability_label.text = "HAV: %d/3 · tekrar tıkla / E" % barks_left if bark_available else "HAV: %d/3 · Bu atışta kullanılamaz" % barks_left
+			ability_label.text = "HAV! düğmesi / E" if bark_available else "Bu atışta HAV yok"
 			ability_label.add_theme_color_override("font_color", Color("86f7a8") if bark_available else Color("7b8da4"))
 		else:
-			ability_label.text = "BÖLÜMDE KALAN HAV: %d/3" % barks_left
+			ability_label.text = "Kalan HAV: %d/3" % barks_left
 			ability_label.add_theme_color_override("font_color", Color("8fa8c4"))
 
 
@@ -720,36 +812,36 @@ func _draw() -> void:
 
 
 func draw_cupboard() -> void:
-	draw_style_box(rounded_box(Color("3b2b27"), 16), Rect2(216, 136, 720, 105))
-	draw_line(Vector2(576, 140), Vector2(576, 234), Color("705044"), 4.0)
+	draw_style_box(rounded_box(Color("3b2b27"), 16), Rect2(42, 196, 456, 136))
+	draw_line(Vector2(270, 200), Vector2(270, 326), Color("705044"), 4.0)
 	if game_state == "celebrating" or game_state == "success":
 		var opening := clampf(celebration_time / 0.4, 0.0, 1.0)
-		draw_rect(Rect2(460, 300, 232, 102), Color("2c211e"))
-		draw_rect(Rect2(460 - opening * 70, 300, 60, 102), Color("75513a"))
-		draw_rect(Rect2(632 + opening * 70, 300, 60, 102), Color("75513a"))
-		draw_colored_polygon(PackedVector2Array([Vector2(542, 365), Vector2(610, 365), Vector2(599, 391), Vector2(553, 391)]), Color("ffcf5a"))
+		draw_rect(Rect2(154, 400, 232, 102), Color("2c211e"))
+		draw_rect(Rect2(154 - opening * 50, 400, 46, 102), Color("75513a"))
+		draw_rect(Rect2(340 + opening * 50, 400, 46, 102), Color("75513a"))
+		draw_colored_polygon(PackedVector2Array([Vector2(236, 465), Vector2(304, 465), Vector2(293, 491), Vector2(247, 491)]), Color("ffcf5a"))
 		for crumb in range(5):
-			draw_circle(Vector2(550 + crumb * 12, 365), 6, Color("a76f45"))
+			draw_circle(Vector2(244 + crumb * 12, 465), 6, Color("a76f45"))
 
 
 func draw_background() -> void:
 	draw_rect(Rect2(Vector2.ZERO, SCREEN_SIZE), Color("081326"))
-	draw_circle(Vector2(96, 112), 160, Color("10294a"))
-	draw_circle(Vector2(1070, 560), 210, Color("182348"))
-	for y in range(290, 610, 40):
-		draw_line(Vector2(44, y), Vector2(1108, y), Color(0.18, 0.28, 0.42, 0.12), 1.0)
-	draw_line(Vector2(42, 105), Vector2(42, 590), Color("294868"), 4.0)
-	draw_line(Vector2(1110, 105), Vector2(1110, 590), Color("294868"), 4.0)
+	draw_circle(Vector2(42, 200), 160, Color("10294a"))
+	draw_circle(Vector2(516, 816), 210, Color("182348"))
+	for y in range(350, 858, 40):
+		draw_line(Vector2(24, y), Vector2(516, y), Color(0.18, 0.28, 0.42, 0.12), 1.0)
+	draw_line(Vector2(24, 184), Vector2(24, 858), Color("294868"), 3.0)
+	draw_line(Vector2(516, 184), Vector2(516, 858), Color("294868"), 3.0)
 
 
 func draw_lock_panel() -> void:
 	var panel_color := Color("12243e")
 	if status_flash > 0.0:
 		panel_color = Color("25445a") if errors < 3 else Color("5b2730")
-	draw_style_box(rounded_box(panel_color, 20), Rect2(18, 50, 984, 54))
+	draw_style_box(rounded_box(panel_color, 20), Rect2(18, 70, 504, 84))
 	for index in range(3):
 		var warning_color := Color("ff645f") if index < errors else Color("263a55")
-		draw_circle(Vector2(930 + index * 22, 77), 6.0, warning_color)
+		draw_circle(Vector2(454 + index * 22, 130), 6.0, warning_color)
 
 
 func draw_holes() -> void:

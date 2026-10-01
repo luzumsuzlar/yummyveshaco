@@ -6,10 +6,13 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 
 Şako'nun fırlatıcısını yönlendirerek sıradaki sembol topunu aynı sembolü taşıyan deliğe gönder ve mama dolabını aç. Bölüm başına üç havlama hakkın var; aynı atışta yalnızca birini kullanabilirsin. Havlama topun yönünü düzeltir ve pati uyarısı sırasında Yumi'yi irkiltir. Yumi yumak topunu sahiplenip takip eder; patisi topu kontrollü-rastgele bir açıyla saptırır. Şanslı bir sekme doğru deliğe girerse Yumi'nin yardımı olarak sayılır.
 
-- Nişan: fare veya `A` / `D` / `←` / `→`
-- Atış: `Boşluk`, `Enter` veya sol tık
-- Havlama: top uçarken tekrar sol tık, `Boşluk` veya `E`
-- Yeniden başlatma: `R`
+- Dikey düzen: 540 × 960 (9:16). Masaüstünde 432 × 768 pencereyle açılır; farklı ekranlarda oranı korunur.
+- Dokunmatik nişan/atış: oyun alanında parmağını sürükle, bırakınca at. İkinci parmak ve iptal edilen hareket atış yapmaz.
+- Alternatif atış: nişan aldıktan sonra alttaki `AT!` düğmesi.
+- Havlama: top uçarken `HAV!` düğmesi. Düğme son nişan/hedef konumunu kullanır; kendi ekran konumuna topu çekmez.
+- Bilgisayarda nişan: fare veya `A` / `D` / `←` / `→`. Atış: sol tık, `Boşluk` veya `Enter`.
+- Bilgisayarda havlama: top uçarken oyun alanına tekrar tık, `Boşluk` veya `E`.
+- Yeniden başlatma: sağ üstteki `↻` düğmesi veya `R`.
 - Kilit dizisini tamamlayınca bölüm kazanılır.
 - Üç hata kilidi sıkıştırır; tek tuşla yeniden denenebilir.
 
@@ -35,4 +38,8 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Bu sürüm, ana oyun döngüsünü doğrulamak için dış görsel veya ses paketi kullanmadan hazırlanmıştır. Karakterler ve oyun alanı Godot içinde çizilir. Sonraki adımlar; gerçek karakter çizimleri, sesler, daha fazla bölüm çeşidi ve mobil dokunmatik kontrollerdir.
+Bu sürüm, ana oyun döngüsünü doğrulamak için dış görsel veya ses paketi kullanmadan hazırlanmıştır. Karakterler ve oyun alanı Godot içinde çizilir. Seçilen sıcak mutfak konsepti henüz oyuna görsel olarak aktarılmadı; bu adım dikey düzen ve dokunmatik kontrol altyapısıdır. Android/iOS paketi hazırlanmadı ve fiziksel telefonda henüz test edilmedi. Sonraki adımlar; mutfak ve karakter görselleri, animasyonlar, sesler ve gerçek cihaz testi.
+
+## Kontrol testi
+
+Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.

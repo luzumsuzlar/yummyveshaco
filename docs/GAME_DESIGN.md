@@ -45,9 +45,18 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 
 - Gerçek Yumi ve Şako karakter görselleri
 - Pati, çarpma, kilit ve başarı sesleri
-- Dokunmatik nişan ve titreşim geri bildirimi
+- Gerçek telefonda dokunmatik kontrol testi ve titreşim geri bildirimi
 - Sabit öğretici bölüm ve ardından bölüm seçimi
 - Güvenli geçit ve bomba topu gibi yeni oyun öğeleri
+
+## Dikey mobil düzen
+
+- Hedef yön: dikey (9:16). Oyun alanı 540 × 960 mantıksal koordinatla çizilir; ekran oranı korunur. Mobil yön ayarı dikeydir, telefonda dağıtım henüz yapılmadı.
+- Hedef delikleri üstte, Yumi ortada, Şako altta bulunur. Altta ayrı `AT!` ve `HAV!` düğmeleri, üstte yeniden deneme düğmesi vardır.
+- Parmak oyun alanında sürüklenirken nişan değişir; bırakılınca atış yapılır. Uçuş sırasında başlatılan bir dokunma yeni atış başlatmaz. GUI üzerine veya alan dışına bırakılan ve iptal edilen hareketler atış yapmaz.
+- Havlama düğmesi son oyun alanı hedefini kullanır; düğmeye dokunmak nişanı düğmenin konumuna kaydırmaz. Dokunmanın taklit fare olayı oyun alanında ikinci kez işlenmez.
+- Yumi'nin yatay sınırı 100–440; orta yüksekliği 510'dur. İleri bölümdeki delik salınımı 22 piksele daraltılarak hedefler ekranda tutulur. İlk bölümde delikler uçuş sırasında hâlâ sabittir.
+- Seçilen sıcak ev/mutfak görseli sonraki görsel üretim aşamasının referansıdır. Mahjong tasarım yönü kullanılmaz. Bu sürümde mevcut basit çizimler korunur.
 
 ## İlerleyen bölümler: hareketli delikler
 

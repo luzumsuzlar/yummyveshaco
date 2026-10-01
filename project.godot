@@ -17,9 +17,18 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/window_width_override=1152
-window/size/window_height_override=648
+window/size/viewport_width=540
+window/size/viewport_height=960
+window/size/window_width_override=432
+window/size/window_height_override=768
+window/handheld/orientation=1
 window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input_devices]
+
+pointing/emulate_mouse_from_touch=true
+pointing/emulate_touch_from_mouse=false
 
 [rendering]
 
