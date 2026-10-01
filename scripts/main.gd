@@ -10,6 +10,7 @@ const YUMI_HOME := Vector2(180.0, 510.0)
 const YUMI_MIN_X := 100.0
 const YUMI_MAX_X := 440.0
 const AIM_AREA := Rect2(24, 172, 492, 686)
+const TOUCH_AIM_RADIANS_PER_PIXEL := 0.0045
 const WALL_LEFT := 24.0 + BALL_RADIUS
 const WALL_RIGHT := SCREEN_SIZE.x - 24.0 - BALL_RADIUS
 const GOAL_LINE := HOLE_Y + 14.0
@@ -95,6 +96,8 @@ var aim_angle := 0.0
 var last_pointer_position := Vector2(270.0, HOLE_Y)
 var active_touch_index := -1
 var touch_can_launch := false
+var touch_start_position := Vector2.ZERO
+var touch_start_angle := 0.0
 var ball_active := false
 var ball_position := LAUNCH_POS
 var ball_velocity := Vector2.ZERO
@@ -379,9 +382,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventScreenDrag:
 		if game_state == "playing" and event.index == active_touch_index and AIM_AREA.has_point(event.position):
-			last_pointer_position = event.position
-			if not ball_active:
-				update_mouse_aim(last_pointer_position)
+			if touch_can_launch and not ball_active:
+				update_touch_aim(event.position)
 		return
 	if event is InputEventMouseMotion:
 		var mouse_event := event as InputEventMouseMotion
@@ -430,17 +432,23 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 			return
 		active_touch_index = event.index
 		touch_can_launch = not ball_active
-		last_pointer_position = event.position
-		if not ball_active:
-			update_mouse_aim(last_pointer_position)
+		touch_start_position = event.position
+		touch_start_angle = aim_angle
 	elif event.index == active_touch_index:
 		active_touch_index = -1
 		var should_launch := touch_can_launch
 		touch_can_launch = false
 		if should_launch and not event.canceled and AIM_AREA.has_point(event.position) and not ball_active:
-			last_pointer_position = event.position
-			update_mouse_aim(last_pointer_position)
+			update_touch_aim(event.position)
 			launch_ball()
+
+
+func update_touch_aim(pointer_position: Vector2) -> void:
+	# Relative drag: touching elsewhere never teleports the current aim.
+	var horizontal_drag := pointer_position.x - touch_start_position.x
+	aim_angle = clampf(touch_start_angle + horizontal_drag * TOUCH_AIM_RADIANS_PER_PIXEL, -aim_limit(), aim_limit())
+	# Bark follows the aimed ray, not the finger's screen position.
+	last_pointer_position = Vector2(LAUNCH_POS.x + tan(aim_angle) * (LAUNCH_POS.y - HOLE_Y), HOLE_Y)
 
 
 func update_mouse_aim(pointer_position: Vector2) -> void:

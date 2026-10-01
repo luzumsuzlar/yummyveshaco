@@ -27,6 +27,12 @@ func mouse(position: Vector2, pressed: bool, emulated: bool = false) -> void:
 	event.device = InputEvent.DEVICE_ID_EMULATION if emulated else 0
 	root.push_input(event, true)
 
+func drag_touch(index: int, position: Vector2) -> void:
+	var event := InputEventScreenDrag.new()
+	event.index = index
+	event.position = position
+	root.push_input(event, true)
+
 func reset(level: int = 0) -> void:
 	game.start_level(level)
 	game.shot_delay = 0.0
@@ -58,7 +64,44 @@ func run_checks() -> void:
 				break
 		check(game.progress == shot + 1 and game.errors == 0, "Tutorial target reachable: %d" % shot)
 	check(game.yumi_is_active() and game.stage_index == 1, "Four goals wake Yumi")
-	# Native touch starts aiming, ignores another finger, launches on release.
+	# Relative touch preserves aim on press, ignores vertical motion and other fingers.
+	reset()
+	game.update_mouse_aim(Vector2(116, 250))
+	var previous_angle: float = game.aim_angle
+	var previous_target: Vector2 = game.last_pointer_position
+	touch(0, Vector2(420, 700), true)
+	check(is_equal_approx(game.aim_angle, previous_angle), "Touch down does not teleport aim")
+	check(game.last_pointer_position == previous_target, "Touch down preserves bark target")
+	drag_touch(0, Vector2(420, 450))
+	check(is_equal_approx(game.aim_angle, previous_angle), "Vertical drag leaves aim unchanged")
+	drag_touch(0, Vector2(450, 450))
+	check(is_equal_approx(game.aim_angle, previous_angle + 30.0 * game.TOUCH_AIM_RADIANS_PER_PIXEL), "Horizontal drag adjusts existing angle")
+	var relative_angle: float = game.aim_angle
+	drag_touch(1, Vector2(50, 450))
+	check(is_equal_approx(game.aim_angle, relative_angle), "Other finger drag cannot change aim")
+	drag_touch(0, Vector2(390, 500))
+	check(game.aim_angle < previous_angle, "Reversing drag turns aim left")
+	touch(0, Vector2(390, 500), false, true)
+	reset()
+	touch(0, Vector2(200, 700), true)
+	drag_touch(0, Vector2(240, 700))
+	var first_origin_angle: float = game.aim_angle
+	touch(0, Vector2(240, 700), false, true)
+	reset()
+	touch(0, Vector2(380, 400), true)
+	drag_touch(0, Vector2(420, 400))
+	check(is_equal_approx(game.aim_angle, first_origin_angle), "Same drag gives same aim from another screen position")
+	var expected_target_x: float = game.LAUNCH_POS.x + tan(game.aim_angle) * (game.LAUNCH_POS.y - game.HOLE_Y)
+	check(is_equal_approx(game.last_pointer_position.x, expected_target_x), "Touch bark target lies on aimed ray")
+	touch(0, Vector2(440, 400), false)
+	check(is_equal_approx(game.aim_angle, 60.0 * game.TOUCH_AIM_RADIANS_PER_PIXEL), "Release uses final relative displacement")
+	check(game.ball_active, "Relative release launches")
+	reset(1)
+	touch(0, Vector2(40, 700), true)
+	drag_touch(0, Vector2(500, 700))
+	check(is_equal_approx(game.aim_angle, game.aim_limit()), "Relative drag respects level aim limit")
+	touch(0, Vector2(500, 700), false, true)
+	# Native touch ignores another finger and launches on release.
 	reset()
 	touch(0, Vector2(116, 250), true)
 	check(not game.ball_active and game.active_touch_index == 0, "Touch down aims without firing")
@@ -75,6 +118,9 @@ func run_checks() -> void:
 	mouse(Vector2(424, 250), true, true)
 	check(game.barks_left == 3, "Emulated duplicate click does not bark")
 	touch(0, Vector2(270, 400), true)
+	var flight_target: Vector2 = game.last_pointer_position
+	drag_touch(0, Vector2(400, 400))
+	check(game.last_pointer_position == flight_target, "In-flight touch does not hijack bark target")
 	game.ball_active = false
 	game.shot_delay = 0.0
 	touch(0, Vector2(270, 400), false)

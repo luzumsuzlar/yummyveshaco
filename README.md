@@ -7,7 +7,7 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 Şako'nun fırlatıcısını yönlendirerek sıradaki sembol topunu aynı sembolü taşıyan deliğe gönder ve mama dolabını aç. Bölüm başına üç havlama hakkın var; aynı atışta yalnızca birini kullanabilirsin. Havlama topun yönünü düzeltir ve pati uyarısı sırasında Yumi'yi irkiltir. Yumi yumak topunu sahiplenip takip eder; patisi topu kontrollü-rastgele bir açıyla saptırır. Şanslı bir sekme doğru deliğe girerse Yumi'nin yardımı olarak sayılır.
 
 - Dikey düzen: 540 × 960 (9:16). Masaüstünde 432 × 768 pencereyle açılır; farklı ekranlarda oranı korunur.
-- Dokunmatik nişan/atış: oyun alanında parmağını sürükle, bırakınca at. İkinci parmak ve iptal edilen hareket atış yapmaz.
+- Dokunmatik nişan/atış: dokununca nişan yerinde kalır; parmağını sağa–sola sürükleyerek mevcut açıyı değiştir, bırakınca at. Dikey sürükleme nişanı değiştirmez. İkinci parmak ve iptal edilen hareket atış yapmaz.
 - Alternatif atış: nişan aldıktan sonra alttaki `AT!` düğmesi.
 - Havlama: top uçarken `HAV!` düğmesi. Düğme son nişan/hedef konumunu kullanır; kendi ekran konumuna topu çekmez.
 - Bilgisayarda nişan: fare veya `A` / `D` / `←` / `→`. Atış: sol tık, `Boşluk` veya `Enter`.

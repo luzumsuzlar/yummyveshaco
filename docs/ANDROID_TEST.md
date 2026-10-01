@@ -2,11 +2,13 @@
 
 1 Ekim 2026: test paketi bağlı Samsung SM-S938B telefona başarıyla kuruldu ve açıldı. Uygulama süreci çalışır durumda, Godot başlangıç kayıtlarında hata görülmedi. Bu kontrol dokunmatik oynanışın veya tüm bölüm akışının gerçek cihazda doğrulandığı anlamına gelmez.
 
+Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; telefondaki sürüm kodu 2 olarak doğrulandı ve oyun yeniden açıldı. Kullanıcının dokununca nişanın sıçraması geri bildirimi üzerine mutlak parmak hedeflemesi yerine göreli yatay sürükleme uygulandı. Otomatik dokunmatik, duvar ve görsel testleri geçti; yeni kontrolün ergonomisi kullanıcı denemesini bekliyor.
+
 ## Paket
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Sürüm: `0.1.0-test`, kod `1`
+- Sürüm: `0.1.1-test`, kod `2`
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
 - APK: `exports/android/yumi-sako-test.apk` (yaklaşık 31 MB)
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
@@ -28,7 +30,8 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 ## Oyuncu kontrol listesi
 
 - Telefon dikeyken hedefler, metinler, AT ve HAV düğmeleri rahat görünüyor mu?
-- Parmağı sürükleyip bırakmak tek top fırlatıyor mu; nişan parmağın altında okunuyor mu?
+- Dokununca nişan yerinde kalıyor mu; sağa–sola sürükleme rahat mı; dikey sürükleme açıyı koruyor mu?
+- Parmağı bırakmak tek top fırlatıyor mu; nişan çizgisi parmağı hedefe götürmeden okunuyor mu?
 - HAV düğmesi uçuş sırasında kolay erişiliyor mu; topu düğmenin kendisine yönlendirmiyor mu?
 - İkinci parmak yanlışlıkla ek atış yapıyor mu?
 - İkinci bölümde duvar sekmesi çizgisi ve zorunlu sekme sayısı anlaşılır mı?
