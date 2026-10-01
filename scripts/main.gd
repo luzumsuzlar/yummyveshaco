@@ -10,6 +10,9 @@ const YUMI_HOME := Vector2(180.0, 510.0)
 const YUMI_MIN_X := 100.0
 const YUMI_MAX_X := 440.0
 const AIM_AREA := Rect2(24, 172, 492, 686)
+const WALL_LEFT := 24.0 + BALL_RADIUS
+const WALL_RIGHT := SCREEN_SIZE.x - 24.0 - BALL_RADIUS
+const GOAL_LINE := HOLE_Y + 14.0
 const TYPE_NAMES := ["BALIK", "PATİ", "YUMAK"]
 const TYPE_SYMBOLS := ["◆", "●", "✦"]
 const TYPE_COLORS := [Color("57d9ff"), Color("ff8b74"), Color("b98cff")]
@@ -36,9 +39,14 @@ const LEVELS := [
 		"intro": "Mama dolabını aç! İlk 4 atışta Yumi uyukluyor.",
 	},
 	{
-		"name": "2 · YUMI SAHADA",
-		"sequence": [2, 0, 1, 2],
-		"yumi_speed": 142.0,
+		"name": "2 · DUVAR OYUNU",
+		"sequence": [0, 2, 1, 0, 1, 2, 0, 2, 2, 0, 1, 2],
+		"stage_size": 4,
+		"max_wall_bounces": 2,
+		"aim_limit": 1.12,
+		"warning_time": 0.40,
+		"ball_speed": 460.0,
+		"yumi_speed": 100.0,
 		"yumi_active": true,
 		"move_directions": 4,
 		"turn_min": 0.9,
@@ -48,7 +56,7 @@ const LEVELS := [
 		"dash_chance": 0.04,
 		"deflection_range": 220.0,
 		"moving_holes": false,
-		"intro": "Yumi hazırlanırken uçuşta tekrar tıkla: Şako HAV! desin.",
+		"intro": "Duvarı kullan! İlk 4 hedefe en az 1 sekmeyle ulaş. Yumi uyuyor.",
 	},
 	{
 		"name": "3 · KAYAN KİLİT",
@@ -90,6 +98,9 @@ var ball_type := 0
 var ball_swatted := false
 var ball_deflected_by_yumi := false
 var shot_delay := 0.0
+var wall_bounces := 0
+var wall_flash := 0.0
+var wall_flash_position := Vector2.ZERO
 
 var bark_available := false
 var barks_left := 0
@@ -135,7 +146,11 @@ func _ready() -> void:
 	for x_position in HOLE_BASE_X:
 		hole_positions.append(Vector2(float(x_position), HOLE_Y))
 	build_interface()
-	start_level(0)
+	var initial_level := 0
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--level="):
+			initial_level = clampi(argument.trim_prefix("--level=").to_int() - 1, 0, LEVELS.size() - 1)
+	start_level(initial_level)
 	queue_redraw()
 
 
@@ -151,8 +166,9 @@ func build_interface() -> void:
 	time_label = make_label("", 15, Color("a9bbd3"), Vector2(358, 76), Vector2(154, 30))
 	status_label = make_label("", 19, Color("fff3cf"), Vector2(28, 638), Vector2(484, 72))
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	next_label = make_label("", 18, Color("d8e9ff"), Vector2(24, 718), Vector2(284, 30))
-	ability_label = make_label("", 15, Color("86f7a8"), Vector2(306, 718), Vector2(210, 38))
+	next_label = make_label("", 17, Color("d8e9ff"), Vector2(28, 778), Vector2(156, 64))
+	ability_label = make_label("", 15, Color("86f7a8"), Vector2(354, 778), Vector2(162, 64))
+	ability_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	story_label = make_label("", 15, Color("efc08c"), Vector2(28, 154), Vector2(484, 26))
 	instruction_label = make_label(
 		"Sürükle, bırak: atış · HAV!: müdahale",
@@ -261,6 +277,8 @@ func start_level(new_level_index: int = level_index) -> void:
 	ball_velocity = Vector2.ZERO
 	ball_swatted = false
 	ball_deflected_by_yumi = false
+	wall_bounces = 0
+	wall_flash = 0.0
 	bark_available = false
 	barks_left = int(config.get("bark_budget", 3))
 	yumi_help_count = 0
@@ -317,6 +335,7 @@ func _process(delta: float) -> void:
 	status_flash = maxf(0.0, status_flash - delta)
 	yumi_swipe_flash = maxf(0.0, yumi_swipe_flash - delta)
 	bark_flash = maxf(0.0, bark_flash - delta)
+	wall_flash = maxf(0.0, wall_flash - delta)
 
 	var keyboard_direction := 0.0
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
@@ -324,7 +343,7 @@ func _process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
 		keyboard_direction += 1.0
 	if keyboard_direction != 0.0 and not ball_active:
-		aim_angle = clampf(aim_angle + keyboard_direction * delta * 1.35, -0.78, 0.78)
+		aim_angle = clampf(aim_angle + keyboard_direction * delta * 1.35, -aim_limit(), aim_limit())
 		last_pointer_position = Vector2(LAUNCH_POS.x + tan(aim_angle) * (LAUNCH_POS.y - HOLE_Y), HOLE_Y)
 
 	update_holes()
@@ -419,7 +438,17 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 func update_mouse_aim(pointer_position: Vector2) -> void:
 	var offset: Vector2 = pointer_position - LAUNCH_POS
 	if offset.y < -20.0:
-		aim_angle = clampf(atan2(offset.x, -offset.y), -0.78, 0.78)
+		aim_angle = clampf(atan2(offset.x, -offset.y), -aim_limit(), aim_limit())
+
+
+func aim_limit() -> float:
+	return float(level_config().get("aim_limit", 0.78))
+
+
+func required_wall_bounces() -> int:
+	if level_index != 1:
+		return 0
+	return 2 if stage_index == 1 else 1
 
 
 func launch_ball() -> void:
@@ -433,6 +462,7 @@ func launch_ball() -> void:
 	ball_active = true
 	ball_swatted = false
 	ball_deflected_by_yumi = false
+	wall_bounces = 0
 	bark_available = barks_left > 0
 	yumi_warning_timer = 0.0
 	yumi_warning_started = false
@@ -450,12 +480,21 @@ func use_bark(target_x: float) -> void:
 	bark_flash = 0.48
 	bark_target_x = clampf(target_x, 90.0, SCREEN_SIZE.x - 90.0)
 
-	var remaining_distance := maxf(ball_position.y - HOLE_Y, 70.0)
-	var upward_speed := maxf(-ball_velocity.y, 220.0)
+	var steering_target := bark_target_x
+	if level_index == 1:
+		# Unfold the remaining bank route instead of canceling it with a bark.
+		var banks_needed := maxi(required_wall_bounces() - wall_bounces, 0)
+		var toward_right := ball_velocity.x >= 0.0
+		if banks_needed == 1:
+			steering_target = 2.0 * (WALL_RIGHT if toward_right else WALL_LEFT) - bark_target_x
+		elif banks_needed == 2:
+			steering_target += (WALL_RIGHT - WALL_LEFT) * (2.0 if toward_right else -2.0)
+	var remaining_distance := maxf(ball_position.y - GOAL_LINE, 70.0)
+	var upward_speed := maxf(-ball_velocity.y, 180.0 if level_index == 1 else 420.0)
 	var remaining_time := maxf(remaining_distance / upward_speed, 0.18)
-	var desired_x_speed := (bark_target_x - ball_position.x) / remaining_time
+	var desired_x_speed := (steering_target - ball_position.x) / remaining_time
 	ball_velocity.x = clampf(lerpf(ball_velocity.x, desired_x_speed, 0.82), -560.0, 560.0)
-	ball_velocity.y = -maxf(absf(ball_velocity.y), 420.0)
+	ball_velocity.y = -upward_speed
 
 	if yumi_warning_timer > 0.0:
 		yumi_warning_timer = 0.0
@@ -582,20 +621,47 @@ func choose_yumi_direction(force_move: bool = false) -> void:
 
 
 func move_ball(delta: float) -> void:
-	ball_position += ball_velocity * delta
+	# Short steps keep warning timing and collisions stable at different FPS.
+	var remaining := delta
+	while remaining > 0.0 and ball_active:
+		var step := minf(remaining, 1.0 / 120.0)
+		advance_ball_segment(step)
+		if ball_active:
+			update_yumi_attack(step)
+		remaining -= step
 
-	if ball_position.x < 24.0 + BALL_RADIUS or ball_position.x > SCREEN_SIZE.x - 24.0 - BALL_RADIUS:
-		register_error("Top kilit kanalının dışına çıktı!")
-		return
 
-	update_yumi_attack(delta)
-	if not ball_active:
-		return
-
-	if ball_position.y <= HOLE_Y + 14.0:
-		resolve_hole_hit()
-	elif ball_position.y > SCREEN_SIZE.y + 40.0:
-		register_error("Top oyun alanından çıktı!")
+func advance_ball_segment(delta: float) -> void:
+	var remaining := delta
+	while remaining > 0.0 and ball_active:
+		var side_time := INF
+		if ball_velocity.x > 0.0:
+			side_time = maxf(0.0, (WALL_RIGHT - ball_position.x) / ball_velocity.x)
+		elif ball_velocity.x < 0.0:
+			side_time = maxf(0.0, (WALL_LEFT - ball_position.x) / ball_velocity.x)
+		var goal_time := INF
+		if ball_velocity.y < 0.0:
+			goal_time = maxf(0.0, (GOAL_LINE - ball_position.y) / ball_velocity.y)
+		var travel_time := minf(remaining, minf(side_time, goal_time))
+		ball_position += ball_velocity * travel_time
+		remaining -= travel_time
+		if goal_time <= side_time and goal_time <= travel_time:
+			resolve_hole_hit()
+			return
+		if side_time <= travel_time:
+			var bounce_limit := int(level_config().get("max_wall_bounces", 0))
+			if wall_bounces >= bounce_limit:
+				register_error("İki sekme hakkı bitti!" if bounce_limit > 0 else "Top kilit kanalının dışına çıktı!")
+				return
+			wall_bounces += 1
+			wall_flash = 0.28
+			wall_flash_position = ball_position
+			ball_velocity.x = -ball_velocity.x
+			status_label.text = "TAK! Duvar sekmesi: %d/2" % wall_bounces
+			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+		if ball_position.y > SCREEN_SIZE.y + 40.0:
+			register_error("Top oyun alanından çıktı!")
+			return
 
 
 func update_yumi_attack(delta: float) -> void:
@@ -621,7 +687,11 @@ func update_yumi_attack(delta: float) -> void:
 
 
 func yumi_is_active() -> bool:
-	return progress >= 4 if level_index == 0 else bool(level_config()["yumi_active"])
+	if level_index == 0:
+		return progress >= 4
+	if level_index == 1:
+		return stage_index >= 2
+	return bool(level_config()["yumi_active"])
 
 
 func perform_yumi_swipe() -> void:
@@ -664,6 +734,9 @@ func resolve_hole_hit() -> void:
 		return
 
 	if nearest_hole == ball_type and ball_type == sequence[progress]:
+		if wall_bounces < required_wall_bounces():
+			register_error("Doğru delik, ama en az %d duvar sekmesi gerekiyor!" % required_wall_bounces())
+			return
 		var lucky_yumi_goal := ball_deflected_by_yumi
 		if lucky_yumi_goal:
 			yumi_help_count += 1
@@ -684,6 +757,10 @@ func resolve_hole_hit() -> void:
 				status_label.text = "Yumi uyandı! Yumağı istiyor. Ünlemde havla: %d hakkın var." % barks_left
 			elif level_index == 0 and stage_index == 2:
 				status_label.text = "Son kilit! Yumi'yi oku, kalan havlamalarını dikkatli kullan."
+			elif level_index == 1 and stage_index == 1:
+				status_label.text = "Şimdi iki duvar! Her hedefe 2 sekmeyle ulaş. Nişan çizgisini izle."
+			elif level_index == 1 and stage_index == 2:
+				status_label.text = "Yumi uyandı! En az 1 sekme yap; pati uyarısında HAV! kullan."
 			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
 		else:
 			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
@@ -697,7 +774,7 @@ func progress_hint() -> String:
 	if level_index == 0:
 		return "Parça oturdu! Sıradaki hedef: %s." % TYPE_NAMES[sequence[progress]]
 	if level_index == 1:
-		return "Parça oturdu. Yumi'nin ünlem işaretini izle."
+		return "Parça oturdu! En az %d sekme; %s hedefle." % [required_wall_bounces(), TYPE_NAMES[sequence[progress]]]
 	return "Parça oturdu. Hareketli hedefin önüne nişan al."
 
 
@@ -770,8 +847,8 @@ func update_interface() -> void:
 	var code_text := "KİLİT:  "
 	var stage_size := int(level_config().get("stage_size", sequence.size()))
 	var stage_start := stage_index * stage_size
-	if level_index == 0:
-		code_text = "AŞAMA %d/3:  " % (stage_index + 1)
+	if int(level_config().get("stage_size", 0)) > 0:
+		code_text = "AŞAMA %d/%d:  " % [stage_index + 1, ceili(float(sequence.size()) / stage_size)]
 	for index in range(stage_start, mini(stage_start + stage_size, sequence.size())):
 		if index < progress:
 			code_text += "✓  "
@@ -785,7 +862,9 @@ func update_interface() -> void:
 	bark_button.text = "HAV!  %d/3" % barks_left
 
 	if game_state == "playing" and progress < sequence.size():
-		next_label.text = "Sıradaki: %s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
+		if level_index == 1:
+			story_label.text = "HEDEF: EN AZ %d SEKME + DOĞRU DELİK" % required_wall_bounces()
+		next_label.text = "Sıradaki:\n%s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
 		next_label.add_theme_color_override("font_color", TYPE_COLORS[sequence[progress]])
 		if stage_rotation > 0.0:
 			ability_label.text = "KASA DÖNÜYOR..."
@@ -796,6 +875,8 @@ func update_interface() -> void:
 		else:
 			ability_label.text = "Kalan HAV: %d/3" % barks_left
 			ability_label.add_theme_color_override("font_color", Color("8fa8c4"))
+		if level_index == 1 and stage_rotation <= 0.0:
+			ability_label.text = "SEKME: %d/2\nKalan HAV: %d" % [wall_bounces if ball_active else 0, barks_left]
 
 
 func _draw() -> void:
@@ -809,6 +890,8 @@ func _draw() -> void:
 		draw_ball(ball_position, ball_type)
 	if bark_flash > 0.0:
 		draw_bark_wave()
+	if wall_flash > 0.0:
+		draw_arc(wall_flash_position, 22.0 + (0.28 - wall_flash) * 90.0, 0, TAU, 24, Color(1, 0.8, 0.3, wall_flash / 0.28), 4.0, true)
 
 
 func draw_cupboard() -> void:
@@ -830,8 +913,9 @@ func draw_background() -> void:
 	draw_circle(Vector2(516, 816), 210, Color("182348"))
 	for y in range(350, 858, 40):
 		draw_line(Vector2(24, y), Vector2(516, y), Color(0.18, 0.28, 0.42, 0.12), 1.0)
-	draw_line(Vector2(24, 184), Vector2(24, 858), Color("294868"), 3.0)
-	draw_line(Vector2(516, 184), Vector2(516, 858), Color("294868"), 3.0)
+	var wall_color := Color("ffcf5a") if level_index == 1 else Color("294868")
+	draw_line(Vector2(24, 184), Vector2(24, 858), wall_color, 4.0)
+	draw_line(Vector2(516, 184), Vector2(516, 858), wall_color, 4.0)
 
 
 func draw_lock_panel() -> void:
@@ -906,15 +990,44 @@ func draw_shako_launcher() -> void:
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
 	var muzzle := LAUNCH_POS + direction * 58.0
 	if not ball_active and game_state == "playing":
-		for step in range(1, 7):
-			var start := LAUNCH_POS + direction * (72.0 + step * 28.0)
-			draw_line(start, start + direction * 13.0, Color(1, 1, 1, 0.28), 3.0, true)
+		if level_index == 1:
+			var points := aim_preview_points()
+			for index in range(points.size() - 1):
+				var segment_start := points[index]
+				var segment_end := points[index + 1]
+				var length := segment_start.distance_to(segment_end)
+				for distance in range(12, int(length), 24):
+					draw_circle(segment_start.lerp(segment_end, float(distance) / length), 3.0, Color(1, 0.9, 0.6, 0.45))
+		else:
+			for step in range(1, 7):
+				var start := LAUNCH_POS + direction * (72.0 + step * 28.0)
+				draw_line(start, start + direction * 13.0, Color(1, 1, 1, 0.28), 3.0, true)
 
 	draw_line(LAUNCH_POS, muzzle, Color("5d7898"), 30.0, true)
 	draw_circle(muzzle, 18, Color("9db8cf"))
 	draw_shako_face(LAUNCH_POS + Vector2(0, 18))
 	if not ball_active and game_state == "playing" and progress < sequence.size():
 		draw_ball(muzzle + direction * 7.0, sequence[progress])
+
+
+func aim_preview_points() -> Array[Vector2]:
+	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
+	var position := LAUNCH_POS + direction * 50.0
+	var points: Array[Vector2] = [position]
+	var bounce_limit := int(level_config().get("max_wall_bounces", 0))
+	for bounce in range(bounce_limit + 1):
+		var goal_distance := (GOAL_LINE - position.y) / direction.y
+		var wall_distance := INF
+		if direction.x > 0.0:
+			wall_distance = (WALL_RIGHT - position.x) / direction.x
+		elif direction.x < 0.0:
+			wall_distance = (WALL_LEFT - position.x) / direction.x
+		position += direction * minf(goal_distance, wall_distance)
+		points.append(position)
+		if goal_distance <= wall_distance:
+			break
+		direction.x = -direction.x
+	return points
 
 
 func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:

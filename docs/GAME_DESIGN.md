@@ -15,11 +15,11 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 
 ## İkinci prototip kararı
 
-- Oyun klasik pinball değildir; duvarlardan sürekli sekme ve yüksek puan kovalamaca döngüsü kullanılmaz.
+- Oyun klasik pinball değildir; sürekli sekme ve yüksek puan kovalamaca kullanılmaz. İkinci bölümde yan duvarlardan ikiye kadar bilinçli bilardo tipi yansıma vardır.
 - Şako topu doğrudan hedefe fırlatır.
 - Oyuncunun bölüm başına üç havlama hakkı vardır; bir atışta en fazla bir kez kullanılabilir. Uçuş sırasında kullanılan havlama topun yönünü düzeltir. Yeni atış hakları doldurmaz; yeniden deneme veya yeni bölüm doldurur.
 - Yumi pati atmadan önce kısa ve okunabilir bir uyarı verir. Uyarı sırasında havlamak Yumi'yi irkiltir ve müdahaleyi engeller.
-- İlk bölümün ilk dört eşleşmesinde Yumi uyur, sonraki aşamalarda yavaş ve okunabilir biçimde müdahale eder. İkinci bölüm dört yönlü Yumi hareketini, üçüncü bölüm hareketli delikleri tanıtır.
+- İlk bölümün ilk dört eşleşmesinde Yumi uyur, sonraki aşamalarda yavaş ve okunabilir biçimde müdahale eder. İkinci bölüm duvar sekmesini öğretir ve son aşamada dört yönlü Yumi hareketiyle birleştirir. Üçüncü bölüm hareketli delikleri tanıtır.
 - Yumi'nin hareket karmaşıklığı bölümle artar: önce yatay, sonra dört yönlü, daha sonra çapraz yönler, duraklamalar ve kısa atılmalar.
 - Top Yumi'ye temas ettiğinde çarpışma tarafı ve bölüm zorluğuna göre kontrollü-rastgele bir yöne seker. Ortaya çıkan açı doğru deliğe denk gelirse atış geçerli sayılır ve Yumi'nin yanlışlıkla yardım ettiği vurgulanır.
 
@@ -40,6 +40,16 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 - Başarısızlık klasik can sisteminden ziyade kilit dayanıklılığıyla anlatılır.
 - Kaybetme ile yeniden deneme arasındaki süre olabildiğince kısadır.
 - Yumi'nin sabotajı eğlenceli ve okunabilir olmalıdır; oyuncuya haksız görünmemelidir.
+
+## İkinci bölüm: Duvar Oyunu
+
+- Üç aşama × dört eşleşme: önce en az bir sekme, sonra iki sekme, son aşamada Yumi + en az bir sekme. Düz atış doğru deliğe girse bile sekme koşulunu karşılamazsa hata sayılır; koşul sürekli ekranda gösterilir.
+- Yalnız yan duvarlarda yansıma vardır: yatay hızın işareti değişir, dikey hız ve toplam hız korunur. Rastgele sekme açısı yoktur. Bir atışta iki sekme yapılabilir; üçüncü temas hata oluşturur. Alt tarafa kaçış atışı bitirir.
+- Topun yarıçapı duvar mesafesine katılır. Çarpışmadan sonra kalan hareket devam eder; düşük kare hızında duvarın içinden geçmemesi ve pati uyarısının zamanlaması için kısa fizik adımları kullanılır.
+- İlk iki aşamada Yumi uyur. Son aşamada dört yönlü hareket, yumak takibi ve 0,40 saniyelik pati uyarısı devrededir. Üç havlama hakkı bölüm genelindedir; her atışta en fazla bir kez kullanılır.
+- Havlama, hedefi kalan sekme rotasına göre hesaplar; doğrudan deliğe çevirip zorunlu duvar temasını bozmaz. Çizilen yol duvarları hesaba katar; Yumi'nin gelecekteki müdahalesini tahmin etmez.
+- Hedefler aşamalar arasında yer değiştirir; uçuşta sabittir. İlk ve üçüncü bölüme yeni duvar sekmesi kuralı eklenmedi.
+- Deneme kısayolu: `-- --level=2`. Otomatik test, oyuncu zamanı/zorluk değerlendirmesinin yerine geçmez.
 
 ## Sonraki küçük hedefler
 

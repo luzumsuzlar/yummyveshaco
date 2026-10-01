@@ -19,10 +19,10 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 ## Prototip bölümleri
 
 1. **Mama Dolabı:** Üç aşamada dörder eşleşme, toplam 12 doğru atış. İlk dört eşleşmede Yumi uyuklar; sonra uyanır ve yavaş, yatay hareketlerle yumak topuna yaklaşır. Son aşama öğrenilen nişan ve havlama kurallarını birleştirir. İlk iki aşama sonunda kasa dönüşüyle hedefler yer değiştirir; atış sırasında sabit kalır. İlk bölümde top daha yavaş, pati uyarısı daha uzundur.
-2. **Yumi Sahada:** Yumi dört yönde kontrollü-rastgele dolaşır ve pati öncesi ünlem işaretiyle uyarır. Havlama karşı hamle olarak kullanılır.
+2. **Duvar Oyunu:** Üç aşamada dörder eşleşme, toplam 12 doğru atış. İlk dört hedef en az bir, sonraki dört hedef iki duvar sekmesi ister; bu iki aşamada Yumi uyur. Son dört hedefte Yumi dört yönde dolaşır ve en az bir sekme gerekir. Yan duvarlar geliş açısına göre yansıtır; hız korunur, üçüncü duvar teması atışı bitirir. Nişan çizgisi sekme yolunu gösterir. Havlama, kalan zorunlu sekmeleri koruyarak yön düzeltir. Aşama geçişlerinde hedefler yer değiştirir; uçuşta sabit kalır.
 3. **Kayan Kilit:** Yumi sekiz yönde daha sık yön değiştirip kısa atılmalar yapar. Delikler de yatay hareket eder.
 
-Duvarlardan pinball tarzı sekme yoktur. Oyun puan toplamaya değil, kilidi doğru sırayla çözmeye odaklanır.
+Sınırsız pinball sekmesi yoktur. Yalnız ikinci bölümde yan duvarlardan en fazla iki sekme kullanılabilir; ilk ve üçüncü bölümün duvar kuralları değişmedi. Alt taraftan kaçan top atışı bitirir. Oyun puan toplamaya değil, kilidi doğru sırayla çözmeye odaklanır.
 
 İlk bölümde geçen süre ve toplam ilerleme ekranda, tamamlanma süresi sonuç ekranında gösterilir. Yanlış atış önceki doğru eşleşmeleri silmez. Üç hata sınırı bölüm boyunca geçerlidir. Başarıda Şako ve Yumi birlikte mamaya koşar; 2,2 saniyelik kutlama tamamlanma süresine eklenmez. Sonuç ekranında kalan havlamalar ve Yumi'nin yardımları da gösterilir. İlk bölüm için 60–90 saniye bir oyuncu testi hedefidir; yeni sürümün gerçek oynama süresi henüz ölçülmedi. Önceki sürümün kusursuz otomatik testindeki 15,1 saniye bu sürüme ait değildir.
 
@@ -43,3 +43,5 @@ Bu sürüm, ana oyun döngüsünü doğrulamak için dış görsel veya ses pake
 ## Kontrol testi
 
 Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.
+
+İkinci bölümü doğrudan denemek için Godot çalıştırma komutuna `-- --level=2` eklenebilir. `res://tests/wall_smoke.gd` testi yansıma açısını, hızın korunmasını, sekme sınırını, nişan çizgisini ve 12 gerçek atışlık bölüm akışını doğrular. Otomatik testteki süre gerçek oyuncu süresi değildir.
