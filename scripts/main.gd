@@ -13,9 +13,12 @@ const TYPE_DARK := [Color("146582"), Color("833b36"), Color("563a84")]
 
 const LEVELS := [
 	{
-		"name": "1 · İLK ATIŞ",
+		"name": "1 · MAMA DOLABI",
 		"sequence": [0, 1, 2, 0, 2, 0, 1, 2, 1, 2, 0, 1],
 		"stage_size": 4,
+		"bark_budget": 3,
+		"ball_speed": 420.0,
+		"warning_time": 0.42,
 		"yumi_speed": 72.0,
 		"yumi_active": false,
 		"move_directions": 2,
@@ -26,7 +29,7 @@ const LEVELS := [
 		"dash_chance": 0.0,
 		"deflection_range": 120.0,
 		"moving_holes": false,
-		"intro": "Sıradaki sembolü aynı işaretli deliğe gönder.",
+		"intro": "Mama dolabını aç! İlk 4 atışta Yumi uyukluyor.",
 	},
 	{
 		"name": "2 · YUMI SAHADA",
@@ -83,6 +86,11 @@ var ball_deflected_by_yumi := false
 var shot_delay := 0.0
 
 var bark_available := false
+var barks_left := 0
+var yumi_help_count := 0
+var celebration_time := 0.0
+var celebration_yumi_start := Vector2.ZERO
+var celebration_shako_position := LAUNCH_POS + Vector2(0, 18)
 var bark_flash := 0.0
 var bark_target_x := 576.0
 
@@ -106,6 +114,7 @@ var instruction_label: Label
 var next_label: Label
 var ability_label: Label
 var time_label: Label
+var story_label: Label
 var overlay: ColorRect
 var overlay_title: Label
 var overlay_subtitle: Label
@@ -132,8 +141,9 @@ func build_interface() -> void:
 	code_label = make_label("", 20, Color.WHITE, Vector2(210, 58), Vector2(760, 40))
 	time_label = make_label("", 15, Color("a9bbd3"), Vector2(1004, 58), Vector2(140, 40))
 	status_label = make_label("", 19, Color("fff3cf"), Vector2(176, 424), Vector2(800, 34))
-	next_label = make_label("", 17, Color("d8e9ff"), Vector2(346, 482), Vector2(460, 28))
-	ability_label = make_label("", 15, Color("86f7a8"), Vector2(396, 509), Vector2(360, 25))
+	next_label = make_label("", 17, Color("d8e9ff"), Vector2(48, 496), Vector2(342, 28))
+	ability_label = make_label("", 15, Color("86f7a8"), Vector2(770, 496), Vector2(330, 48))
+	story_label = make_label("", 15, Color("efc08c"), Vector2(24, 14), Vector2(360, 30))
 	instruction_label = make_label(
 		"Nişan/Atış: Fare + sol tık veya Boşluk     Havlama: Uçuşta tekrar tık / E     Yenile: R",
 		14,
@@ -151,7 +161,7 @@ func build_interface() -> void:
 	add_child(overlay)
 
 	overlay_title = make_label("", 42, Color("fff3cf"), Vector2(206, 180), Vector2(740, 62), overlay)
-	overlay_subtitle = make_label("", 21, Color("d8e9ff"), Vector2(256, 255), Vector2(640, 100), overlay)
+	overlay_subtitle = make_label("", 20, Color("d8e9ff"), Vector2(236, 255), Vector2(680, 116), overlay)
 	overlay_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	overlay_button = Button.new()
 	overlay_button.text = "TEKRAR DENE"
@@ -217,6 +227,10 @@ func start_level(new_level_index: int = level_index) -> void:
 	ball_swatted = false
 	ball_deflected_by_yumi = false
 	bark_available = false
+	barks_left = int(config.get("bark_budget", 3))
+	yumi_help_count = 0
+	celebration_time = 0.0
+	celebration_shako_position = LAUNCH_POS + Vector2(0, 18)
 	bark_flash = 0.0
 	shot_delay = 0.35
 	aim_angle = 0.0
@@ -231,6 +245,10 @@ func start_level(new_level_index: int = level_index) -> void:
 	yumi_warning_started = false
 	yumi_swipe_flash = 0.0
 	choose_yumi_direction(true)
+	story_label.text = "AMAÇ: MAMA DOLABINI AÇ"
+	status_label.show()
+	next_label.show()
+	ability_label.show()
 	status_label.text = str(config["intro"])
 	status_label.add_theme_color_override("font_color", Color("fff3cf"))
 	overlay.hide()
@@ -240,6 +258,16 @@ func start_level(new_level_index: int = level_index) -> void:
 
 
 func _process(delta: float) -> void:
+	if game_state == "celebrating":
+		celebration_time += delta
+		var run_fraction := smoothstep(0.0, 1.0, clampf((celebration_time - 0.5) / 1.4, 0.0, 1.0))
+		yumi_position = celebration_yumi_start.lerp(Vector2(638, 330), run_fraction)
+		celebration_shako_position = (LAUNCH_POS + Vector2(0, 18)).lerp(Vector2(512, 340), run_fraction)
+		queue_redraw()
+		if celebration_time >= 2.2:
+			game_state = "success"
+			overlay.show()
+		return
 	if game_state != "playing":
 		return
 
@@ -316,14 +344,16 @@ func launch_ball() -> void:
 	ball_type = sequence[progress]
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
 	ball_position = LAUNCH_POS + direction * 50.0
-	ball_velocity = direction * 520.0
+	ball_velocity = direction * float(level_config().get("ball_speed", 520.0))
 	ball_active = true
 	ball_swatted = false
 	ball_deflected_by_yumi = false
-	bark_available = true
+	bark_available = barks_left > 0
 	yumi_warning_timer = 0.0
 	yumi_warning_started = false
-	status_label.text = "%s topu yolda. Gerekirse bir kez HAV!" % TYPE_NAMES[ball_type]
+	status_label.text = "%s topu yolda." % TYPE_NAMES[ball_type]
+	if yumi_is_active() and ball_type == 2:
+		status_label.text = "Yumi: O yumak benim! Ünlemi bekle, gerekirse HAV!"
 	status_label.add_theme_color_override("font_color", TYPE_COLORS[ball_type])
 
 
@@ -331,6 +361,7 @@ func use_bark(target_x: float) -> void:
 	if game_state != "playing" or not ball_active or not bark_available:
 		return
 	bark_available = false
+	barks_left -= 1
 	bark_flash = 0.48
 	bark_target_x = clampf(target_x, 90.0, SCREEN_SIZE.x - 90.0)
 
@@ -367,6 +398,9 @@ func update_holes() -> void:
 
 
 func move_yumi(delta: float) -> void:
+	if not yumi_is_active():
+		yumi_velocity = Vector2.ZERO
+		return
 	var config := level_config()
 	var movement_scale := 0.18 if yumi_warning_timer > 0.0 else 1.0
 
@@ -383,6 +417,15 @@ func move_yumi(delta: float) -> void:
 			yumi_velocity = yumi_velocity.normalized() * yumi_speed
 		if yumi_move_timer == 0.0:
 			choose_yumi_direction()
+
+	# Yumi wants the yarn; the first level keeps this pursuit slow and horizontal.
+	if ball_active and ball_type == 2 and not ball_swatted and yumi_warning_timer <= 0.0:
+		var chase_direction := ball_position - yumi_position
+		if level_index == 0:
+			chase_direction.y = 0.0
+		if chase_direction.length() > 8.0:
+			yumi_velocity = chase_direction.normalized() * yumi_speed
+			yumi_pause_timer = 0.0
 
 	yumi_position += yumi_velocity * delta * movement_scale
 
@@ -471,11 +514,7 @@ func move_ball(delta: float) -> void:
 
 
 func update_yumi_attack(delta: float) -> void:
-	if not bool(level_config()["yumi_active"]) or ball_swatted:
-		return
-
-	if ball_position.distance_to(yumi_position) < 64.0:
-		deflect_ball_from_yumi()
+	if not yumi_is_active() or ball_swatted:
 		return
 
 	if yumi_warning_timer > 0.0:
@@ -491,9 +530,13 @@ func update_yumi_attack(delta: float) -> void:
 
 	if not yumi_warning_started and ball_position.distance_to(yumi_position) < 178.0:
 		yumi_warning_started = true
-		yumi_warning_timer = 0.24
+		yumi_warning_timer = float(level_config().get("warning_time", 0.24))
 		status_label.text = "Yumi hazırlanıyor! Şimdi HAV! diyebilirsin."
 		status_label.add_theme_color_override("font_color", Color("ffcf5a"))
+
+
+func yumi_is_active() -> bool:
+	return progress >= 4 if level_index == 0 else bool(level_config()["yumi_active"])
 
 
 func perform_yumi_swipe() -> void:
@@ -537,6 +580,8 @@ func resolve_hole_hit() -> void:
 
 	if nearest_hole == ball_type and ball_type == sequence[progress]:
 		var lucky_yumi_goal := ball_deflected_by_yumi
+		if lucky_yumi_goal:
+			yumi_help_count += 1
 		progress += 1
 		ball_active = false
 		bark_available = false
@@ -550,6 +595,10 @@ func resolve_hole_hit() -> void:
 			stage_rotation = 1.2
 			shot_delay = 1.2
 			status_label.text = "TAK! Kasa dönüyor. Yeni hedef düzenini incele."
+			if level_index == 0 and stage_index == 1:
+				status_label.text = "Yumi uyandı! Yumağı istiyor. Ünlemde havla: %d hakkın var." % barks_left
+			elif level_index == 0 and stage_index == 2:
+				status_label.text = "Son kilit! Yumi'yi oku, kalan havlamalarını dikkatli kullan."
 			status_label.add_theme_color_override("font_color", Color("ffcf5a"))
 		else:
 			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
@@ -583,13 +632,19 @@ func register_error(message: String) -> void:
 func finish_game(success: bool) -> void:
 	ball_active = false
 	bark_available = false
-	overlay.show()
+	yumi_warning_timer = 0.0
 	if success:
-		game_state = "success"
-		overlay_title.text = "KİLİT AÇILDI!"
+		game_state = "celebrating"
+		celebration_time = 0.0
+		celebration_yumi_start = yumi_position
+		status_label.hide()
+		next_label.hide()
+		ability_label.hide()
+		story_label.text = "DOLAP AÇILDI! MAMA ZAMANI!"
+		overlay_title.text = "MAMA DOLABI AÇILDI!"
 		overlay_title.add_theme_color_override("font_color", Color("86f7a8"))
-		if ball_deflected_by_yumi:
-			overlay_subtitle.text = "Yumi son topu yanlışlıkla doğru deliğe gönderdi! Şako bu yardımı unutmayacak."
+		if yumi_help_count > 0:
+			overlay_subtitle.text = "Şako: Sen de mi yardım ettin?\nYumi: Ben sadece yumağı istedim!"
 			overlay_button.text = "SONRAKİ BÖLÜM" if level_index < LEVELS.size() - 1 else "BAŞA DÖN"
 		elif level_index < LEVELS.size() - 1:
 			overlay_subtitle.text = "%s tamamlandı. Sıradaki bölüm yeni bir kural ekliyor." % str(level_config()["name"])
@@ -599,11 +654,14 @@ func finish_game(success: bool) -> void:
 			overlay_button.text = "BAŞA DÖN"
 	else:
 		game_state = "failed"
+		overlay.show()
 		overlay_title.text = "KİLİT SIKIŞTI!"
 		overlay_title.add_theme_color_override("font_color", Color("ff746f"))
 		overlay_subtitle.text = "Yumi: 😼     Şako: 😵\nAynı bölümü hemen yeniden deneyebilirsin."
 		overlay_button.text = "TEKRAR DENE"
 	overlay_subtitle.text += "\nGeçen süre: %.1f saniye · Doğru atış: %d/%d" % [level_time, progress, sequence.size()]
+	overlay_subtitle.text += "\nKalan havlama: %d · Yumi'nin yardımı: %d" % [barks_left, yumi_help_count]
+	update_interface()
 	queue_redraw()
 
 
@@ -641,15 +699,16 @@ func update_interface() -> void:
 			ability_label.text = "KASA DÖNÜYOR..."
 			ability_label.add_theme_color_override("font_color", Color("ffcf5a"))
 		elif ball_active:
-			ability_label.text = "HAVLAMA: HAZIR — tekrar tıkla / E" if bark_available else "HAVLAMA: KULLANILDI"
+			ability_label.text = "HAV: %d/3 · tekrar tıkla / E" % barks_left if bark_available else "HAV: %d/3 · Bu atışta kullanılamaz" % barks_left
 			ability_label.add_theme_color_override("font_color", Color("86f7a8") if bark_available else Color("7b8da4"))
 		else:
-			ability_label.text = "Bu atışta 1 havlama hakkı"
+			ability_label.text = "BÖLÜMDE KALAN HAV: %d/3" % barks_left
 			ability_label.add_theme_color_override("font_color", Color("8fa8c4"))
 
 
 func _draw() -> void:
 	draw_background()
+	draw_cupboard()
 	draw_lock_panel()
 	draw_holes()
 	draw_yumi()
@@ -658,6 +717,19 @@ func _draw() -> void:
 		draw_ball(ball_position, ball_type)
 	if bark_flash > 0.0:
 		draw_bark_wave()
+
+
+func draw_cupboard() -> void:
+	draw_style_box(rounded_box(Color("3b2b27"), 16), Rect2(216, 136, 720, 105))
+	draw_line(Vector2(576, 140), Vector2(576, 234), Color("705044"), 4.0)
+	if game_state == "celebrating" or game_state == "success":
+		var opening := clampf(celebration_time / 0.4, 0.0, 1.0)
+		draw_rect(Rect2(460, 300, 232, 102), Color("2c211e"))
+		draw_rect(Rect2(460 - opening * 70, 300, 60, 102), Color("75513a"))
+		draw_rect(Rect2(632 + opening * 70, 300, 60, 102), Color("75513a"))
+		draw_colored_polygon(PackedVector2Array([Vector2(542, 365), Vector2(610, 365), Vector2(599, 391), Vector2(553, 391)]), Color("ffcf5a"))
+		for crumb in range(5):
+			draw_circle(Vector2(550 + crumb * 12, 365), 6, Color("a76f45"))
 
 
 func draw_background() -> void:
@@ -696,7 +768,8 @@ func draw_yumi() -> void:
 	var p := yumi_position
 	var fur := Color("f7b45b")
 	var fur_dark := Color("c96c3d")
-	if not bool(level_config()["yumi_active"]):
+	var sleeping := not yumi_is_active() and game_state == "playing"
+	if sleeping:
 		fur = Color("b9956e")
 		fur_dark = Color("765948")
 
@@ -705,8 +778,12 @@ func draw_yumi() -> void:
 	draw_colored_polygon(PackedVector2Array([p + Vector2(-34, -28), p + Vector2(-15, -58), p + Vector2(-5, -25)]), fur)
 	draw_colored_polygon(PackedVector2Array([p + Vector2(34, -28), p + Vector2(15, -58), p + Vector2(5, -25)]), fur)
 	draw_circle(p, 42, fur)
-	draw_circle(p + Vector2(-14, -5), 5, Color("122038"))
-	draw_circle(p + Vector2(14, -5), 5, Color("122038"))
+	if sleeping:
+		draw_arc(p + Vector2(-14, -8), 7, 0, PI, 12, Color("122038"), 3.0, true)
+		draw_arc(p + Vector2(14, -8), 7, 0, PI, 12, Color("122038"), 3.0, true)
+	else:
+		draw_circle(p + Vector2(-14, -5), 5, Color("122038"))
+		draw_circle(p + Vector2(14, -5), 5, Color("122038"))
 	draw_line(p + Vector2(-11, 17), p + Vector2(0, 22), Color("713b3c"), 3.0)
 	draw_line(p + Vector2(0, 22), p + Vector2(13, 15), Color("713b3c"), 3.0)
 
@@ -722,11 +799,18 @@ func draw_yumi() -> void:
 	var font := ThemeDB.fallback_font
 	if yumi_warning_timer > 0.0:
 		draw_string(font, p + Vector2(-20, -96), "!", HORIZONTAL_ALIGNMENT_CENTER, 40, 34, Color("ffcf5a"))
-	var yumi_caption := "YUMI" if bool(level_config()["yumi_active"]) else "YUMI · İZLİYOR"
+	var yumi_caption := "YUMI · Zzz" if sleeping else "YUMI"
+	if yumi_is_active() and ball_active and ball_type == 2 and not ball_swatted:
+		yumi_caption = "YUMAK BENİM!"
+	if game_state == "celebrating":
+		yumi_caption = "BEN Mİ?" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
 	draw_string(font, p + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, Color("ffd490"))
 
 
 func draw_shako_launcher() -> void:
+	if game_state == "celebrating" or game_state == "success":
+		draw_shako_face(celebration_shako_position, true)
+		return
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
 	var muzzle := LAUNCH_POS + direction * 58.0
 	if not ball_active and game_state == "playing":
@@ -736,7 +820,12 @@ func draw_shako_launcher() -> void:
 
 	draw_line(LAUNCH_POS, muzzle, Color("5d7898"), 30.0, true)
 	draw_circle(muzzle, 18, Color("9db8cf"))
-	var head := LAUNCH_POS + Vector2(0, 18)
+	draw_shako_face(LAUNCH_POS + Vector2(0, 18))
+	if not ball_active and game_state == "playing" and progress < sequence.size():
+		draw_ball(muzzle + direction * 7.0, sequence[progress])
+
+
+func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
 	draw_circle(head, 44, Color("a76f45"))
 	draw_circle(head + Vector2(-38, -1), 21, Color("68442f"))
 	draw_circle(head + Vector2(38, -1), 21, Color("68442f"))
@@ -744,9 +833,10 @@ func draw_shako_launcher() -> void:
 	draw_circle(head + Vector2(14, -5), 5, Color("0d1b2b"))
 	draw_circle(head + Vector2(0, 12), 7, Color("15243a"))
 	var font := ThemeDB.fallback_font
-	draw_string(font, head + Vector2(-48, 55), "ŞAKO", HORIZONTAL_ALIGNMENT_CENTER, 96, 16, Color("efc08c"))
-	if not ball_active and game_state == "playing" and progress < sequence.size():
-		draw_ball(muzzle + direction * 7.0, sequence[progress])
+	var caption := "ŞAKO"
+	if celebrating:
+		caption = "YUMI?!" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
+	draw_string(font, head + Vector2(-48, 55), caption, HORIZONTAL_ALIGNMENT_CENTER, 96, 16, Color("efc08c"))
 
 
 func draw_bark_wave() -> void:
