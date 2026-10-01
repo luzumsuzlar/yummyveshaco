@@ -27,4 +27,4 @@ Use case: stylized-concept. Asset type: isolated production 2D game cupboard spr
 - Gerçek Godot ekranlarında üç bölüm, sekme çizgisi, hareketli delik, pati uyarısı ve sonuç ekranı gözden geçirildi.
 - Dokunmatik ve sekme regresyon testleri korunur; bu değişiklikler fizik hesabını değiştirmez.
 - Başarıdaki dolap açılışı hâlâ basit çizim animasyonudur. Yeni çizimlerle uyumlu başarı animasyonu, karakter sprite'ları ve sesler ayrı aşamada hazırlanmalıdır.
-- Fiziksel telefon testi yapılmadı. Görsel konsept, bitmiş ürün veya mağazaya hazır sürüm olarak sunulmaz.
+- Android test paketi fiziksel telefonda açıldı; parmakla kontrol rahatlığı ve telefondaki görsel yerleşim henüz oyuncuyla değerlendirilmedi. Görsel konsept, bitmiş ürün veya mağazaya hazır sürüm olarak sunulmaz.

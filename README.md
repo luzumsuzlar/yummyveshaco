@@ -38,7 +38,7 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Sıcak mutfak arka planı ve ahşap dolap görseli artık oyuna yerleştirildi. Krem renkli paneller ve düğmeler, koyu okunabilir yazılar, balık/pati/yumak simgeleri ve belirgin nişan çizgileri aynı görsel dili izler. Delikler ve düğmeler arka planın parçası değildir; oyun tarafından ayrı çizilir ve hareket ettirilir. Karakterler hâlâ basit geçici çizimlerdir; konseptteki profesyonel karakter görünümü ve animasyonları bu sürümde hazır değildir. Sesler, Android/iOS paketi ve fiziksel telefon testi henüz yapılmadı. Görsel kaynaklar ve üretim yönergeleri `docs/ART_DIRECTION.md` içinde kayıtlıdır.
+Sıcak mutfak arka planı ve ahşap dolap görseli artık oyuna yerleştirildi. Krem renkli paneller ve düğmeler, koyu okunabilir yazılar, balık/pati/yumak simgeleri ve belirgin nişan çizgileri aynı görsel dili izler. Delikler ve düğmeler arka planın parçası değildir; oyun tarafından ayrı çizilir ve hareket ettirilir. Karakterler hâlâ basit geçici çizimlerdir; konseptteki profesyonel karakter görünümü ve animasyonları bu sürümde hazır değildir. Android test paketi bağlı ARM64 telefona kuruldu ve ilk açılışı doğrulandı; dokunmatik oynanışın rahatlığı henüz oyuncuyla değerlendirilmedi. Sesler, iOS paketi ve mağaza sürümü hazır değildir. Android deneme yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` içindedir.
 
 ## Kontrol testi
 

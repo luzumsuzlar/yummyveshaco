@@ -61,7 +61,7 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 
 ## Dikey mobil düzen
 
-- Hedef yön: dikey (9:16). Oyun alanı 540 × 960 mantıksal koordinatla çizilir; ekran oranı korunur. Mobil yön ayarı dikeydir, telefonda dağıtım henüz yapılmadı.
+- Hedef yön: dikey (9:16). Oyun alanı 540 × 960 mantıksal koordinatla çizilir; ekran oranı korunur. Mobil yön ayarı dikeydir. Android debug paketi bağlı ARM64 telefona kuruldu ve ilk açılışı doğrulandı; fiziksel dokunmatik oynanış değerlendirmesi bekleniyor.
 - Hedef delikleri üstte, Yumi ortada, Şako altta bulunur. Altta ayrı `AT!` ve `HAV!` düğmeleri, üstte yeniden deneme düğmesi vardır.
 - Parmak oyun alanında sürüklenirken nişan değişir; bırakılınca atış yapılır. Uçuş sırasında başlatılan bir dokunma yeni atış başlatmaz. GUI üzerine veya alan dışına bırakılan ve iptal edilen hareketler atış yapmaz.
 - Havlama düğmesi son oyun alanı hedefini kullanır; düğmeye dokunmak nişanı düğmenin konumuna kaydırmaz. Dokunmanın taklit fare olayı oyun alanında ikinci kez işlenmez.
