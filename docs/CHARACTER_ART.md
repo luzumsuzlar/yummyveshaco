@@ -2,7 +2,7 @@
 
 ## Kapsam
 
-Yerleşik image_gen ile hazırlanmış, şeffaf arka planlı ilk karakter pozları. CLI/API yedeği kullanılmadı. Dört hazır poz artık oyunun çizim koduna bağlandı; ayrı pozlar akıcı animasyon anlamına gelmez. Android 0.1.2-test paketi bu görselleri içerir; telefon bağlı olmadığı için kurulum yapılmadı. GitHub bu aşamada güncellenmedi.
+Yerleşik image_gen ile hazırlanmış, şeffaf arka planlı ilk karakter pozları. CLI/API yedeği kullanılmadı. Dört hazır poz artık oyunun çizim koduna bağlandı; ayrı pozlar akıcı animasyon anlamına gelmez. Android 0.1.3-test paketi yeni uyku pozu dahil bu görselleri içerir ve telefona kurulmuştur. GitHub bu aşamada güncellenmedi.
 
 Yumi: turuncu tekir, krem ağız/göğüs, amber gözler ve kıvrık kuyruk. Şako: karamel kahverengi, koyu sarkık kulaklar, krem ağız/göğüs. Yuvarlak siluet ve büyük yüzler küçük ekranda ifadeyi korumak için seçildi. Işık üst-soldan gelir; zemin gölgesi oyun tarafından çizilmelidir.
 
