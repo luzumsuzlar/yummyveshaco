@@ -24,6 +24,14 @@ Use case: stylized-concept. Asset type: isolated production 2D game cupboard spr
 
 ## Kontrol ve kalan işler
 
+### Görsel derinlik geçişi — 7 Ekim 2026
+
+- Yumi, Şako ve top için katmanlı elipslerden yumuşak temas gölgeleri çizilir. Gölge merkezi karakterin veya topun konumunu izler; fizik hesabına katılmaz.
+- Dolap altındaki temas gölgesi, ince alt/yan yüzeyler ve deliklerin koyu üst dudağı/açık alt kenarı sığ hacim hissi verir. Topun üst-sol parlaması ve alt kenar tonu da aynı ışık yönünü izler.
+- Kamera, perspektif, hedef merkezleri, top/delik yarıçapları, nişan ve sekme kuralları değişmedi. Yeni görsel dosyası veya 3D sahne kullanılmadı.
+- `res://tests/depth_preview.gd` görüntülü Godot çalıştırmasında üç bölümün, uçan top/pati uyarısının ve kutlamanın PNG önizlemelerini `exports/depth-preview/` altına kaydeder. Headless çalışma görüntü kontrolünün yerine geçmez.
+- Bu geçiş masaüstündeki gerçek Godot görüntülerinde kontrol edildi; telefona henüz güncellenmedi. Gerçek karakter çizimleri ve animasyonlar hâlâ ayrı iş kalemidir.
+
 - Gerçek Godot ekranlarında üç bölüm, sekme çizgisi, hareketli delik, pati uyarısı ve sonuç ekranı gözden geçirildi.
 - Dokunmatik ve sekme regresyon testleri korunur; bu değişiklikler fizik hesabını değiştirmez.
 - Başarıdaki dolap açılışı hâlâ basit çizim animasyonudur. Yeni çizimlerle uyumlu başarı animasyonu, karakter sprite'ları ve sesler ayrı aşamada hazırlanmalıdır.

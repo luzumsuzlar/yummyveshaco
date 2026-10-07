@@ -900,6 +900,7 @@ func _draw() -> void:
 	draw_cupboard()
 	draw_lock_panel()
 	draw_holes()
+	draw_ground_shadows()
 	draw_yumi()
 	draw_shako_launcher()
 	if ball_active:
@@ -911,6 +912,10 @@ func _draw() -> void:
 
 
 func draw_cupboard() -> void:
+	# Shallow extrusion and floor contact; target coordinates stay unchanged.
+	draw_soft_shadow(Vector2(274, 343), Vector2(225, 14), 0.20)
+	draw_colored_polygon(PackedVector2Array([Vector2(496, 194), Vector2(513, 202), Vector2(513, 340), Vector2(496, 332)]), Color("765039"))
+	draw_colored_polygon(PackedVector2Array([Vector2(44, 326), Vector2(496, 326), Vector2(508, 342), Vector2(56, 342)]), Color("875a39"))
 	draw_texture_rect(CUPBOARD_ART, Rect2(32, 184, 476, 158), false)
 	if game_state == "celebrating" or game_state == "success":
 		var opening := clampf(celebration_time / 0.4, 0.0, 1.0)
@@ -951,11 +956,15 @@ func draw_holes() -> void:
 	var font := ThemeDB.fallback_font
 	for index in range(hole_positions.size()):
 		var center := hole_positions[index]
-		draw_circle(center + Vector2(0, 7), HOLE_RADIUS + 6.0, Color(0, 0, 0, 0.42))
+		draw_soft_shadow(center + Vector2(3, 7), Vector2(HOLE_RADIUS + 8, HOLE_RADIUS + 5), 0.22)
 		draw_circle(center, HOLE_RADIUS + 5.0, TYPE_COLORS[index])
 		draw_circle(center, HOLE_RADIUS - 5.0, TYPE_DARK[index])
 		draw_circle(center + Vector2(0, 3), HOLE_RADIUS - 10.0, Color("352116"))
 		draw_circle(center + Vector2(0, 5), HOLE_RADIUS - 17.0, Color("241810"))
+		# Inner upper lip is dark; the lower lip catches light from upper left.
+		draw_arc(center + Vector2(0, 3), HOLE_RADIUS - 9.0, PI, TAU, 32, Color("130f0d"), 5.0, true)
+		draw_arc(center, HOLE_RADIUS - 6.0, 0.15, PI - 0.15, 32, TYPE_DARK[index].lightened(0.25), 3.0, true)
+		draw_arc(center, HOLE_RADIUS + 2.0, 0.1, PI - 0.1, 32, TYPE_DARK[index], 4.0, true)
 		draw_arc(center, HOLE_RADIUS + 2.0, PI, TAU, 32, TYPE_COLORS[index].lightened(0.45), 3.0, true)
 		var badge := center + Vector2(0, -48)
 		draw_circle(badge + Vector2(0, 3), 21, Color("8e572f"))
@@ -963,6 +972,25 @@ func draw_holes() -> void:
 		draw_type_icon(badge, index, 14, TYPE_DARK[index])
 		draw_style_box(rounded_box(CREAM, 7), Rect2(center + Vector2(-52, 60), Vector2(104, 24)))
 		draw_string(font, center + Vector2(-52, 78), TYPE_NAMES[index], HORIZONTAL_ALIGNMENT_CENTER, 104, 15, INK)
+
+
+func draw_soft_shadow(center: Vector2, radii: Vector2, opacity: float) -> void:
+	# Nested ellipses approximate a soft contact shadow without extra textures.
+	for layer in range(4):
+		var scale_factor := 1.0 - float(layer) * 0.15
+		var points := PackedVector2Array()
+		for point in range(32):
+			var angle := TAU * float(point) / 32.0
+			points.append(center + Vector2(cos(angle), sin(angle)) * radii * scale_factor)
+		draw_colored_polygon(points, Color(0.20, 0.12, 0.07, opacity * 0.32))
+
+
+func draw_ground_shadows() -> void:
+	draw_soft_shadow(yumi_position + Vector2(7, 57), Vector2(54, 15), 0.30)
+	var shako_head := celebration_shako_position if game_state in ["celebrating", "success"] else LAUNCH_POS + Vector2(0, 18)
+	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(61, 17), 0.30)
+	if ball_active:
+		draw_soft_shadow(ball_position + Vector2(6, 12), Vector2(21, 9), 0.28)
 
 
 func draw_yumi() -> void:
@@ -1086,9 +1114,13 @@ func draw_bark_wave() -> void:
 
 
 func draw_ball(center: Vector2, type: int) -> void:
-	draw_circle(center + Vector2(2, 4), BALL_RADIUS + 2.0, Color(0, 0, 0, 0.35))
+	if not ball_active:
+		draw_soft_shadow(center + Vector2(4, 8), Vector2(20, 8), 0.22)
+	draw_circle(center + Vector2(1, 2), BALL_RADIUS + 1.0, TYPE_DARK[type])
 	draw_circle(center, BALL_RADIUS, TYPE_COLORS[type])
-	draw_arc(center, BALL_RADIUS - 4, 0, TAU, 24, Color(1, 1, 1, 0.55), 2.0, true)
+	draw_arc(center, BALL_RADIUS - 2, 0.2, PI - 0.2, 24, Color(0.12, 0.08, 0.05, 0.22), 3.0, true)
+	draw_arc(center, BALL_RADIUS - 4, PI + 0.2, TAU - 0.4, 24, Color(1, 1, 1, 0.65), 2.0, true)
+	draw_circle(center + Vector2(-7, -8), 3.0, Color(1, 1, 1, 0.70))
 	draw_type_icon(center, type, 11, TYPE_DARK[type])
 
 
