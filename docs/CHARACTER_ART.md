@@ -1,5 +1,15 @@
 # Yumi ve Şako — karakter görselleri v1
 
+## Yürüyüş döngüsü
+
+`assets/art/characters/yumi-walk-v1.png`: yerleşik image_gen ile üretilmiş 1536 × 1024 şeffaf PNG; 3 sütun × 2 satır, altı adet 512 × 512 kare. Kaynak PNG değiştirilmeden korunur; oyun atlas bölgelerini ayrı çizer. Üretim şeması aşağıdaki yönergelerde kayıtlıdır. Bu çalışma GIF dosyası değil, oyun içinde kontrol edilen ilk yürüyüş döngüsüdür.
+
+Yumi gerçekten yer değiştirirken yürür. Görsel faz katettiği mesafeye bağlıdır: 80 piksel yol bir döngü, görsel hız en fazla saniyede 180 piksel eşdeğeri. Hareketsizlikte faz sıfırlanıp oturan poza geçer. Uyku, pati uyarısı ve darbe pozu önceliklidir. Sola yürürken çizim aynalanır; yukarı/aşağı ve çapraz hareketler henüz ayrı açılara sahip değildir, aynı yan görünümü kullanır. Başarı yürüyüşü bu sürümde ayrı animasyon değildir.
+
+Karelerin görünür ayak tabanları ve yatay merkezleri ölçülüp altı ayrı görsel çıpa ile hizalandı. Fizik merkezleri, hareket hızları, sınırlar ve pati zamanlaması değiştirilmedi. `tests/walk_smoke.gd` faz/durum geçişlerini, atlas sınırlarını, şeffaflığı, ayak hizasını ve 30/60/144 FPS tutarlılığını kontrol eder. `tests/walk_preview.gd` iki yönün 12 kare önizlemesini gerçek Godot çıktısında üretir. İlk sürümde küçük tüy/siluet farklılıkları vardır; tam profesyonel kare temizliği yapılmış kabul edilmez.
+
+Android 0.1.4-test paketi yürüyüşü içerir; bağlı telefon algılanmadığı için fiziksel cihazda kurulmadı. Son doğrulanan telefon sürümü 0.1.3-test'tir. GitHub güncellenmedi.
+
 ## Kapsam
 
 Yerleşik image_gen ile hazırlanmış, şeffaf arka planlı ilk karakter pozları. CLI/API yedeği kullanılmadı. Dört hazır poz artık oyunun çizim koduna bağlandı; ayrı pozlar akıcı animasyon anlamına gelmez. Android 0.1.3-test paketi yeni uyku pozu dahil bu görselleri içerir ve telefona kurulmuştur. GitHub bu aşamada güncellenmedi.
@@ -33,6 +43,10 @@ Oyuncak fare gelecekteki dikkat dağıtma fikri olarak bekliyor: Yumi top yerine
 Kullanıcının `assets/art/characters/sleep.jpg` dosyası düzenleme hedefi, `yumi-idle-v1.png` ise yalnız renk/karakter referansı olarak kullanıldı. Yerleşik image_gen ile beyaz arka plan gerçek alfa şeffaflığına çevrildi, turuncu/krem tonları mevcut Yumi'ye yaklaştırıldı. Orijinal JPG değiştirilmedi, önceki PNG de korundu. Yeni dosya `yumi-sleep-v2.png` olarak kaydedilip uyku durumuna bağlandı. Görsel dikdörtgeni (-72, -73), 144 × 144; temas gölgesi kıvrılmış gövdeye göre genişletildi. Oyun merkezi, fizik ve uyanma kuralı değişmedi. Dört regresyon testi ve gerçek Godot sahne kontrolü geçti. Bu değişiklik henüz Android APK'ye veya GitHub'a aktarılmadı.
 
 ## Üretim yönergeleri
+
+### Yumi — altı kare yürüyüş (yerleşik üretim)
+
+Use case: stylized-concept. Asset type: one production 6-frame walking sprite sheet for a 2D mobile game. Reference image: character identity and painted rendering ONLY, do not copy seated pose. Create the same small ginger-orange tabby cat Yumi with cream muzzle/chest/paws, amber eyes, forehead stripes, rounded oversized head and curled orange cream-tipped tail. All SIX frames show quadruped walking toward SCREEN RIGHT, side/three-quarter view with face slightly toward viewer. Six successive phases of ONE continuous gentle walk cycle: opposite front/back paws reach forward, passing stance, opposite stride, other passing stance, smooth return; genuinely different paw positions with coherent four-leg anatomy. Keep face, size, body location and tail identity constant, very small body bob. Layout exactly THREE equal columns by TWO equal rows, row-major order, landscape 3:2 canvas, invisible equal square cells. Each entire cat fits its own cell with 12% clear padding; body center and ground baseline identical in every cell. No overlap across cells. One cat per cell, six total, no grid lines or labels. Warm softly hand-painted 2.5D cartoon finish matching reference, light from upper left. Genuinely transparent background in all empty regions. No floor, cast shadow, text, numbers, props, speed streaks or background. Clear silhouette readable at 120px tall. This is an animation sheet, not six different cats or a scene.
 
 ### Yumi — kıvrılmış uyku v2 (yerleşik düzenleme)
 

@@ -38,7 +38,7 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Sıcak mutfak arka planı, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri ve delik kenarları sığ derinlik verir. Yumi'nin normal, uyku ve pati pozları ile Şako'nun temel karakter görseli oyuna bağlandı. Şako'nun havlama pozu eksiktir; mevcut HAV yazısı ve halka efekti korunur. Akıcı yürüyüş/başarı animasyonları ve sesler hazır değildir. Önceki Android sürümü telefonda denendi; yeni karakterli 0.1.2-test paketinin fiziksel telefon testi henüz yapılmadı. iOS ve mağaza sürümü hazır değildir. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir.
+Sıcak mutfak, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri sığ derinlik verir. Yumi'nin normal, kıvrılmış uyku ve pati pozları ile Şako'nun temel görseli oyuna bağlıdır. Yumi hareket ederken altı karelik yürüyüş döngüsü oynar; gerçek hareket mesafesi görsel fazı ilerletir, durunca animasyon durur. Uyku ve pati pozları önceliklidir. Sola yürüyüş aynalanır; dikey/çapraz yönlere özel kareler henüz yoktur. Şako'nun havlama pozu, tam başarı animasyonları ve sesler eksiktir. Son telefon kurulumu 0.1.3-test; yürüyüş içeren 0.1.4-test paketi hazır ama fiziksel cihazda denenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir.
 
 ## Kontrol testi
 

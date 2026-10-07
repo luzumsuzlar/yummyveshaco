@@ -10,9 +10,10 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan güncel sürüm ve son doğrulanan telefon kurulumu: `0.1.3-test`, kod `4` (karakter görselleri, kıvrılmış uyku pozu ve sahne derinliği).
+- Hazırlanan güncel sürüm: `0.1.4-test`, kod `5`; altı karelik Yumi yürüyüşü içerir. Bağlı telefon algılanmadı; bu paket henüz kurulmadı.
+- Son doğrulanan telefon kurulumu: `0.1.3-test`, kod `4` (karakter görselleri, kıvrılmış uyku pozu ve sahne derinliği).
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
-- APK: `exports/android/yumi-sako-test.apk` (yaklaşık 36,5 MB)
+- APK: `exports/android/yumi-sako-test.apk` (yaklaşık 39 MB)
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
 
 Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı; yeni kurulum veya global ayar değişikliği yapılmadı. Android için ETC2/ASTC doku içe aktarımı proje ayarında açıldı. APK, Git tarafından yok sayılan `exports/` altında tutulur.

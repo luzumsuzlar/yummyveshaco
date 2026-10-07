@@ -25,6 +25,8 @@ const CUPBOARD_ART := preload("res://assets/art/cupboard-v1.png")
 const YUMI_IDLE_ART := preload("res://assets/art/characters/yumi-idle-v1.png")
 const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v2.png")
 const YUMI_PAW_ART := preload("res://assets/art/characters/yumi-paw-v1.png")
+const YUMI_WALK_ART := preload("res://assets/art/characters/yumi-walk-v1.png")
+const YUMI_WALK_ANCHORS := [Vector2(280, 476), Vector2(266, 480), Vector2(254, 480), Vector2(274, 444), Vector2(252, 448), Vector2(258, 452)]
 const SHAKO_IDLE_ART := preload("res://assets/art/characters/shako-idle-v1.png")
 
 const LEVELS := [
@@ -126,6 +128,8 @@ var yumi_position := YUMI_HOME
 var yumi_direction := 1.0
 var yumi_speed := 100.0
 var yumi_velocity := Vector2.RIGHT
+var yumi_walk_phase := 0.0
+var yumi_walk_moving := false
 var yumi_move_timer := 0.0
 var yumi_pause_timer := 0.0
 var yumi_dash_timer := 0.0
@@ -306,6 +310,8 @@ func start_level(new_level_index: int = level_index) -> void:
 	touch_can_launch = false
 	last_pointer_position = Vector2(LAUNCH_POS.x, HOLE_Y)
 	yumi_position = YUMI_HOME
+	yumi_walk_phase = 0.0
+	yumi_walk_moving = false
 	yumi_direction = 1.0
 	yumi_speed = float(config["yumi_speed"])
 	yumi_velocity = Vector2.RIGHT * yumi_speed
@@ -362,7 +368,9 @@ func _process(delta: float) -> void:
 		last_pointer_position = Vector2(LAUNCH_POS.x + tan(aim_angle) * (LAUNCH_POS.y - HOLE_Y), HOLE_Y)
 
 	update_holes()
+	var previous_yumi_position := yumi_position
 	move_yumi(delta)
+	update_yumi_walk(delta, previous_yumi_position.distance_to(yumi_position))
 	if ball_active:
 		move_ball(delta)
 	update_interface()
@@ -600,6 +608,20 @@ func move_yumi(delta: float) -> void:
 		yumi_move_timer = minf(yumi_move_timer, 0.35)
 	if absf(yumi_velocity.x) > 5.0:
 		yumi_direction = signf(yumi_velocity.x)
+
+
+func update_yumi_walk(delta: float, distance: float) -> void:
+	# Visual phase follows actual travel, never changes motion or collision.
+	yumi_walk_moving = game_state == "playing" and yumi_is_active() and distance > 0.001 and yumi_warning_timer <= 0.0 and yumi_swipe_flash <= 0.0
+	if not yumi_walk_moving:
+		yumi_walk_phase = 0.0
+		return
+	var visual_distance := minf(distance, maxf(delta, 0.0) * 180.0)
+	yumi_walk_phase = fposmod(yumi_walk_phase + visual_distance * 6.0 / 80.0, 6.0)
+
+
+func yumi_walk_frame() -> int:
+	return int(floor(yumi_walk_phase)) % 6
 
 
 func choose_yumi_direction(force_move: bool = false) -> void:
@@ -990,7 +1012,7 @@ func draw_soft_shadow(center: Vector2, radii: Vector2, opacity: float) -> void:
 
 
 func draw_ground_shadows() -> void:
-	var cat_shadow_radii := Vector2(58, 10) if yumi_art_texture() == YUMI_SLEEP_ART else Vector2(44, 12)
+	var cat_shadow_radii := Vector2(58, 10) if yumi_art_texture() in [YUMI_SLEEP_ART, YUMI_WALK_ART] else Vector2(44, 12)
 	draw_soft_shadow(yumi_position + Vector2(7, 57), cat_shadow_radii, 0.30)
 	var shako_head := celebration_shako_position if game_state in ["celebrating", "success"] else LAUNCH_POS + Vector2(0, 18)
 	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(40, 11), 0.30)
@@ -1003,9 +1025,13 @@ func draw_yumi() -> void:
 	var sleeping := not yumi_is_active() and game_state == "playing"
 	var art := yumi_art_texture()
 	var reaching := art == YUMI_PAW_ART
+	var walking := art == YUMI_WALK_ART
 	# Align each source pose around the unchanged gameplay center.
-	draw_set_transform(p, 0.0, Vector2(-1, 1) if reaching and yumi_direction < 0.0 else Vector2.ONE)
-	draw_texture_rect(art, yumi_art_rect(), false)
+	draw_set_transform(p, 0.0, Vector2(-1, 1) if (reaching or walking) and yumi_direction < 0.0 else Vector2.ONE)
+	if walking:
+		draw_texture_rect_region(art, yumi_art_rect(), yumi_walk_region())
+	else:
+		draw_texture_rect(art, yumi_art_rect(), false)
 	draw_set_transform(Vector2.ZERO)
 
 	var paw_end := p + Vector2(yumi_direction * 58.0, 16)
@@ -1034,16 +1060,27 @@ func yumi_art_texture() -> Texture2D:
 		return YUMI_SLEEP_ART
 	if yumi_warning_timer > 0.0 or yumi_swipe_flash > 0.0:
 		return YUMI_PAW_ART
+	if game_state == "playing" and yumi_walk_moving:
+		return YUMI_WALK_ART
 	return YUMI_IDLE_ART
 
 
 func yumi_art_rect() -> Rect2:
+	if yumi_art_texture() == YUMI_WALK_ART:
+		var anchor: Vector2 = YUMI_WALK_ANCHORS[yumi_walk_frame()] * (144.0 / 512.0)
+		return Rect2(Vector2(-anchor.x, 57.0 - anchor.y), Vector2(144, 144))
 	if yumi_art_texture() == YUMI_SLEEP_ART:
 		# Curled silhouette rests on the same floor as the upright poses.
 		return Rect2(Vector2(-72, -73), Vector2(144, 144))
 	# The paw pose has a different source anchor, not a different collision box.
 	var normalized_anchor := Vector2(680, 590) / 1280.0 if yumi_art_texture() == YUMI_PAW_ART else Vector2(600, 600) / 1280.0
 	return Rect2(-normalized_anchor * 144.0, Vector2(144, 144))
+
+
+func yumi_walk_region() -> Rect2:
+	var frame := yumi_walk_frame()
+	var cell := Vector2(YUMI_WALK_ART.get_width() / 3.0, YUMI_WALK_ART.get_height() / 2.0)
+	return Rect2(Vector2(frame % 3, frame / 3) * cell, cell)
 
 
 func draw_shako_launcher() -> void:
