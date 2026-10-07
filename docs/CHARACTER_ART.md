@@ -9,7 +9,8 @@ Yumi: turuncu tekir, krem ağız/göğüs, amber gözler ve kıvrık kuyruk. Şa
 ## Dosyalar
 
 - `assets/art/characters/yumi-idle-v1.png`: uyanık temel poz.
-- `assets/art/characters/yumi-sleep-v1.png`: aynı pozda kapalı gözler.
+- `assets/art/characters/yumi-sleep-v2.png`: güncel, kıvrılmış uyku pozu.
+- `assets/art/characters/yumi-sleep-v1.png`: önceki oturan uyku pozu; yedek olarak korunur, oyunda kullanılmaz.
 - `assets/art/characters/yumi-paw-v1.png`: sağa uzanan pati.
 - `assets/art/characters/shako-idle-v1.png`: temel köpek pozu.
 
@@ -25,9 +26,17 @@ PNG kaynakları kırpılmadan ve alfa kanalı korunarak saklanır. Oyuna bağlar
 
 Oyuncak fare gelecekteki dikkat dağıtma fikri olarak bekliyor: Yumi top yerine farenin atıldığı yere yönelip kısa süre oyalanabilir. Bu görsel çalışmasında mekanik eklenmedi.
 
-`res://tests/character_art_smoke.gd` hazır dört dosyanın çözünürlüğünü, şeffaf köşelerini ve dolu karakter piksellerini kontrol eder. `res://tests/character_preview.gd` büyük ve 100 piksel boyda dört pozu gerçek Godot çıktısında gösterir ve `exports/character-preview.png` kaydeder. Bu test gerçek telefonda okunabilirlik veya animasyon kalitesini kanıtlamaz.
+`res://tests/character_art_smoke.gd` güncel dört poz ve eski uyku yedeği dahil beş PNG'nin çözünürlüğünü, şeffaf köşelerini ve dolu karakter piksellerini kontrol eder. `res://tests/character_preview.gd` büyük ve 100 piksel boyda güncel dört pozu gerçek Godot çıktısında gösterir ve `exports/character-preview.png` kaydeder. Bu test gerçek telefonda okunabilirlik veya animasyon kalitesini kanıtlamaz.
+
+## Kıvrılmış uyku pozu v2
+
+Kullanıcının `assets/art/characters/sleep.jpg` dosyası düzenleme hedefi, `yumi-idle-v1.png` ise yalnız renk/karakter referansı olarak kullanıldı. Yerleşik image_gen ile beyaz arka plan gerçek alfa şeffaflığına çevrildi, turuncu/krem tonları mevcut Yumi'ye yaklaştırıldı. Orijinal JPG değiştirilmedi, önceki PNG de korundu. Yeni dosya `yumi-sleep-v2.png` olarak kaydedilip uyku durumuna bağlandı. Görsel dikdörtgeni (-72, -73), 144 × 144; temas gölgesi kıvrılmış gövdeye göre genişletildi. Oyun merkezi, fizik ve uyanma kuralı değişmedi. Dört regresyon testi ve gerçek Godot sahne kontrolü geçti. Bu değişiklik henüz Android APK'ye veya GitHub'a aktarılmadı.
 
 ## Üretim yönergeleri
+
+### Yumi — kıvrılmış uyku v2 (yerleşik düzenleme)
+
+Use case: precise-object-edit. Asset type: transparent sleeping character sprite for a cozy portrait mobile game. Input 1 sleep.jpg is the EDIT TARGET. Input 2 yumi-idle-v1.png is CHARACTER COLOR AND STYLE REFERENCE ONLY. Preserve Input 1's curled-up sleeping pose, closed eyes, paws tucked under the chin, tail wrapped around the body, head tilt and full silhouette. Remove its entire white background to genuine alpha transparency, including spaces around whiskers; no white matte or halo. Gently match its fur to Input 2: brighter warm ginger-orange, cream muzzle/chest and tail tip, clear darker orange tabby stripes, softly painted premium cartoon rendering and upper-left warm light. Keep it recognizable as the same orange tabby, not a new breed. Ears may be relaxed during sleep. One complete isolated cat centered with transparent padding, no floor, no baked-in ground shadow, no text, props, UI or extra animals. Do not use the seated pose from Input 2. Retain the peaceful curled-up sleeping silhouette from Input 1.
 
 ### Şako — havlama (reddedilen son istek, çıktı yok)
 

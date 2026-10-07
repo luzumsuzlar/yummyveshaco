@@ -2,7 +2,7 @@ extends SceneTree
 
 class Preview extends Node2D:
 	const NAMES := ["Yumi", "Yumi · uyku", "Yumi · pati", "Şako"]
-	const FILES := ["yumi-idle-v1", "yumi-sleep-v1", "yumi-paw-v1", "shako-idle-v1"]
+	const FILES := ["yumi-idle-v1", "yumi-sleep-v2", "yumi-paw-v1", "shako-idle-v1"]
 	var textures: Array[Texture2D] = []
 
 	func _ready() -> void:

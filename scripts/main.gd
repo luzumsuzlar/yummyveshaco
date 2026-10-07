@@ -23,7 +23,7 @@ const CREAM := Color("fff0d2")
 const KITCHEN_BACKGROUND := preload("res://assets/art/kitchen-background-v1.png")
 const CUPBOARD_ART := preload("res://assets/art/cupboard-v1.png")
 const YUMI_IDLE_ART := preload("res://assets/art/characters/yumi-idle-v1.png")
-const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v1.png")
+const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v2.png")
 const YUMI_PAW_ART := preload("res://assets/art/characters/yumi-paw-v1.png")
 const SHAKO_IDLE_ART := preload("res://assets/art/characters/shako-idle-v1.png")
 
@@ -990,7 +990,8 @@ func draw_soft_shadow(center: Vector2, radii: Vector2, opacity: float) -> void:
 
 
 func draw_ground_shadows() -> void:
-	draw_soft_shadow(yumi_position + Vector2(7, 57), Vector2(44, 12), 0.30)
+	var cat_shadow_radii := Vector2(58, 10) if yumi_art_texture() == YUMI_SLEEP_ART else Vector2(44, 12)
+	draw_soft_shadow(yumi_position + Vector2(7, 57), cat_shadow_radii, 0.30)
 	var shako_head := celebration_shako_position if game_state in ["celebrating", "success"] else LAUNCH_POS + Vector2(0, 18)
 	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(40, 11), 0.30)
 	if ball_active:
@@ -1037,6 +1038,9 @@ func yumi_art_texture() -> Texture2D:
 
 
 func yumi_art_rect() -> Rect2:
+	if yumi_art_texture() == YUMI_SLEEP_ART:
+		# Curled silhouette rests on the same floor as the upright poses.
+		return Rect2(Vector2(-72, -73), Vector2(144, 144))
 	# The paw pose has a different source anchor, not a different collision box.
 	var normalized_anchor := Vector2(680, 590) / 1280.0 if yumi_art_texture() == YUMI_PAW_ART else Vector2(600, 600) / 1280.0
 	return Rect2(-normalized_anchor * 144.0, Vector2(144, 144))

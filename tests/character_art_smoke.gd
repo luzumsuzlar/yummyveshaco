@@ -1,6 +1,6 @@
 extends SceneTree
 
-const ASSETS := ["yumi-idle-v1", "yumi-sleep-v1", "yumi-paw-v1", "shako-idle-v1"]
+const ASSETS := ["yumi-idle-v1", "yumi-sleep-v1", "yumi-sleep-v2", "yumi-paw-v1", "shako-idle-v1"]
 var failures := 0
 
 func _initialize() -> void:

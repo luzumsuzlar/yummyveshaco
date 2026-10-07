@@ -17,6 +17,8 @@ func run_checks() -> void:
 	check(game.KITCHEN_BACKGROUND.get_width() > 500, "Kitchen background loads at sufficient resolution")
 	check(game.KITCHEN_BACKGROUND.get_height() > game.KITCHEN_BACKGROUND.get_width(), "Kitchen background is portrait")
 	check(game.yumi_art_texture() == game.YUMI_SLEEP_ART, "Tutorial binds sleeping cat art")
+	check(game.YUMI_SLEEP_ART.resource_path.ends_with("yumi-sleep-v2.png"), "Sleeping cat uses curled transparent replacement")
+	check(game.yumi_art_rect() == Rect2(-72, -73, 144, 144), "Curled pose uses its own ground alignment")
 	game.start_level(2)
 	check(game.yumi_art_texture() == game.YUMI_IDLE_ART, "Active cat binds idle art")
 	var cat_center: Vector2 = game.yumi_position

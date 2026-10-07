@@ -1,5 +1,7 @@
 # Android telefon denemesi
 
+Yerel projedeki yeni kıvrılmış uyku görseli v2 henüz aşağıdaki APK'ye dahil edilmedi; paket yeniden üretilmeden telefon güncellemesi yapılmamalıdır.
+
 1 Ekim 2026: test paketi bağlı Samsung SM-S938B telefona başarıyla kuruldu ve açıldı. Uygulama süreci çalışır durumda, Godot başlangıç kayıtlarında hata görülmedi. Bu kontrol dokunmatik oynanışın veya tüm bölüm akışının gerçek cihazda doğrulandığı anlamına gelmez.
 
 Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; telefondaki sürüm kodu 2 olarak doğrulandı ve oyun yeniden açıldı. Kullanıcının dokununca nişanın sıçraması geri bildirimi üzerine mutlak parmak hedeflemesi yerine göreli yatay sürükleme uygulandı. Otomatik dokunmatik, duvar ve görsel testleri geçti; yeni kontrolün ergonomisi kullanıcı denemesini bekliyor.
