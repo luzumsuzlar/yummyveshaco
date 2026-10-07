@@ -38,7 +38,7 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Sıcak mutfak arka planı ve ahşap dolap görseli artık oyuna yerleştirildi. Krem renkli paneller ve düğmeler, koyu okunabilir yazılar, balık/pati/yumak simgeleri ve belirgin nişan çizgileri aynı görsel dili izler. Delikler ve düğmeler arka planın parçası değildir; oyun tarafından ayrı çizilir ve hareket ettirilir. Karakterler hâlâ basit geçici çizimlerdir; konseptteki profesyonel karakter görünümü ve animasyonları bu sürümde hazır değildir. Android test paketi bağlı ARM64 telefona kuruldu ve ilk açılışı doğrulandı; dokunmatik oynanışın rahatlığı henüz oyuncuyla değerlendirilmedi. Sesler, iOS paketi ve mağaza sürümü hazır değildir. Android deneme yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` içindedir.
+Sıcak mutfak arka planı, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri ve delik kenarları sığ derinlik verir. Yumi'nin normal, uyku ve pati pozları ile Şako'nun temel karakter görseli oyuna bağlandı. Şako'nun havlama pozu eksiktir; mevcut HAV yazısı ve halka efekti korunur. Akıcı yürüyüş/başarı animasyonları ve sesler hazır değildir. Önceki Android sürümü telefonda denendi; yeni karakterli 0.1.2-test paketinin fiziksel telefon testi henüz yapılmadı. iOS ve mağaza sürümü hazır değildir. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir.
 
 ## Kontrol testi
 

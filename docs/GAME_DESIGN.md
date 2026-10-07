@@ -53,7 +53,7 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 
 ## Sonraki küçük hedefler
 
-- Gerçek Yumi ve Şako karakter görselleri
+- Yumi ve Şako için akıcı yürüyüş/başarı animasyonları ve eksik havlama pozu
 - Pati, çarpma, kilit ve başarı sesleri
 - Gerçek telefonda dokunmatik kontrol testi ve titreşim geri bildirimi
 - Sabit öğretici bölüm ve ardından bölüm seçimi
@@ -66,7 +66,7 @@ Oyuncu bir şifreyi ezberleyip yazmaz. Kilidin gösterdiği sıradaki sembol top
 - Dokunma başlangıcında nişan korunur. Başlangıç parmak konumundan yatay uzaklık, mevcut nişan açısına eklenir (mantıksal piksel başına 0,0045 radyan); dikey hareket etkisizdir. Bölümün açı sınırı korunur. Parmak bırakılınca son göreli nişanla atış yapılır. Uçuş sırasında başlatılan bir dokunma yeni atış başlatmaz veya havlama hedefini değiştirmez. GUI üzerine veya alan dışına bırakılan ve iptal edilen hareketler atış yapmaz.
 - Havlama düğmesi son oyun alanı hedefini kullanır; düğmeye dokunmak nişanı düğmenin konumuna kaydırmaz. Dokunmanın taklit fare olayı oyun alanında ikinci kez işlenmez.
 - Yumi'nin yatay sınırı 100–440; orta yüksekliği 510'dur. İleri bölümdeki delik salınımı 22 piksele daraltılarak hedefler ekranda tutulur. İlk bölümde delikler uçuş sırasında hâlâ sabittir.
-- Seçilen sıcak ev/mutfak görseli çevre ve arayüzün referansıdır. Mutfak arka planı ve ahşap dolap ayrı görsel katmanlar olarak uygulandı; hedefler renkli yuvarlak çerçeve ve ayrı simge rozetleriyle çizilir. Krem paneller ve koyu metinler kullanılır. Mahjong tasarım yönü yoktur. Karakterlerin basit geçici çizimleri korunur; gerçek karakter görselleri ve animasyonları sıradaki aşamadır.
+- Seçilen sıcak ev/mutfak görseli çevre ve arayüzün referansıdır. Mutfak arka planı ve ahşap dolap ayrı görsel katmanlar olarak uygulandı; hedefler renkli yuvarlak çerçeve ve ayrı simge rozetleriyle çizilir. Krem paneller ve koyu metinler kullanılır. Mahjong tasarım yönü yoktur. Yumi'nin normal/uyku/pati pozları ve Şako'nun temel görseli geçici çizimlerin yerine bağlandı; uyarı, fırlatıcı ve fizik konumları korundu. Eksik havlama pozu yerine eski halka efekti kalır. Akıcı karakter animasyonları ayrı aşamadır.
 
 ## İlerleyen bölümler: hareketli delikler
 

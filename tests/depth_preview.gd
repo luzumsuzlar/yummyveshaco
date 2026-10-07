@@ -31,6 +31,14 @@ func capture() -> void:
 	if root.get_texture().get_image().save_png("res://exports/depth-preview/flight.png") != OK:
 		quit(1)
 		return
+	game.yumi_direction = -1.0
+	game.bark_flash = 0.3
+	game.queue_redraw()
+	await process_frame
+	await RenderingServer.frame_post_draw
+	if root.get_texture().get_image().save_png("res://exports/depth-preview/left-paw-bark.png") != OK:
+		quit(1)
+		return
 	game.start_level(0)
 	game.game_state = "celebrating"
 	game.celebration_time = 1.0

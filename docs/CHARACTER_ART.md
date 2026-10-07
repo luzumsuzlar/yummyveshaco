@@ -2,7 +2,7 @@
 
 ## Kapsam
 
-Yerleşik image_gen ile hazırlanmış, şeffaf arka planlı ilk karakter pozları. CLI/API yedeği kullanılmadı. Bu dosyalar oyunun mevcut çizimlerinin yerine henüz bağlanmadı; ayrı pozlar akıcı animasyon anlamına gelmez. Telefon paketi ve GitHub bu aşamada güncellenmez.
+Yerleşik image_gen ile hazırlanmış, şeffaf arka planlı ilk karakter pozları. CLI/API yedeği kullanılmadı. Dört hazır poz artık oyunun çizim koduna bağlandı; ayrı pozlar akıcı animasyon anlamına gelmez. Android 0.1.2-test paketi bu görselleri içerir; telefon bağlı olmadığı için kurulum yapılmadı. GitHub bu aşamada güncellenmedi.
 
 Yumi: turuncu tekir, krem ağız/göğüs, amber gözler ve kıvrık kuyruk. Şako: karamel kahverengi, koyu sarkık kulaklar, krem ağız/göğüs. Yuvarlak siluet ve büyük yüzler küçük ekranda ifadeyi korumak için seçildi. Işık üst-soldan gelir; zemin gölgesi oyun tarafından çizilmelidir.
 
@@ -17,7 +17,9 @@ Eksik: Şako'nun havlama pozu. İki yerleşik üretim denemesi aracın çıktı 
 
 ## Kullanım sınırları
 
-7 Ekim 2026: dört PNG'nin alfa/çözünürlük testi geçti ve büyük/100 piksel boydaki Godot önizlemesi gözden geçirildi. Uyku pozunda kimlik tutarlı; pati pozunda kuyruk tarafı ve gövde açısı değiştiğinden bu çıktı otomatik hizalanmış animasyon karesi değildir. Dosyalar 1280 × 1280 kaynak boyutunda korunur.
+7 Ekim 2026: dört PNG'nin alfa/çözünürlük testi geçti ve büyük/100 piksel boydaki Godot önizlemesi gözden geçirildi. Uyku pozunda kimlik tutarlı; pati pozunda kuyruk tarafı ve gövde açısı değiştiğinden bu çıktı otomatik hizalanmış animasyon karesi değildir. Dosyalar 1254 × 1254 kaynak boyutunda korunur.
+
+Oyunda Yumi'nin uyanık/uyku/pati pozları mevcut durumlara bağlanır. Pati uyarısı veya darbe flaşı bittiğinde normal poza döner; sola pati için yalnız çizim yatay aynalanır. Her pozun normalleştirilmiş görsel merkezi ayrı hizalanır, fizik konumu değişmez. Şako normal ve başarı sırasında aynı temel görseli kullanır. Eksik havlama pozu yerine mevcut HAV yazısı ve halka efekti korunur. Fırlatıcı ve nişan ayrı katmanlardır. Tam yürüyüş/başarı animasyonları henüz yoktur.
 
 PNG kaynakları kırpılmadan ve alfa kanalı korunarak saklanır. Oyuna bağlarken boş kenarları, ayak hizasını, pati yönünü ve boyutları her poz için denetlemek gerekir. Pati görselinin genişlemesi vurulabilir alanı genişletmemelidir. Şako'nun fırlatıcısı, nişan çizgisi ve uyarı ünlemi ayrı oyun katmanları olarak korunmalıdır.
 

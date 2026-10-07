@@ -8,7 +8,8 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Sürüm: `0.1.1-test`, kod `2`
+- Hazırlanan güncel sürüm: `0.1.2-test`, kod `3` (karakter görselleri ve sahne derinliği).
+- Son doğrulanan telefon kurulumu: `0.1.1-test`, kod `2`. 7 Ekim 2026 kontrolünde bağlı telefon algılanmadı; yeni sürüm henüz telefona yüklenmedi.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
 - APK: `exports/android/yumi-sako-test.apk` (yaklaşık 31 MB)
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.

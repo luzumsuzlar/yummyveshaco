@@ -22,6 +22,10 @@ const INK := Color("54321f")
 const CREAM := Color("fff0d2")
 const KITCHEN_BACKGROUND := preload("res://assets/art/kitchen-background-v1.png")
 const CUPBOARD_ART := preload("res://assets/art/cupboard-v1.png")
+const YUMI_IDLE_ART := preload("res://assets/art/characters/yumi-idle-v1.png")
+const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v1.png")
+const YUMI_PAW_ART := preload("res://assets/art/characters/yumi-paw-v1.png")
+const SHAKO_IDLE_ART := preload("res://assets/art/characters/shako-idle-v1.png")
 
 const LEVELS := [
 	{
@@ -986,38 +990,24 @@ func draw_soft_shadow(center: Vector2, radii: Vector2, opacity: float) -> void:
 
 
 func draw_ground_shadows() -> void:
-	draw_soft_shadow(yumi_position + Vector2(7, 57), Vector2(54, 15), 0.30)
+	draw_soft_shadow(yumi_position + Vector2(7, 57), Vector2(44, 12), 0.30)
 	var shako_head := celebration_shako_position if game_state in ["celebrating", "success"] else LAUNCH_POS + Vector2(0, 18)
-	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(61, 17), 0.30)
+	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(40, 11), 0.30)
 	if ball_active:
 		draw_soft_shadow(ball_position + Vector2(6, 12), Vector2(21, 9), 0.28)
 
 
 func draw_yumi() -> void:
 	var p := yumi_position
-	var fur := Color("f7b45b")
-	var fur_dark := Color("c96c3d")
 	var sleeping := not yumi_is_active() and game_state == "playing"
-	if sleeping:
-		fur = Color("b9956e")
-		fur_dark = Color("765948")
-
-	draw_arc(p + Vector2(43, 30), 38, -1.4, 1.4, 24, fur_dark, 12.0, true)
-	draw_circle(p + Vector2(0, 28), 38, fur)
-	draw_colored_polygon(PackedVector2Array([p + Vector2(-34, -28), p + Vector2(-15, -58), p + Vector2(-5, -25)]), fur)
-	draw_colored_polygon(PackedVector2Array([p + Vector2(34, -28), p + Vector2(15, -58), p + Vector2(5, -25)]), fur)
-	draw_circle(p, 42, fur)
-	if sleeping:
-		draw_arc(p + Vector2(-14, -8), 7, 0, PI, 12, Color("122038"), 3.0, true)
-		draw_arc(p + Vector2(14, -8), 7, 0, PI, 12, Color("122038"), 3.0, true)
-	else:
-		draw_circle(p + Vector2(-14, -5), 5, Color("122038"))
-		draw_circle(p + Vector2(14, -5), 5, Color("122038"))
-	draw_line(p + Vector2(-11, 17), p + Vector2(0, 22), Color("713b3c"), 3.0)
-	draw_line(p + Vector2(0, 22), p + Vector2(13, 15), Color("713b3c"), 3.0)
+	var art := yumi_art_texture()
+	var reaching := art == YUMI_PAW_ART
+	# Align each source pose around the unchanged gameplay center.
+	draw_set_transform(p, 0.0, Vector2(-1, 1) if reaching and yumi_direction < 0.0 else Vector2.ONE)
+	draw_texture_rect(art, yumi_art_rect(), false)
+	draw_set_transform(Vector2.ZERO)
 
 	var paw_end := p + Vector2(yumi_direction * 58.0, 16)
-	draw_line(p + Vector2(yumi_direction * 24.0, 15), paw_end, fur, 14.0, true)
 	if yumi_warning_timer > 0.0:
 		draw_circle(paw_end, 28.0 + sin(level_time * 24.0) * 4.0, Color(1.0, 0.8, 0.2, 0.18))
 		draw_arc(paw_end, 33.0, 0, TAU, 28, Color("ffcf5a"), 4.0, true)
@@ -1036,6 +1026,20 @@ func draw_yumi() -> void:
 		yumi_caption = "BEN Mİ?" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
 	draw_style_box(rounded_box(CREAM, 8), Rect2(p + Vector2(-70, -85), Vector2(140, 24)))
 	draw_string(font, p + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, INK)
+
+
+func yumi_art_texture() -> Texture2D:
+	if not yumi_is_active() and game_state == "playing":
+		return YUMI_SLEEP_ART
+	if yumi_warning_timer > 0.0 or yumi_swipe_flash > 0.0:
+		return YUMI_PAW_ART
+	return YUMI_IDLE_ART
+
+
+func yumi_art_rect() -> Rect2:
+	# The paw pose has a different source anchor, not a different collision box.
+	var normalized_anchor := Vector2(680, 590) / 1280.0 if yumi_art_texture() == YUMI_PAW_ART else Vector2(600, 600) / 1280.0
+	return Rect2(-normalized_anchor * 144.0, Vector2(144, 144))
 
 
 func draw_shako_launcher() -> void:
@@ -1089,12 +1093,7 @@ func aim_preview_points() -> Array[Vector2]:
 
 
 func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
-	draw_circle(head, 44, Color("a76f45"))
-	draw_circle(head + Vector2(-38, -1), 21, Color("68442f"))
-	draw_circle(head + Vector2(38, -1), 21, Color("68442f"))
-	draw_circle(head + Vector2(-14, -5), 5, Color("0d1b2b"))
-	draw_circle(head + Vector2(14, -5), 5, Color("0d1b2b"))
-	draw_circle(head + Vector2(0, 12), 7, Color("15243a"))
+	draw_texture_rect(SHAKO_IDLE_ART, Rect2(head + Vector2(-59, -77), Vector2(118, 118)), false)
 	var font := ThemeDB.fallback_font
 	var caption := "ŞAKO"
 	if celebrating:

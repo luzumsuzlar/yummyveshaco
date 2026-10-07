@@ -16,6 +16,21 @@ func run_checks() -> void:
 	game.set_process(false)
 	check(game.KITCHEN_BACKGROUND.get_width() > 500, "Kitchen background loads at sufficient resolution")
 	check(game.KITCHEN_BACKGROUND.get_height() > game.KITCHEN_BACKGROUND.get_width(), "Kitchen background is portrait")
+	check(game.yumi_art_texture() == game.YUMI_SLEEP_ART, "Tutorial binds sleeping cat art")
+	game.start_level(2)
+	check(game.yumi_art_texture() == game.YUMI_IDLE_ART, "Active cat binds idle art")
+	var cat_center: Vector2 = game.yumi_position
+	game.yumi_warning_timer = 0.4
+	check(game.yumi_art_texture() == game.YUMI_PAW_ART, "Paw warning binds reaching pose")
+	game.yumi_direction = -1.0
+	check(game.yumi_art_texture() == game.YUMI_PAW_ART and game.yumi_position == cat_center, "Left pose leaves gameplay center unchanged")
+	game.yumi_warning_timer = 0.0
+	game.yumi_swipe_flash = 0.12
+	check(game.yumi_art_texture() == game.YUMI_PAW_ART, "Swipe keeps reaching pose")
+	game.yumi_swipe_flash = 0.0
+	check(game.yumi_art_texture() == game.YUMI_IDLE_ART, "Cat returns to idle after swipe")
+	check(game.SHAKO_IDLE_ART.resource_path == "res://assets/art/characters/shako-idle-v1.png", "Dog uses the prepared character asset")
+	game.start_level(0)
 	var cupboard: Image = game.CUPBOARD_ART.get_image()
 	check(cupboard.get_pixel(0, 0).a < 0.01, "Cupboard outside silhouette stays transparent")
 	check(cupboard.get_pixel(cupboard.get_width() / 2, cupboard.get_height() / 2).a > 0.95, "Cupboard middle stays opaque")

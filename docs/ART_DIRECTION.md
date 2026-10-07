@@ -1,6 +1,6 @@
 # Yumi & Şako — Mutfak görsel katmanı v1
 
-Yumi ve Şako için ayrı şeffaf karakter pozları `assets/art/characters/` altında hazırlanıyor. Üretim yönergeleri, kullanım sınırları ve dosyalar `docs/CHARACTER_ART.md` içindedir; bu pozlar henüz oyunun çizim koduna bağlanmadı.
+Yumi ve Şako için dört şeffaf karakter pozu `assets/art/characters/` altında hazır ve oyunun çizim koduna bağlıdır. Üretim yönergeleri, kullanım sınırları ve dosyalar `docs/CHARACTER_ART.md` içindedir. Aşağıdaki mutfak v1 notları önceki aşamayı anlatır; havlama pozu ve akıcı karakter animasyonları hâlâ eksiktir.
 
 Bu aşama bitmiş oyun değildir. Çevre ve arayüz, seçilen dikey mutfak konseptine yaklaştırıldı. Yumi ve Şako'nun karakter çizimleri ve animasyonları henüz yenilenmedi. Oynanış koordinatları, delik hit alanları, bölüm kuralları ve düğme işlevleri değiştirilmedi.
 
