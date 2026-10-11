@@ -188,6 +188,8 @@ var story_label: Label
 var overlay: ColorRect
 var overlay_title: Label
 var overlay_subtitle: Label
+var result_notice_label: Label
+var menu_footer_label: Label
 var overlay_button: Button
 var launch_button: Button
 var bark_button: Button
@@ -280,6 +282,7 @@ func build_interface() -> void:
 	overlay_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	overlay_subtitle = make_label("", 20, Color("d8e9ff"), Vector2(40, 408), Vector2(460, 210), overlay)
 	overlay_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	result_notice_label = make_label("", 14, Color("ffe3a4"), Vector2(40, 624), Vector2(460, 28), overlay)
 	overlay_button = Button.new()
 	overlay_button.text = "TEKRAR DENE"
 	overlay_button.position = Vector2(100, 662)
@@ -428,7 +431,7 @@ func build_level_menu() -> void:
 		character.size = Vector2(100, 100)
 		character.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		level_menu.add_child(character)
-	make_label("Test sürümü · Tüm bölümler açık", 15, INK, Vector2(24, 926), Vector2(492, 24), level_menu)
+	menu_footer_label = make_label("Test sürümü · Tüm bölümler açık", 15, INK, Vector2(24, 926), Vector2(492, 24), level_menu)
 
 
 func draw_level_thumbnail(canvas: Control, index: int) -> void:
@@ -471,6 +474,9 @@ func show_level_menu() -> void:
 	for index in range(progress_labels.size()):
 		progress_labels[index].text = game_progress.summary(index)
 		progress_labels[index].add_theme_color_override("font_color", Color("2c6838") if game_progress.best_times.has(index) else Color("856044"))
+	var storage_notice: String = game_progress.storage_notice()
+	menu_footer_label.text = storage_notice if not storage_notice.is_empty() else "Test sürümü · Tüm bölümler açık"
+	menu_footer_label.add_theme_color_override("font_color", Color("a03125") if game_progress.unsaved_changes else INK)
 	tutorial_label.hide()
 	update_sound_button()
 	queue_redraw()
@@ -1390,6 +1396,9 @@ func finish_game(success: bool) -> void:
 	game_audio.update_sleep(false, 0.0)
 	scatter_state = ""
 	toy_button.hide()
+	toy_selecting = false
+	toy_active = false
+	toy_touch_index = -1
 	active_touch_index = -1
 	touch_can_launch = false
 	ball_active = false
@@ -1427,7 +1436,8 @@ func finish_game(success: bool) -> void:
 	overlay_subtitle.text += "\nGeçen süre: %.1f saniye · Doğru atış: %d/%d" % [level_time, progress, sequence.size()]
 	overlay_subtitle.text += "\nKalan havlama: %d · Yumi'nin yardımı: %d" % [barks_left, yumi_help_count]
 	if success and new_time_record:
-		overlay_subtitle.text += "\nYeni en iyi süren!"
+		overlay_subtitle.text += "\nBu oturumdaki en iyi süren!" if game_progress.unsaved_changes else "\nYeni en iyi süren!"
+	result_notice_label.text = game_progress.storage_notice()
 	update_interface()
 	update_sound_button()
 	queue_redraw()

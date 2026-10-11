@@ -70,6 +70,23 @@ func run_checks() -> void:
 	check(game.game_state == "menu" and not game.overlay.visible, "Celebration cannot revive overlay after return")
 	game.start_level(0)
 	check(game.progress == 0 and game.errors == 0 and game.level_time == 0.0, "Selection starts a fresh attempt")
+	for success in [false, true]:
+		game.start_level(2)
+		game.toy_selecting = true
+		game.toy_active = true
+		game.toy_touch_index = 0
+		game.progress = game.sequence.size() if success else 0
+		game.level_time = 40.0
+		game.finish_game(success)
+		check(not game.toy_selecting and not game.toy_active and game.toy_touch_index == -1, "Results close toy selection and active distraction")
+		var stale_release := InputEventScreenTouch.new()
+		stale_release.index = 0
+		stale_release.position = Vector2(200, 550)
+		stale_release.pressed = false
+		game.handle_touch(stale_release)
+		check(not game.toy_active and not game.ball_active, "Old toy release cannot act on result screen")
+		game.start_level(2)
+		check(game.toys_left == 2 and not game.toy_selecting, "Next attempt gets clean toy state")
 	game.free()
 	print("Menu smoke: %d failures" % failures)
 	quit(1 if failures else 0)

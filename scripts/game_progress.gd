@@ -6,6 +6,7 @@ var best_times: Dictionary = {}
 var completions: Dictionary = {}
 var recovered_from_backup := false
 var last_save_error := OK
+var unsaved_changes := false
 
 func _ready() -> void:
 	if persistence_enabled:
@@ -15,6 +16,8 @@ func load_progress() -> void:
 	best_times.clear()
 	completions.clear()
 	recovered_from_backup = false
+	unsaved_changes = false
+	last_save_error = OK
 	var snapshot := read_snapshot(storage_path)
 	if snapshot.is_empty() or snapshot["best"].is_empty():
 		var backup := read_snapshot(storage_path + ".bak")
@@ -93,9 +96,20 @@ func record_completion(index: int, seconds: float) -> bool:
 	completions[index] = mini(int(completions.get(index, 0)) + 1, 1000000)
 	if persistence_enabled:
 		last_save_error = save_progress()
+		unsaved_changes = last_save_error != OK
+		if last_save_error == OK:
+			recovered_from_backup = false
 		if last_save_error != OK:
 			push_warning("Bölüm kaydı diske yazılamadı: %s" % last_save_error)
 	return seconds < previous
+
+
+func storage_notice() -> String:
+	if unsaved_changes:
+		return "Kayıt yazılamadı · Sadece bu oturumda"
+	if recovered_from_backup:
+		return "Önceki sağlam kayıt geri yüklendi"
+	return ""
 
 func summary(index: int) -> String:
 	if not best_times.has(index):

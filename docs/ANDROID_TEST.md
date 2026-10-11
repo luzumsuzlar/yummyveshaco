@@ -46,5 +46,6 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 - Yeni mola sürümü yüklendikten sonra: telefon arka plana alınınca top/süre duruyor mu; geri dönünce DEVAM ET bekleniyor mu?
 - Yeni kayıt sürümü yüklendikten sonra: tamamlanan bölümün en iyi süresi uygulama yeniden açıldığında menüde duruyor mu?
 - Yeni sonuç ekranında kaybın nedeni ve yanlış delik/beklenen sembol net okunuyor mu; Yumi'nin yanlış yönlendirmesi ayırt ediliyor mu?
+- Fare seçimi/oyalama sürerken bölüm biterse seçim kapanıyor mu; eski parmak bırakma sonuç ekranında işlem yapmıyor mu; yeni denemede iki fare hakkı geliyor mu?
 
 Bu sonuçlar kullanıcı denemesiyle kaydedilecek. Masaüstü sentetik dokunma testleri gerçek telefon ergonomisini kanıtlamaz.

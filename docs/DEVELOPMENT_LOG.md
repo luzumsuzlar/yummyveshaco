@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Menü-sonuç-oyuncak geçişlerini incele; kayıt hatası durumunu oyuncuya açıkça göster (şu an yalnız geliştirme kaydında uyarı var). Yerel kayıt dayanıklılığı ve 3./4. bölüm gerçek atış kontrolleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Sonraki dilimde bölüm kartlarının metin/boşluk düzenini ve bütün bölüm geçişlerini incele. Yerel kayıt hata bildirimi, oyuncak-sonuç temizliği ve 3./4. bölüm gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -45,6 +45,7 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - 7b042e5: atıcı kapalıyken başlayan dokunuştan gecikmiş atışı önleme.
 - 07bed02: HUD düğmelerine bırakılan sürüklemeden atışı önleme ve 180 gerçek karışmış hedef atışı.
 - ed617ac: hata nedenini sonuç ekranında koruma, hareketli hedef/Yumi kontrolleri (15 test).
+- d2da9d3: geçici yazma/bütünlük kontrolü/yedekten dönüş (16 test).
 
 ## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
 
@@ -63,3 +64,11 @@ Kullanım izinli; yeni kullanıcı yönlendirmesi yok. Yerel profil doğrudan te
 save_recovery_smoke.gd ile gerçek oyuncu profilinden ayrı dosyalarda bozuk değer/checksum, eksik dosya, geçici dosya, yeniden kaydetme, eski biçimden geçiş ve yazılamayan konum sınandı. Bunlar dosya durumu simülasyonlarıdır; gerçek cihazda güç kesintisi testi yapılmadı, eksiksiz kurtarma garantisi yok. Sağlam yedek önceki yazmayı temsil ettiğinden son sonuç geri alınabilir.
 
 16 toplu kontrol geçti. Menü önizlemesi yeniden üretildi ve rekor gösteriminin korunduğu görsel olarak kontrol edildi. Telefon/APK/GitHub değişmedi; kullanıcı dosyaları korundu. Açık kalan iş: oyuncuya görünür kayıt hatası bildirimi.
+
+## Saatlik devam — 12 Ekim 2026, 01:34 Türkiye
+
+Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirmesi yoktu. Kayıt yazılamadığında sonuç ekranı ve menüde görünür oturum uyarısı eklendi; yeni rekor kalıcı gibi sunulmuyor. Sonraki başarılı yazma uyarıyı temizler; yedekten dönüş menüde belirtilir. Oturum bilgileri korunur, oyun başarısı kayıt hatası yüzünden engellenmez.
+
+Bölüm sonucu fare seçimi, aktif oyalama ve fareye ait parmak kimliğini kapatır. Başarı/kayıp sonrasında eski parmak bırakmasının işlem yapmadığı ve yeni denemede iki fare hakkının döndüğü test edildi. Mola sırasında oyuncak durumu korunmaya devam eder.
+
+save_notice_smoke.gd ile gerçek dosyaya dokunmayan yazma hatası simülasyonu eklendi. Çıktıdaki bir disk-yazma uyarısı bu testin beklenen sonucudur; gerçek kullanıcı disk hatası değildir. 17 toplu kontrolün tamamı geçti. save_notice_preview.gd çıktılarında uzun son bölüm başarı metniyle sonuç uyarısı ve menü uyarısı görsel olarak kontrol edildi. Telefon/APK/GitHub ve ilişkisiz kullanıcı dosyaları değişmedi.
