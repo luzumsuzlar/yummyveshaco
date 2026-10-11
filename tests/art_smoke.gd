@@ -14,6 +14,7 @@ func run_checks() -> void:
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
 	game.set_process(false)
+	game.start_level(0)
 	check(game.KITCHEN_BACKGROUND.get_width() > 500, "Kitchen background loads at sufficient resolution")
 	check(game.KITCHEN_BACKGROUND.get_height() > game.KITCHEN_BACKGROUND.get_width(), "Kitchen background is portrait")
 	check(game.yumi_art_texture() == game.YUMI_SLEEP_ART, "Tutorial binds sleeping cat art")

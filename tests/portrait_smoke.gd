@@ -43,6 +43,8 @@ func run_checks() -> void:
 	root.add_child(game)
 	game.set_process(false)
 	await process_frame
+	# Normal startup now opens the menu; explicitly select the tutorial for play tests.
+	game.start_level(0)
 	check(root.content_scale_size == Vector2i(540, 960), "Viewport is portrait 540x960")
 	check(ProjectSettings.get_setting("display/window/handheld/orientation") == DisplayServer.SCREEN_PORTRAIT, "Mobile orientation is portrait")
 	for button in [game.launch_button, game.bark_button, game.restart_button]:

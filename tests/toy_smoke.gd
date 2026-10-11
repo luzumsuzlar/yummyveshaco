@@ -1,0 +1,73 @@
+extends SceneTree
+
+var failures := 0
+
+func check(condition: bool, message: String) -> void:
+	if not condition:
+		failures += 1
+		push_error(message)
+
+func _initialize() -> void:
+	call_deferred("run_checks")
+
+func touch(index: int, position: Vector2, pressed: bool, canceled: bool = false) -> InputEventScreenTouch:
+	var event := InputEventScreenTouch.new()
+	event.index = index
+	event.position = position
+	event.pressed = pressed
+	event.canceled = canceled
+	return event
+
+func run_checks() -> void:
+	var game = load("res://scenes/main.tscn").instantiate()
+	root.add_child(game)
+	game.set_process(false)
+	for level in [0, 1]:
+		game.start_level(level)
+		game.toggle_toy_selection()
+		check(not game.toy_selecting and not game.toy_button.visible, "Earlier levels unchanged")
+	game.start_level(2)
+	game.shot_delay = 0
+	game.toggle_toy_selection()
+	game.launch_ball()
+	check(not game.ball_active and game.toys_left == 2, "Selection never launches or spends")
+	game.place_toy(Vector2(50, 300))
+	check(game.toy_selecting and game.toys_left == 2, "Invalid placement is free")
+	game.handle_touch(touch(0, Vector2(400, 500), true))
+	game.handle_touch(touch(1, Vector2(120, 550), true))
+	game.handle_touch(touch(1, Vector2(120, 550), false))
+	check(not game.toy_active, "Second finger cannot place")
+	game.handle_touch(touch(0, Vector2(400, 500), false, true))
+	check(not game.toy_active and game.toys_left == 2, "Canceled touch spends nothing")
+	game.handle_touch(touch(0, Vector2(400, 500), true))
+	game.handle_touch(touch(0, Vector2(400, 500), false))
+	check(game.toy_active and game.toys_left == 1 and not game.ball_active, "Release places without launching")
+	game.yumi_warning_timer = 0.01
+	game.ball_active = true
+	game.ball_type = 2
+	game.ball_position = game.yumi_position
+	game.yumi_warning_timer = 0
+	game.update_yumi_attack(1.0)
+	check(not game.ball_swatted and game.yumi_warning_timer == 0, "Toy suppresses attacks")
+	var destination: Vector2 = game.toy_position - Vector2(0, 50)
+	var distance: float = game.yumi_position.distance_to(destination)
+	game.move_yumi(0.1)
+	check(game.yumi_position.distance_to(destination) < distance, "Toy overrides yarn pursuit")
+	for step in range(45):
+		game.move_yumi(0.1)
+	check(not game.toy_active, "Distraction expires and patrol resumes")
+	game.ball_active = false
+	game.toggle_toy_selection()
+	game.place_toy(Vector2(120, 550))
+	check(game.toys_left == 0, "Second use consumes last charge")
+	game.toy_active = false
+	game.toggle_toy_selection()
+	check(not game.toy_selecting, "No third use")
+	game.start_level(2)
+	check(game.toys_left == 2 and not game.toy_active and not game.toy_selecting, "Restart resets toys")
+	game.toggle_toy_selection()
+	game.toggle_toy_selection()
+	check(not game.toy_selecting and game.toys_left == 2, "Cancel button is free")
+	game.queue_free()
+	print("Toy smoke: %d failures" % failures)
+	quit(1 if failures else 0)
