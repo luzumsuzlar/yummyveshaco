@@ -118,6 +118,7 @@ var stage_index := 0
 var stage_rotation := 0.0
 var stage_from_positions: Array[Vector2] = []
 var errors := 0
+var last_error_message := ""
 var game_state := "playing"
 
 var aim_angle := 0.0
@@ -545,6 +546,7 @@ func start_level(new_level_index: int = level_index) -> void:
 	stage_rotation = 0.0
 	stage_from_positions.clear()
 	errors = 0
+	last_error_message = ""
 	level_time = 0.0
 	new_time_record = false
 	tutorial_aim_done = false
@@ -1352,7 +1354,9 @@ func resolve_hole_hit(target_index: int = -1) -> void:
 			status_label.text = "Yumi yanlışlıkla yardım etti! " + progress_hint() if lucky_yumi_goal else progress_hint()
 			status_label.add_theme_color_override("font_color", Color("2c6838"))
 	else:
-		var error_message := "Yumi topu yanlış deliğe sektirdi!" if ball_deflected_by_yumi else "Yanlış delik! Kilitte çatlak oluştu."
+		var error_message := "%s deliği! %s bekleniyordu." % [TYPE_NAMES[nearest_hole], TYPE_NAMES[sequence[progress]]]
+		if ball_deflected_by_yumi:
+			error_message = "Yumi %s deliğine sektirdi!\n%s bekleniyordu." % [TYPE_NAMES[nearest_hole], TYPE_NAMES[sequence[progress]]]
 		register_error(error_message)
 
 
@@ -1367,6 +1371,7 @@ func progress_hint() -> String:
 
 
 func register_error(message: String) -> void:
+	last_error_message = message
 	ball_active = false
 	bark_available = false
 	yumi_warning_timer = 0.0
@@ -1417,7 +1422,7 @@ func finish_game(success: bool) -> void:
 		overlay.show()
 		overlay_title.text = "KİLİT SIKIŞTI!"
 		overlay_title.add_theme_color_override("font_color", Color("ff746f"))
-		overlay_subtitle.text = "Yumi: 😼     Şako: 😵\nAynı bölümü hemen yeniden deneyebilirsin."
+		overlay_subtitle.text = "Yumi: 😼     Şako: 😵\n" + (last_error_message if not last_error_message.is_empty() else "Aynı bölümü hemen yeniden deneyebilirsin.")
 		overlay_button.text = "TEKRAR DENE"
 	overlay_subtitle.text += "\nGeçen süre: %.1f saniye · Doğru atış: %d/%d" % [level_time, progress, sequence.size()]
 	overlay_subtitle.text += "\nKalan havlama: %d · Yumi'nin yardımı: %d" % [barks_left, yumi_help_count]

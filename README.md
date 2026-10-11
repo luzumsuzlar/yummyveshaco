@@ -49,7 +49,9 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 ## Kontrol testi
 
-Tüm 14 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme kaydını yazmaz; fiziksel telefon testinin yerine geçmez.
+Tüm 15 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme kaydını yazmaz; fiziksel telefon testinin yerine geçmez.
+
+Yanlış deliğe girince gerçek ve beklenen sembol belirtilir; kayıp ekranı son hatanın nedenini korur. `res://tests/interaction_smoke.gd` hareketli hedefe tahminli gerçek atışları, Yumi'nin önceden uyarı vermesini, tek atışta bir pati sınırını, havlamayla iptali ve yardım/hata ayrımını kontrol eder.
 
 Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.
 

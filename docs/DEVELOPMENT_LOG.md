@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. 3. bölümün hareketli hedeflerinde ve Yumi müdahalesinde sınır durumları; gerekirse yanlış atış geri bildirimini iyileştir. 4. bölümde aşağıda kaydedilen gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Sonraki dilimde yerel kayıt dayanıklılığını (yarıda yazma/bozuk dosya) ve menü-sonuç-oyuncak geçişlerini incele. 3. ve 4. bölümde aşağıdaki gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -43,3 +43,14 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - 5f4f28e: mola/arka plan/geri tuşu, 13 test ve ekran kontrolü.
 - 1277569: yerel bölüm başarısı/en iyi süre, 14 kontrol çalıştırıcısı ve güncel belgeler.
 - 7b042e5: atıcı kapalıyken başlayan dokunuştan gecikmiş atışı önleme.
+- 07bed02: HUD düğmelerine bırakılan sürüklemeden atışı önleme ve 180 gerçek karışmış hedef atışı.
+
+## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
+
+Kullanım izinli olarak doğrulandı; kredi/sıfırlama kullanılmadı. Yeni kullanıcı yönlendirmesi yoktu.
+
+3. bölüm hareketli hedefleri 30/60/144 FPS'de, sekiz hareket fazı ve üç sembolle sınandı: 72 gerçek tahminli atışın hepsi hedefe ulaştı. Yumi bu uçuşlarda izole edildi; ayrı kontrollerde pati öncesi uyarı, tepki zamanı, havlamanın gerçekten patiyi iptal etmesi, bir topa ikinci pati olmaması, menzil dışına çıkınca ıskalama, yardım ve yanlış delik ayrımı doğrulandı. Bu sonuçlar gerçek oyuncunun başarısını/süresini ölçmez.
+
+Yanlış delik geri bildirimi artık gerçek ve beklenen sembolü adlandırıyor. Yumi sebep olduysa metin bunu açıkça söylüyor. Kayıp ekranında son hatanın nedeni korunuyor; yeniden başlatmada eski neden temizleniyor. Zorluk, süre, atış veya ses kuralları değiştirilmedi.
+
+interaction_smoke.gd toplu kontrol listesine eklendi; 15 kontrolün tamamı geçti. interaction_preview.gd ile normal/Yumi kaynaklı kayıp ekranları üretildi; daha uzun Yumi metninin sığdığı görsel olarak kontrol edildi. Bu değişiklikler kaynakta ve yerel Git kaydında; mevcut APK, telefon ve GitHub değişmedi. Kullanıcı dosyaları korundu.
