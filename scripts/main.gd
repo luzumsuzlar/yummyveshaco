@@ -202,6 +202,9 @@ var tutorial_bark_done := false
 var tutorial_toy_done := false
 var tutorial_bark_time := 0.0
 var tutorial_touch_mode := OS.has_feature("android") or OS.has_feature("ios")
+var pause_button: Button
+var pause_panel: ColorRect
+var paused_from_state := "playing"
 
 
 func _ready() -> void:
@@ -292,6 +295,7 @@ func build_interface() -> void:
 	sound_button.add_theme_font_size_override("font_size", 16)
 	sound_button.pressed.connect(toggle_sound)
 	tutorial_label = make_label("", 14, INK, Vector2(34, 719), Vector2(172, 46), self, true)
+	build_pause_interface()
 	update_sound_button()
 
 
@@ -306,6 +310,72 @@ func update_sound_button() -> void:
 	sound_button.text = "SES: KAPALI" if game_audio.muted else "SES: AÇIK"
 	sound_button.position = Vector2(398, 160) if game_state == "menu" else Vector2(398, 714)
 	sound_button.visible = game_state in ["menu", "playing"]
+	if is_instance_valid(pause_button):
+		pause_button.visible = game_state == "playing"
+
+
+func build_pause_interface() -> void:
+	pause_button = make_action_button("II", Vector2(334, 714), Vector2(56, 48), CREAM)
+	pause_button.pressed.connect(pause_game)
+	pause_panel = ColorRect.new()
+	pause_panel.size = SCREEN_SIZE
+	pause_panel.color = Color(0.15, 0.08, 0.04, 0.87)
+	pause_panel.z_index = 50
+	pause_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(pause_panel)
+	make_label("MOLA ZAMANI", 32, CREAM, Vector2(30, 286), Vector2(480, 60), pause_panel)
+	make_label("Top ve süre durdu.\nHazır olduğunda devam et.", 21, CREAM, Vector2(40, 370), Vector2(460, 80), pause_panel)
+	var resume_button := make_action_button("DEVAM ET", Vector2(100, 488), Vector2(340, 64), Color("c7eef1"))
+	resume_button.reparent(pause_panel, false)
+	resume_button.pressed.connect(resume_game)
+	var retry_button := make_action_button("BÖLÜMÜ YENİDEN BAŞLAT", Vector2(100, 576), Vector2(340, 64), CREAM)
+	retry_button.add_theme_font_size_override("font_size", 18)
+	retry_button.reparent(pause_panel, false)
+	retry_button.pressed.connect(func(): start_level(level_index))
+	var back_button := make_action_button("BÖLÜMLER", Vector2(100, 664), Vector2(340, 64), CREAM)
+	back_button.reparent(pause_panel, false)
+	back_button.pressed.connect(show_level_menu)
+	make_label("Bölümlere dönmek bu denemeyi kapatır.", 15, CREAM, Vector2(24, 756), Vector2(492, 32), pause_panel)
+	pause_panel.hide()
+
+
+func pause_game() -> void:
+	if game_state not in ["playing", "celebrating"]:
+		return
+	paused_from_state = game_state
+	game_state = "paused"
+	active_touch_index = -1
+	touch_can_launch = false
+	toy_touch_index = -1
+	game_audio.stop_all()
+	tutorial_label.hide()
+	pause_panel.show()
+	update_sound_button()
+	queue_redraw()
+
+
+func resume_game() -> void:
+	if game_state != "paused":
+		return
+	game_state = paused_from_state
+	pause_panel.hide()
+	update_interface()
+	update_sound_button()
+	queue_redraw()
+
+
+func _notification(what: int) -> void:
+	if not is_instance_valid(pause_panel):
+		return
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		pause_game()
+	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if game_state == "paused":
+			resume_game()
+		elif game_state in ["playing", "celebrating"]:
+			pause_game()
+		elif game_state in ["success", "failed"]:
+			show_level_menu()
 
 
 func build_level_menu() -> void:
@@ -371,6 +441,7 @@ func draw_level_thumbnail(canvas: Control, index: int) -> void:
 
 
 func show_level_menu() -> void:
+	pause_panel.hide()
 	game_audio.stop_all()
 	game_state = "menu"
 	ball_active = false
@@ -447,6 +518,7 @@ func level_config() -> Dictionary:
 
 
 func start_level(new_level_index: int = level_index) -> void:
+	pause_panel.hide()
 	game_audio.stop_all()
 	level_menu.hide()
 	for control in [title_label, level_label, code_label, instruction_label, time_label, story_label, restart_button, menu_button]:
@@ -607,10 +679,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventKey and event.pressed and not event.echo:
+		if game_state == "paused":
+			if event.keycode in [KEY_ESCAPE, KEY_P]:
+				resume_game()
+			return
 		if game_state == "menu":
 			return
+		if event.keycode == KEY_P:
+			pause_game()
+			return
 		if event.keycode == KEY_ESCAPE and not toy_selecting:
-			show_level_menu()
+			pause_game()
 			return
 		if event.keycode == KEY_M or (event.keycode == KEY_ESCAPE and toy_selecting):
 			toggle_toy_selection()
