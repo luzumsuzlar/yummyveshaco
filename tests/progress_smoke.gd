@@ -15,6 +15,7 @@ func run_checks() -> void:
 	var path := "res://exports/progress-preview/test-progress.cfg"
 	var empty := ConfigFile.new()
 	empty.save(path)
+	empty.save(path + ".bak")
 	var profile = load("res://scripts/game_progress.gd").new()
 	profile.storage_path = path
 	profile.persistence_enabled = true
@@ -30,7 +31,8 @@ func run_checks() -> void:
 	var malformed := ConfigFile.new()
 	malformed.set_value("level_2", "best_seconds", "bad")
 	malformed.set_value("level_2", "completions", 3)
-	malformed.save(path)
+	profile.storage_path = "res://exports/progress-preview/invalid-progress.cfg"
+	malformed.save(profile.storage_path)
 	profile.load_progress()
 	check(profile.best_times.is_empty(), "Bad stored values do not crash or create fake records")
 	profile.free()

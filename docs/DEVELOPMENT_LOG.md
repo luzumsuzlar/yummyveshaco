@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Sonraki dilimde yerel kayıt dayanıklılığını (yarıda yazma/bozuk dosya) ve menü-sonuç-oyuncak geçişlerini incele. 3. ve 4. bölümde aşağıdaki gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Menü-sonuç-oyuncak geçişlerini incele; kayıt hatası durumunu oyuncuya açıkça göster (şu an yalnız geliştirme kaydında uyarı var). Yerel kayıt dayanıklılığı ve 3./4. bölüm gerçek atış kontrolleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -44,6 +44,7 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - 1277569: yerel bölüm başarısı/en iyi süre, 14 kontrol çalıştırıcısı ve güncel belgeler.
 - 7b042e5: atıcı kapalıyken başlayan dokunuştan gecikmiş atışı önleme.
 - 07bed02: HUD düğmelerine bırakılan sürüklemeden atışı önleme ve 180 gerçek karışmış hedef atışı.
+- ed617ac: hata nedenini sonuç ekranında koruma, hareketli hedef/Yumi kontrolleri (15 test).
 
 ## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
 
@@ -54,3 +55,11 @@ Kullanım izinli olarak doğrulandı; kredi/sıfırlama kullanılmadı. Yeni kul
 Yanlış delik geri bildirimi artık gerçek ve beklenen sembolü adlandırıyor. Yumi sebep olduysa metin bunu açıkça söylüyor. Kayıp ekranında son hatanın nedeni korunuyor; yeniden başlatmada eski neden temizleniyor. Zorluk, süre, atış veya ses kuralları değiştirilmedi.
 
 interaction_smoke.gd toplu kontrol listesine eklendi; 15 kontrolün tamamı geçti. interaction_preview.gd ile normal/Yumi kaynaklı kayıp ekranları üretildi; daha uzun Yumi metninin sığdığı görsel olarak kontrol edildi. Bu değişiklikler kaynakta ve yerel Git kaydında; mevcut APK, telefon ve GitHub değişmedi. Kullanıcı dosyaları korundu.
+
+## Saatlik devam — 12 Ekim 2026, 00:34 Türkiye
+
+Kullanım izinli; yeni kullanıcı yönlendirmesi yok. Yerel profil doğrudan tek dosyaya yazıldığı için yazma kesintisi önceki veriyi riske atıyordu. Kayıt artık geçici dosyaya hazırlanıp okunarak doğrulanıyor, önceki sağlam dosya yedekleniyor ve hazır dosya ana kayıt olarak taşınıyor. Bozuk/eksik/boş ana dosyada sağlam yedeğe dönülüyor. Eski biçim korunuyor; tamamlanmamış geçici dosya okunmuyor. Bütünlük kontrolü veri hasarını yakalamak içindir, güvenlik/şifreleme iddiası değildir.
+
+save_recovery_smoke.gd ile gerçek oyuncu profilinden ayrı dosyalarda bozuk değer/checksum, eksik dosya, geçici dosya, yeniden kaydetme, eski biçimden geçiş ve yazılamayan konum sınandı. Bunlar dosya durumu simülasyonlarıdır; gerçek cihazda güç kesintisi testi yapılmadı, eksiksiz kurtarma garantisi yok. Sağlam yedek önceki yazmayı temsil ettiğinden son sonuç geri alınabilir.
+
+16 toplu kontrol geçti. Menü önizlemesi yeniden üretildi ve rekor gösteriminin korunduğu görsel olarak kontrol edildi. Telefon/APK/GitHub değişmedi; kullanıcı dosyaları korundu. Açık kalan iş: oyuncuya görünür kayıt hatası bildirimi.
