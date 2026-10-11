@@ -398,7 +398,7 @@ func build_level_menu() -> void:
 	make_label("YUMI & ŞAKO", 38, Color("874719"), Vector2(24, 48), Vector2(492, 60), level_menu)
 	make_label("Hangi yaramazlığa hazırsın?", 22, INK, Vector2(24, 116), Vector2(492, 38), level_menu)
 	make_label("BÖLÜM SEÇ", 17, Color("8e6544"), Vector2(24, 172), Vector2(300, 28), level_menu)
-	var descriptions := ["Nişan al, kilidi çöz. Yumi uyanıyor!", "Duvarlardan sektirerek hedefe ulaş.", "Kayan hedefler ve oyuncak fare.", "Yumi hedefleri dağıtıyor. Yeni düzene uyum sağla!"]
+	var descriptions := ["Nişan al, kilidi çöz. Yumi uyanıyor!", "Duvarlardan sektirerek hedefe ulaş.", "Kayan hedefler ve oyuncak fare.", "Yumi hedefleri dağıtır.\nYeni düzene nişan al."]
 	for index in range(LEVELS.size()):
 		var card := make_action_button("", Vector2(22, 218 + index * 150), Vector2(496, 132), CREAM)
 		card.reparent(level_menu, false)
@@ -410,15 +410,15 @@ func build_level_menu() -> void:
 		thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(thumbnail)
 		thumbnail.draw.connect(draw_level_thumbnail.bind(thumbnail, index))
-		var name_label := make_label(str(LEVELS[index]["name"]), 18, INK, Vector2(142, 12), Vector2(332, 48), card, true)
+		var name_label := make_label(str(LEVELS[index]["name"]), 18, INK, Vector2(142, 12), Vector2(332, 32), card, true)
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		name_label.size = Vector2(332, 48)
+		name_label.size = Vector2(332, 32)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var description := make_label(descriptions[index], 16, Color("856044"), Vector2(142, 58), Vector2(324, 42), card, true)
+		var description := make_label(descriptions[index], 16, Color("856044"), Vector2(142, 48), Vector2(324, 49), card, true)
 		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		description.size = Vector2(324, 42)
-		var progress_text := make_label("", 14, Color("856044"), Vector2(142, 103), Vector2(324, 22), card)
+		description.size = Vector2(324, 49)
+		var progress_text := make_label("", 14, Color("856044"), Vector2(142, 105), Vector2(324, 23), card)
 		progress_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		progress_labels.append(progress_text)
 	for item in [[YUMI_IDLE_ART, 158.0], [SHAKO_IDLE_ART, 282.0]]:

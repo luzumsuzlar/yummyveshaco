@@ -30,6 +30,15 @@ func run_checks() -> void:
 		for child in card.get_children():
 			if child is Label:
 				check(Rect2(Vector2.ZERO, card.size).encloses(child.get_rect()), "Card text fits without overflowing")
+		var labels: Array[Label] = []
+		for child in card.get_children():
+			if child is Label:
+				labels.append(child)
+		check(labels.size() == 3, "Card has title, description and progress")
+		check(labels[1].position.y - labels[0].get_rect().end.y >= 4.0, "Title is separated from description")
+		check(labels[2].position.y - labels[1].get_rect().end.y >= 8.0, "Progress has a clear gap after description: %s, description %s, progress %s" % [labels[0].text, labels[1].get_rect(), labels[2].get_rect()])
+		for label in labels:
+			check(label.get_combined_minimum_size().y <= label.size.y, "Rendered text height fits its assigned area")
 	var old_time: float = game.level_time
 	game._process(5.0)
 	game.launch_ball()
@@ -87,6 +96,21 @@ func run_checks() -> void:
 		check(not game.toy_active and not game.ball_active, "Old toy release cannot act on result screen")
 		game.start_level(2)
 		check(game.toys_left == 2 and not game.toy_selecting, "Next attempt gets clean toy state")
+	# Exercise all result buttons through GUI, including last -> first.
+	# Completion is forced here only to isolate navigation, not prove playability.
+	for index in range(4):
+		game.start_level(index)
+		game.progress = game.sequence.size()
+		game.level_time = 70.0 + index
+		game.finish_game(true)
+		game._process(2.3)
+		check(game.game_state == "success" and game.overlay.visible, "Each completion opens its result screen")
+		click(game.overlay_button.position + game.overlay_button.size / 2, true)
+		click(game.overlay_button.position + game.overlay_button.size / 2, false)
+		check(game.level_index == (index + 1) % 4 and game.game_state == "playing", "Actual result click advances or wraps to first level")
+		check(not game.ball_active and not game.overlay.visible and not game.pause_panel.visible, "Transition click cannot launch a shot or keep an old modal")
+		check(game.progress == 0 and game.errors == 0 and game.barks_left == 3, "Each next level resets attempt and bark budget")
+		check(game.toys_left == (2 if game.level_index == 2 else 0), "Next level applies its own toy budget")
 	game.free()
 	print("Menu smoke: %d failures" % failures)
 	quit(1 if failures else 0)

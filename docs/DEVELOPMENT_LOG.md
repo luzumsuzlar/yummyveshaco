@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Sonraki dilimde bölüm kartlarının metin/boşluk düzenini ve bütün bölüm geçişlerini incele. Yerel kayıt hata bildirimi, oyuncak-sonuç temizliği ve 3./4. bölüm gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Sonraki dilimde ses tercihinin testlerden etkilenmediğini ve sessiz/mola/sonuç geçişlerinde seslerin kapandığını kontrol et. Bölüm kartları ve dört bölüm sonuç geçişleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -46,6 +46,7 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - 07bed02: HUD düğmelerine bırakılan sürüklemeden atışı önleme ve 180 gerçek karışmış hedef atışı.
 - ed617ac: hata nedenini sonuç ekranında koruma, hareketli hedef/Yumi kontrolleri (15 test).
 - d2da9d3: geçici yazma/bütünlük kontrolü/yedekten dönüş (16 test).
+- ddfeb0a: görünür kayıt hatası/oturum uyarısı ve sonuçta oyuncak temizliği (17 test).
 
 ## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
 
@@ -72,3 +73,13 @@ Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirm
 Bölüm sonucu fare seçimi, aktif oyalama ve fareye ait parmak kimliğini kapatır. Başarı/kayıp sonrasında eski parmak bırakmasının işlem yapmadığı ve yeni denemede iki fare hakkının döndüğü test edildi. Mola sırasında oyuncak durumu korunmaya devam eder.
 
 save_notice_smoke.gd ile gerçek dosyaya dokunmayan yazma hatası simülasyonu eklendi. Çıktıdaki bir disk-yazma uyarısı bu testin beklenen sonucudur; gerçek kullanıcı disk hatası değildir. 17 toplu kontrolün tamamı geçti. save_notice_preview.gd çıktılarında uzun son bölüm başarı metniyle sonuç uyarısı ve menü uyarısı görsel olarak kontrol edildi. Telefon/APK/GitHub ve ilişkisiz kullanıcı dosyaları değişmedi.
+
+## Saatlik devam — 12 Ekim 2026, 02:32 Türkiye
+
+Kullanım izinli; beş saatlik pencere yenilenmiş olarak görünüyor, sıfırlama kredisi tüketilmedi. Yeni kullanıcı yönlendirmesi yoktu.
+
+Bölüm kartlarında başlık, açıklama ve tamamlanma satırlarının boşlukları ayrıldı. Dördüncü bölüm açıklaması iki kısa satırla netleştirildi. Godot yazı tipinde iki satırın gerçek yüksekliği 49 piksel olduğundan yerleşim buna göre ayarlandı; rekor satırına en az 8 piksel ara bırakıldı. Menü testine gerçek metin yükseklikleri ve alanların ayrılığı kontrolleri eklendi. Tamamlanmış dördüncü kart dahil önizleme yeniden üretildi ve görsel olarak kontrol edildi.
+
+Dört bölümün sonuç düğmeleri GUI tıklama yoluyla sınandı: doğru sonraki bölüm, son bölümden birinciye dönüş, eski panelin kapanması, tıklamanın atışa dönüşmemesi, ilerleme/hata/havlama/fare haklarının yeni bölüm kuralıyla sıfırlanması. Bu gezinme testlerinde başarı durumu bilerek kuruldu; gerçek bölüm oynanabilirliği iddiası değil, geçiş izolasyonudur.
+
+17 toplu kontrol geçti. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi; değişiklikler yerel kaydedildi.

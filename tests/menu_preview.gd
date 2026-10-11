@@ -9,6 +9,7 @@ func capture() -> void:
 	game.set_process(false)
 	DirAccess.make_dir_recursive_absolute("res://exports/menu-preview")
 	game.game_progress.record_completion(0, 64.3)
+	game.game_progress.record_completion(3, 82.7)
 	game.show_level_menu()
 	await save_preview(game, "level-menu")
 	game.start_level(2)

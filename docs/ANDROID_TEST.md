@@ -35,6 +35,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 ## Oyuncu kontrol listesi
 
 - Telefon dikeyken hedefler, metinler, AT ve HAV düğmeleri rahat görünüyor mu?
+- Yeni menü kartlarında, özellikle dördüncü bölüm tamamlandıktan sonra açıklama ve en iyi süre birbirinden rahat ayrılıyor mu?
 - Dokununca nişan yerinde kalıyor mu; sağa–sola sürükleme rahat mı; dikey sürükleme açıyı koruyor mu?
 - Parmağı bırakmak tek top fırlatıyor mu; nişan çizgisi parmağı hedefe götürmeden okunuyor mu?
 - HAV düğmesi uçuş sırasında kolay erişiliyor mu; topu düğmenin kendisine yönlendirmiyor mu?
