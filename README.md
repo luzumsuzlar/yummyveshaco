@@ -13,6 +13,10 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 - Bilgisayarda nişan: fare veya `A` / `D` / `←` / `→`. Atış: sol tık, `Boşluk` veya `Enter`.
 - Bilgisayarda havlama: top uçarken oyun alanına tekrar tık, `Boşluk` veya `E`.
 - Yeniden başlatma: sağ üstteki `↻` düğmesi veya `R`.
+- Bölüm seçimi: açılış menüsü ve sol üst `≡` düğmesi; tüm bölümler test için açık.
+- Mola: `II` düğmesi, `P` veya `Esc`. Telefonda arka plana geçiş mola verir; hazır olduğunda devam et. Mola süresi sonuca eklenmez.
+- Ses: menü/oyundaki `SES: AÇIK/KAPALI` düğmesi. Ses tercihi saklanır; uyuyan Yumi aralıklı mırlar.
+- İlk atış, Yumi'nin uyanması ve fare yerleştirmesi sırasında kısa öğretici ipuçları gösterilir.
 - Kilit dizisini tamamlayınca bölüm kazanılır.
 - Üç hata kilidi sıkıştırır; tek tuşla yeniden denenebilir.
 
@@ -20,7 +24,8 @@ Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oyna
 
 1. **Mama Dolabı:** Üç aşamada dörder eşleşme, toplam 12 doğru atış. İlk dört eşleşmede Yumi uyuklar; sonra uyanır ve yavaş, yatay hareketlerle yumak topuna yaklaşır. Son aşama öğrenilen nişan ve havlama kurallarını birleştirir. İlk iki aşama sonunda kasa dönüşüyle hedefler yer değiştirir; atış sırasında sabit kalır. İlk bölümde top daha yavaş, pati uyarısı daha uzundur.
 2. **Duvar Oyunu:** Üç aşamada dörder eşleşme, toplam 12 doğru atış. İlk dört hedef en az bir, sonraki dört hedef iki duvar sekmesi ister; bu iki aşamada Yumi uyur. Son dört hedefte Yumi dört yönde dolaşır ve en az bir sekme gerekir. Yan duvarlar geliş açısına göre yansıtır; hız korunur, üçüncü duvar teması atışı bitirir. Nişan çizgisi sekme yolunu gösterir. Havlama, kalan zorunlu sekmeleri koruyarak yön düzeltir. Aşama geçişlerinde hedefler yer değiştirir; uçuşta sabit kalır.
-3. **Kayan Kilit:** Yumi sekiz yönde daha sık yön değiştirip kısa atılmalar yapar. Delikler de yatay hareket eder.
+3. **Kayan Kilit:** Yumi sekiz yönde daha sık yön değiştirip kısa atılmalar yapar. Delikler de yatay hareket eder. İki oyuncak fare hakkıyla mor alanda yer seçip Yumi'yi kısa süre oyalayabilirsin.
+4. **Yumi'nin Yaramazlığı:** Sekiz doğru eşleşme. 2. ve 5. başarıdan sonra Yumi hedeflere gider, ünlemle uyarıp pati atar. Hedefler duvarlardan/birbirlerinden sekip farklı yerlerde durur. Karışma sırasında atış kapalıdır; sembol kimlikleri korunur. Yerleşmiş her hedef için açık atış yolu kontrol edilir.
 
 Sınırsız pinball sekmesi yoktur. Yalnız ikinci bölümde yan duvarlardan en fazla iki sekme kullanılabilir; ilk ve üçüncü bölümün duvar kuralları değişmedi. Alt taraftan kaçan top atışı bitirir. Oyun puan toplamaya değil, kilidi doğru sırayla çözmeye odaklanır.
 
@@ -38,9 +43,13 @@ Komut satırından:
 
 ## Prototip kapsamı
 
-Sıcak mutfak, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri sığ derinlik verir. Yumi'nin normal, kıvrılmış uyku ve pati pozları ile Şako'nun temel görseli oyuna bağlıdır. Yumi hareket ederken altı karelik yürüyüş döngüsü oynar; gerçek hareket mesafesi görsel fazı ilerletir, durunca animasyon durur. Uyku ve pati pozları önceliklidir. Sola yürüyüş aynalanır; dikey/çapraz yönlere özel kareler henüz yoktur. Şako'nun havlama pozu, tam başarı animasyonları ve sesler eksiktir. Son telefon kurulumu 0.1.3-test; yürüyüş içeren 0.1.4-test paketi hazır ama fiziksel cihazda denenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir.
+Sıcak mutfak, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri sığ derinlik verir. Yumi'nin normal, kıvrılmış uyku ve pati pozları ile Şako'nun temel görseli oyuna bağlıdır. Yürüyüş altı kareden oluşur; sola aynalanır, dikey/çapraz yönlere özel kareler henüz yoktur. Pati hazırlığı, gövde hamlesi ve temas efekti çizim katmanındadır. Atış, sekme, pati, kilit açma ve mırlama sesleri vardır; müzik ve gerçek hayvan kaydı yoktur.
+
+Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistemi yoktur. Henüz yarım denemeyi uygulama tamamen kapandıktan sonra sürdürme yoktur. Son telefon/dağıtım APK'sı 0.1.8-test (kod 9); mırlama kullanıcı tarafından duyuldu olarak doğrulandı. Yeni öğretici, mola ve ilerleme kaydı henüz bu APK'ya alınmadı veya telefona yüklenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir. Bağımsız geliştirme günlüğü: `docs/DEVELOPMENT_LOG.md`.
 
 ## Kontrol testi
+
+Tüm 14 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme kaydını yazmaz; fiziksel telefon testinin yerine geçmez.
 
 Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.
 

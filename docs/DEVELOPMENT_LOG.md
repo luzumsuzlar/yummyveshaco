@@ -12,13 +12,20 @@ Saatlik aynı-sohbet devam takibi: yumi-ako-geli-tirmeye-devam, aktif. Kullanım
 - Telefonda son yüklenen sürüm 0.1.8-test/kod 9; mırlamanın duyulduğu kullanıcı tarafından doğrulandı.
 - Öğretici bu APK'da yok. Henüz yeni paket veya telefon kurulumu yapılmadı.
 
-## Devam eden dilim
+## Tamamlanan dilimler
 
 Duraklatma ve telefon yaşam döngüsü tamamlandı: mola düğmesi, arka plana/fokus dışına geçişte mola, Android geri tuşu, canlı top/uyarı/kasa/oyuncak/kutlama durumunu bozmadan devam. 13 test geçti, pause_preview.gd çıktısı kontrol edildi. Fiziksel Android yaşam döngüsü denemesi yapılmadı.
 
+Yerel tamamlanma/en iyi süre kaydı tamamlandı. Menüde tamamlanan bölüm ve en iyi süre görünür; bölümler test amacıyla açık kaldı. Test/önizleme çalışmaları gerçek oyuncu kaydını değiştirmez. Başarı süresi kutlama ve mola süresini içermez; kayıplar başarı olarak kaydedilmez. Menü önizlemesi görsel olarak kontrol edildi.
+
+tests/run_checks.ps1 ile 14 kontrol birlikte çalıştırıldı ve hepsi geçti. Her kontrol için süre sınırı ve ayrı çıktı kaydı var. README ve Android test belgesi güncellendi. Bu yeni özellikler mevcut 0.1.8-test APK'sında yok; henüz paketlenmedi veya telefona kurulmadı.
+
 ## Sıradaki işler
 
-1. Duraklatmayı tüm testlerle doğrula; dokümanları güncelle ve yerel kaydet.
-2. Tamamlanan bölümleri/en iyi süreleri yerel sakla, menüde göster; testler gerçek kullanıcı kayıtlarını değiştirmesin. Bölümler test için açık kalacak.
-3. Tek komutla tüm kontrolleri çalıştıracak sınanmış kontrol düzeni; README ve Android belgesini güncel durumla eşitle.
-4. Yeniden nişan, hareketli hedef ve 4. bölümün açık atış yolu için kenar durum incelemeleri. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Yeniden nişan, hareketli hedef ve 4. bölümün açık atış yolu için kenar durum incelemeleri. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
+
+## Yerel kayıtlar
+
+- e88d37f: başlangıç güvenli kaydı.
+- 5f4f28e: mola/arka plan/geri tuşu, 13 test ve ekran kontrolü.

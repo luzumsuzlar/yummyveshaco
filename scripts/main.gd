@@ -32,6 +32,7 @@ const TOY_AREA := Rect2(100, 498, 340, 124)
 const SCATTER_BOUNDS := Rect2(82, 242, 376, 170)
 const TARGET_SPACING := 112.0
 const GAME_AUDIO := preload("res://scripts/game_audio.gd")
+const GAME_PROGRESS := preload("res://scripts/game_progress.gd")
 
 const LEVELS := [
 	{
@@ -205,11 +206,16 @@ var tutorial_touch_mode := OS.has_feature("android") or OS.has_feature("ios")
 var pause_button: Button
 var pause_panel: ColorRect
 var paused_from_state := "playing"
+var game_progress: Node
+var progress_labels: Array[Label] = []
+var new_time_record := false
 
 
 func _ready() -> void:
 	game_audio = GAME_AUDIO.new()
 	add_child(game_audio)
+	game_progress = GAME_PROGRESS.new()
+	add_child(game_progress)
 	rng.randomize()
 	for x_position in HOLE_BASE_X:
 		hole_positions.append(Vector2(float(x_position), HOLE_Y))
@@ -404,10 +410,13 @@ func build_level_menu() -> void:
 		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		name_label.size = Vector2(332, 48)
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var description := make_label(descriptions[index], 17, Color("856044"), Vector2(142, 62), Vector2(324, 56), card, true)
+		var description := make_label(descriptions[index], 16, Color("856044"), Vector2(142, 58), Vector2(324, 42), card, true)
 		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		description.size = Vector2(324, 56)
+		description.size = Vector2(324, 42)
+		var progress_text := make_label("", 14, Color("856044"), Vector2(142, 103), Vector2(324, 22), card)
+		progress_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		progress_labels.append(progress_text)
 	for item in [[YUMI_IDLE_ART, 158.0], [SHAKO_IDLE_ART, 282.0]]:
 		var character := TextureRect.new()
 		character.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -458,6 +467,9 @@ func show_level_menu() -> void:
 	for control in [title_label, level_label, code_label, status_label, instruction_label, next_label, ability_label, time_label, story_label, launch_button, bark_button, toy_button, restart_button, menu_button, overlay]:
 		control.hide()
 	level_menu.show()
+	for index in range(progress_labels.size()):
+		progress_labels[index].text = game_progress.summary(index)
+		progress_labels[index].add_theme_color_override("font_color", Color("2c6838") if game_progress.best_times.has(index) else Color("856044"))
 	tutorial_label.hide()
 	update_sound_button()
 	queue_redraw()
@@ -534,6 +546,7 @@ func start_level(new_level_index: int = level_index) -> void:
 	stage_from_positions.clear()
 	errors = 0
 	level_time = 0.0
+	new_time_record = false
 	tutorial_aim_done = false
 	tutorial_bark_done = false
 	tutorial_toy_done = false
@@ -1354,6 +1367,8 @@ func register_error(message: String) -> void:
 
 
 func finish_game(success: bool) -> void:
+	if success and game_state == "playing" and progress >= sequence.size():
+		new_time_record = game_progress.record_completion(level_index, level_time)
 	game_audio.update_sleep(false, 0.0)
 	scatter_state = ""
 	toy_button.hide()
@@ -1393,6 +1408,8 @@ func finish_game(success: bool) -> void:
 		overlay_button.text = "TEKRAR DENE"
 	overlay_subtitle.text += "\nGeçen süre: %.1f saniye · Doğru atış: %d/%d" % [level_time, progress, sequence.size()]
 	overlay_subtitle.text += "\nKalan havlama: %d · Yumi'nin yardımı: %d" % [barks_left, yumi_help_count]
+	if success and new_time_record:
+		overlay_subtitle.text += "\nYeni en iyi süren!"
 	update_interface()
 	update_sound_button()
 	queue_redraw()

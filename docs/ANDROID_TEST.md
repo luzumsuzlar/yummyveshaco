@@ -1,5 +1,7 @@
 # Android telefon denemesi
 
+11 Ekim 2026 güncel durum: 0.1.8-test (kod 9) bağlı Samsung telefona güncelleme olarak yüklendi ve açıldı; mırlamanın duyulduğu kullanıcı tarafından doğrulandı. Fare, 4. bölüm, bölüm menüsü, belirgin pati ve sesler bu pakette var. Yeni bağlamsal öğretici, mola/arka plan kontrolü ve en iyi süre kaydı yalnız yerel kaynakta; henüz APK'ya alınmadı veya telefona yüklenmedi. Aşağıdaki eski tarihli notlar geçmiş denemelerin kaydıdır.
+
 7 Ekim 2026: kıvrılmış uyku görseli v2, karakterler ve sahne derinliğini içeren 0.1.3-test paketi hazırlandı. Bağlı Samsung telefona mevcut uygulama kaldırılmadan yüklendi; sürüm kodu 4 doğrulandı, oyun açıldı ve başlangıç kayıtlarında hata görülmedi. Görsel yerleşimin telefondaki son değerlendirmesi kullanıcı denemesini bekliyor.
 
 1 Ekim 2026: test paketi bağlı Samsung SM-S938B telefona başarıyla kuruldu ve açıldı. Uygulama süreci çalışır durumda, Godot başlangıç kayıtlarında hata görülmedi. Bu kontrol dokunmatik oynanışın veya tüm bölüm akışının gerçek cihazda doğrulandığı anlamına gelmez.
@@ -10,8 +12,8 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan güncel sürüm: `0.1.4-test`, kod `5`; altı karelik Yumi yürüyüşü içerir. Bağlı telefon algılanmadı; bu paket henüz kurulmadı.
-- Son doğrulanan telefon kurulumu: `0.1.3-test`, kod `4` (karakter görselleri, kıvrılmış uyku pozu ve sahne derinliği).
+- Hazırlanan ve son yüklenen sürüm: `0.1.8-test`, kod `9`. Mırlama telefonda duyuldu olarak doğrulandı.
+- Yeni yerel özellikler henüz bu pakette değildir; kaynak yeniden paketlenirse sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
 - APK: `exports/android/yumi-sako-test.apk` (yaklaşık 39 MB)
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
@@ -39,5 +41,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 - İkinci parmak yanlışlıkla ek atış yapıyor mu?
 - İkinci bölümde duvar sekmesi çizgisi ve zorunlu sekme sayısı anlaşılır mı?
 - Uygulamadan çıkıp geri dönünce görüntü ve kontroller korunuyor mu?
+- Yeni mola sürümü yüklendikten sonra: telefon arka plana alınınca top/süre duruyor mu; geri dönünce DEVAM ET bekleniyor mu?
+- Yeni kayıt sürümü yüklendikten sonra: tamamlanan bölümün en iyi süresi uygulama yeniden açıldığında menüde duruyor mu?
 
 Bu sonuçlar kullanıcı denemesiyle kaydedilecek. Masaüstü sentetik dokunma testleri gerçek telefon ergonomisini kanıtlamaz.
