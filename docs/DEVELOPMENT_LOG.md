@@ -20,6 +20,8 @@ Yerel tamamlanma/en iyi süre kaydı tamamlandı. Menüde tamamlanan bölüm ve 
 
 tests/run_checks.ps1 ile 14 kontrol birlikte çalıştırıldı ve hepsi geçti. Her kontrol için süre sınırı ve ayrı çıktı kaydı var. README ve Android test belgesi güncellendi. Bu yeni özellikler mevcut 0.1.8-test APK'sında yok; henüz paketlenmedi veya telefona kurulmadı.
 
+Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, kasa dönüşü veya hedef karışması sırasında başlayan dokunuş, engel bittiğinde bırakılarak gecikmiş atış yapabiliyordu. Yeni dokunuş yalnız atıcı hazırken kurulabilir. Üç hatayı önce kırmızı testle doğruladık; düzeltmeden sonra yeni kontroller dahil 14 testin tamamı geçti. Atış hazır olma kuralı düğme, dokunma ve fırlatma için ortaklaştırıldı.
+
 ## Sıradaki işler
 
 1. Yeniden nişan, hareketli hedef ve 4. bölümün açık atış yolu için kenar durum incelemeleri. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
@@ -29,3 +31,4 @@ tests/run_checks.ps1 ile 14 kontrol birlikte çalıştırıldı ve hepsi geçti.
 
 - e88d37f: başlangıç güvenli kaydı.
 - 5f4f28e: mola/arka plan/geri tuşu, 13 test ve ekran kontrolü.
+- 1277569: yerel bölüm başarısı/en iyi süre, 14 kontrol çalıştırıcısı ve güncel belgeler.

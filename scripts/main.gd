@@ -756,7 +756,7 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 		if active_touch_index != -1 or not AIM_AREA.has_point(event.position):
 			return
 		active_touch_index = event.index
-		touch_can_launch = not ball_active
+		touch_can_launch = can_launch_ball()
 		touch_start_position = event.position
 		touch_start_angle = aim_angle
 	elif event.index == active_touch_index:
@@ -792,8 +792,12 @@ func required_wall_bounces() -> int:
 	return 2 if stage_index == 1 else 1
 
 
+func can_launch_ball() -> bool:
+	return game_state == "playing" and scatter_state == "" and not toy_selecting and not ball_active and shot_delay <= 0.0 and stage_rotation <= 0.0
+
+
 func launch_ball() -> void:
-	if game_state != "playing" or scatter_state != "" or toy_selecting or ball_active or shot_delay > 0.0 or stage_rotation > 0.0:
+	if not can_launch_ball():
 		return
 	touch_can_launch = false
 	ball_type = sequence[progress]
@@ -1442,9 +1446,7 @@ func update_interface() -> void:
 		else:
 			code_text += "%s  " % TYPE_SYMBOLS[sequence[index]]
 	code_label.text = code_text + "  %d/%d" % [progress, sequence.size()]
-	launch_button.disabled = game_state != "playing" or ball_active or shot_delay > 0.0 or stage_rotation > 0.0
-	launch_button.disabled = launch_button.disabled or toy_selecting
-	launch_button.disabled = launch_button.disabled or scatter_state != ""
+	launch_button.disabled = not can_launch_ball()
 	toy_button.visible = int(level_config().get("toy_budget", 0)) > 0 and game_state == "playing"
 	var has_toy := int(level_config().get("toy_budget", 0)) > 0
 	launch_button.size.x = 148.0 if has_toy else 224.0

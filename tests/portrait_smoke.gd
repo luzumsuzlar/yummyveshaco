@@ -127,6 +127,17 @@ func run_checks() -> void:
 	game.shot_delay = 0.0
 	touch(0, Vector2(270, 400), false)
 	check(not game.ball_active, "Gesture started in flight cannot launch next shot")
+	# A gesture begun while the launcher is blocked must not become a delayed shot.
+	for blocker in ["shot_delay", "stage_rotation", "scatter_state"]:
+		reset()
+		game.set(blocker, "return" if blocker == "scatter_state" else 0.5)
+		touch(0, Vector2(270, 400), true)
+		game.set(blocker, "" if blocker == "scatter_state" else 0.0)
+		touch(0, Vector2(270, 400), false)
+		check(not game.ball_active, "Blocked gesture cannot launch later: %s" % blocker)
+		touch(0, Vector2(270, 400), true)
+		touch(0, Vector2(270, 400), false)
+		check(game.ball_active, "Fresh gesture launches after blocker ends: %s" % blocker)
 	# Canceled/outside releases must never fire or poison the next gesture.
 	reset()
 	touch(0, Vector2(270, 400), true)
