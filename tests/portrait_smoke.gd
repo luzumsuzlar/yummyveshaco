@@ -149,6 +149,15 @@ func run_checks() -> void:
 	touch(0, Vector2(270, 400), true)
 	touch(0, Vector2(400, 900), false)
 	check(not game.ball_active and game.active_touch_index == -1, "Release over GUI cancels drag")
+	# The small sound/pause buttons overlap the aiming rectangle.
+	for button in [game.sound_button, game.pause_button]:
+		reset()
+		touch(0, Vector2(270, 400), true)
+		touch(0, button.position + button.size / 2, false)
+		check(not game.ball_active and game.active_touch_index == -1, "Release over in-field GUI cancels drag: %s" % button.text)
+		touch(0, Vector2(270, 400), true)
+		touch(0, Vector2(270, 400), false)
+		check(game.ball_active, "Gesture after in-field GUI release still launches: %s" % button.text)
 	# Test the actual GUI signal route with emulated touchscreen clicks.
 	reset()
 	game.last_pointer_position = Vector2(116, 250)

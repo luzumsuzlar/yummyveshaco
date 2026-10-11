@@ -40,6 +40,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 - HAV düğmesi uçuş sırasında kolay erişiliyor mu; topu düğmenin kendisine yönlendirmiyor mu?
 - İkinci parmak yanlışlıkla ek atış yapıyor mu?
 - Yeni dokunmatik düzeltmesi yüklendikten sonra: kasa dönüşü veya hedef karışması sırasında başlayan dokunuş, bekleme bitince bırakıldığında atış yapmıyor mu; yeni dokunuş normal atış yapıyor mu?
+- Nişan alanında başlayıp ses/mola düğmesi üzerinde biten sürükleme top atmadan iptal oluyor mu; ardından normal bir sürükleme çalışıyor mu? Düğmeye doğrudan basmak kendi işlevini koruyor mu?
 - İkinci bölümde duvar sekmesi çizgisi ve zorunlu sekme sayısı anlaşılır mı?
 - Uygulamadan çıkıp geri dönünce görüntü ve kontroller korunuyor mu?
 - Yeni mola sürümü yüklendikten sonra: telefon arka plana alınınca top/süre duruyor mu; geri dönünce DEVAM ET bekleniyor mu?

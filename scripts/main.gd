@@ -665,9 +665,18 @@ func _input(event: InputEvent) -> void:
 			toy_touch_index = -1
 	# A release over a GUI button must cancel, not leave an old drag armed.
 	if event is InputEventScreenTouch and event.index == active_touch_index and not event.pressed:
-		if event.canceled or not AIM_AREA.has_point(event.position) or game_state != "playing":
+		if event.canceled or not AIM_AREA.has_point(event.position) or pointer_over_action_button(event.position) or game_state != "playing":
 			active_touch_index = -1
 			touch_can_launch = false
+
+
+func pointer_over_action_button(position: Vector2) -> bool:
+	# Some HUD buttons sit inside AIM_AREA. Native touch and emulated mouse
+	# ordering must never turn a release over those buttons into a field shot.
+	for button in [launch_button, bark_button, toy_button, restart_button, menu_button, sound_button, pause_button]:
+		if is_instance_valid(button) and button.is_visible_in_tree() and button.get_global_rect().has_point(position):
+			return true
+	return false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -753,7 +762,7 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 				place_toy(event.position)
 		return
 	if event.pressed:
-		if active_touch_index != -1 or not AIM_AREA.has_point(event.position):
+		if active_touch_index != -1 or not AIM_AREA.has_point(event.position) or pointer_over_action_button(event.position):
 			return
 		active_touch_index = event.index
 		touch_can_launch = can_launch_ball()
@@ -763,7 +772,7 @@ func handle_touch(event: InputEventScreenTouch) -> void:
 		active_touch_index = -1
 		var should_launch := touch_can_launch
 		touch_can_launch = false
-		if should_launch and not event.canceled and AIM_AREA.has_point(event.position) and not ball_active:
+		if should_launch and not event.canceled and AIM_AREA.has_point(event.position) and not pointer_over_action_button(event.position) and not ball_active:
 			update_touch_aim(event.position)
 			launch_ball()
 

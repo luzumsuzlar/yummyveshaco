@@ -24,11 +24,22 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Yeniden nişan, hareketli hedef ve 4. bölümün açık atış yolu için kenar durum incelemeleri. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. 3. bölümün hareketli hedeflerinde ve Yumi müdahalesinde sınır durumları; gerekirse yanlış atış geri bildirimini iyileştir. 4. bölümde aşağıda kaydedilen gerçek atış kontrolleri tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
+
+## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
+
+Kullanım izinli olarak doğrulandı; sıfırlama hakkı/kredi kullanılmadı. Kullanıcının yeni yönlendirmesi yoktu.
+
+Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı bırakmak, alan atışı olarak işlenebiliyordu. Her iki düğmede hatayı önce başarısız testle doğruladık. Görünür eylem düğmelerinin alanı artık dokunmatik atıştan hariç; bu alanlara bırakılan hareket iptal edilir ve sonraki temiz dokunuş normal çalışır. Düzen veya ses tercihi değiştirilmedi.
+
+4. bölüm kontrolü genişletildi: 30/60/144 FPS ve her biri 20 rastgele tohumla 60 karışma düzeni; her düzende üç duran hedefe gerçek süpürülmüş top atışı (toplam 180). Yumi sabotajı ayrı kontrollerde sınandığından burada izole edildi. Üç hedefin de yasal nişan açısında ve başka hedefe takılmadan erişilebilirliği geçti. Bu ölçüm gerçek oyuncunun başarı oranı veya bölüm süresi iddiası değildir.
+
+14 toplu kontrolün tamamı geçti. scatter_preview.gd ile uyarı ve durmuş düzen ekranları üretildi, görsel olarak kontrol edildi. Telefon/GitHub/APK'ya dokunulmadı; ilişkisiz kullanıcı dosyaları korunuyor.
 
 ## Yerel kayıtlar
 
 - e88d37f: başlangıç güvenli kaydı.
 - 5f4f28e: mola/arka plan/geri tuşu, 13 test ve ekran kontrolü.
 - 1277569: yerel bölüm başarısı/en iyi süre, 14 kontrol çalıştırıcısı ve güncel belgeler.
+- 7b042e5: atıcı kapalıyken başlayan dokunuştan gecikmiş atışı önleme.

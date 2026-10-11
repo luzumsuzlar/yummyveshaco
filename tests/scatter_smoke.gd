@@ -42,6 +42,21 @@ func run_checks() -> void:
 					check(p.distance_to(game.hole_positions[other]) >= game.TARGET_SPACING - 0.1, "Targets rest separately")
 			game.update_holes()
 			check(positions == game.hole_positions, "Targets retain resting positions")
+			# Geometry alone is not enough: fire a real swept ball into all three
+			# resting targets, isolating only Yumi's independent sabotage.
+			for target_index in range(3):
+				game.progress = 0
+				game.sequence[0] = target_index
+				game.errors = 0
+				game.shot_delay = 0.0
+				var target: Vector2 = game.hole_positions[target_index]
+				game.update_mouse_aim(target)
+				var direct_angle := atan2(target.x - game.LAUNCH_POS.x, game.LAUNCH_POS.y - target.y)
+				check(is_equal_approx(game.aim_angle, direct_angle), "Resting target within legal aim: FPS %d seed %d target %d" % [fps, seed_value, target_index])
+				game.launch_ball()
+				game.ball_swatted = true
+				game.advance_ball_segment(2.0)
+				check(game.progress == 1 and game.errors == 0 and not game.ball_active, "Real shot reaches each resting target: FPS %d seed %d target %d" % [fps, seed_value, target_index])
 	game.start_level(3)
 	game.ball_active = true
 	game.begin_scatter()
