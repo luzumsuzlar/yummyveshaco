@@ -6,6 +6,7 @@ const HOLE_RADIUS := 48.0
 const HOLE_BASE_X := [116.0, 270.0, 424.0]
 const LAUNCH_POS := Vector2(270.0, 790.0)
 const BALL_RADIUS := 18.0
+const BALL_DROP_DURATION := 0.32
 const YUMI_HOME := Vector2(180.0, 510.0)
 const YUMI_MIN_X := 100.0
 const YUMI_MAX_X := 440.0
@@ -131,6 +132,10 @@ var ball_active := false
 var ball_position := LAUNCH_POS
 var ball_velocity := Vector2.ZERO
 var ball_type := 0
+var ball_drop_time := 0.0
+var ball_drop_hole := -1
+var ball_drop_type := 0
+var ball_drop_offset := Vector2.ZERO
 var ball_swatted := false
 var ball_deflected_by_yumi := false
 var shot_delay := 0.0
@@ -454,6 +459,8 @@ func draw_level_thumbnail(canvas: Control, index: int) -> void:
 
 
 func show_level_menu() -> void:
+	ball_drop_time = 0.0
+	ball_drop_hole = -1
 	pause_panel.hide()
 	game_audio.stop_all()
 	game_state = "menu"
@@ -561,6 +568,8 @@ func start_level(new_level_index: int = level_index) -> void:
 	tutorial_bark_time = 0.0
 	game_state = "playing"
 	ball_active = false
+	ball_drop_time = 0.0
+	ball_drop_hole = -1
 	ball_position = LAUNCH_POS
 	ball_velocity = Vector2.ZERO
 	ball_swatted = false
@@ -622,6 +631,10 @@ func start_level(new_level_index: int = level_index) -> void:
 
 
 func _process(delta: float) -> void:
+	# Cosmetic only: scoring and existing shot delays are unchanged. Pause freezes it.
+	if game_state not in ["paused", "menu"] and ball_drop_time > 0.0:
+		ball_drop_time = maxf(0.0, ball_drop_time - delta)
+		queue_redraw()
 	if game_state == "celebrating":
 		celebration_time += delta
 		var run_fraction := smoothstep(0.0, 1.0, clampf((celebration_time - 0.5) / 1.4, 0.0, 1.0))
@@ -1324,6 +1337,11 @@ func resolve_hole_hit(target_index: int = -1) -> void:
 		register_error("Top deliği ıskaladı!")
 		return
 
+	ball_drop_hole = nearest_hole
+	ball_drop_type = ball_type
+	ball_drop_offset = (ball_position - hole_positions[nearest_hole]).limit_length(HOLE_RADIUS - BALL_RADIUS - 8.0)
+	ball_drop_time = BALL_DROP_DURATION
+
 	if nearest_hole == ball_type and ball_type == sequence[progress]:
 		if wall_bounces < required_wall_bounces():
 			register_error("Doğru delik, ama en az %d duvar sekmesi gerekiyor!" % required_wall_bounces())
@@ -1651,8 +1669,13 @@ func draw_holes() -> void:
 		draw_soft_shadow(center + Vector2(3, 7), Vector2(HOLE_RADIUS + 8, HOLE_RADIUS + 5), 0.22)
 		draw_circle(center, HOLE_RADIUS + 5.0, TYPE_COLORS[index])
 		draw_circle(center, HOLE_RADIUS - 5.0, TYPE_DARK[index])
-		draw_circle(center + Vector2(0, 3), HOLE_RADIUS - 10.0, Color("352116"))
-		draw_circle(center + Vector2(0, 5), HOLE_RADIUS - 17.0, Color("241810"))
+		# Offset, nested cavity shading makes a recessed tunnel without new textures.
+		draw_circle(center + Vector2(0, 2), HOLE_RADIUS - 9.0, Color("38251d"))
+		for depth in range(7):
+			var fraction := float(depth) / 6.0
+			draw_circle(center + Vector2(1, 3 + fraction * 5), HOLE_RADIUS - 12.0 - fraction * 12.0, Color("302019").lerp(Color("090909"), fraction))
+		if ball_drop_time > 0.0 and ball_drop_hole == index:
+			draw_ball_drop(center)
 		# Inner upper lip is dark; the lower lip catches light from upper left.
 		draw_arc(center + Vector2(0, 3), HOLE_RADIUS - 9.0, PI, TAU, 32, Color("130f0d"), 5.0, true)
 		draw_arc(center, HOLE_RADIUS - 6.0, 0.15, PI - 0.15, 32, TYPE_DARK[index].lightened(0.25), 3.0, true)
@@ -1882,8 +1905,21 @@ func draw_bark_wave() -> void:
 	draw_string(font, LAUNCH_POS + Vector2(-55, -86), "HAV!", HORIZONTAL_ALIGNMENT_CENTER, 110, 28, Color("86f7ff"))
 
 
-func draw_ball(center: Vector2, type: int) -> void:
-	if not ball_active:
+func draw_ball_drop(hole_center: Vector2) -> void:
+	var fraction := clampf(1.0 - ball_drop_time / BALL_DROP_DURATION, 0.0, 1.0)
+	var eased := smoothstep(0.0, 1.0, fraction)
+	var center := hole_center + ball_drop_offset * (1.0 - eased) + Vector2(2, 7) * eased
+	var scale_factor := lerpf(1.0, 0.06, eased)
+	draw_set_transform(center, fraction * 0.65, Vector2.ONE * scale_factor)
+	draw_ball(Vector2.ZERO, ball_drop_type, false)
+	draw_circle(Vector2.ZERO, BALL_RADIUS + 1.0, Color(0.035, 0.035, 0.035, eased * 0.95))
+	draw_set_transform(Vector2.ZERO)
+	# A subtle mouth ripple, drawn under the front rim rather than over the HUD.
+	draw_arc(hole_center, HOLE_RADIUS - 11.0 + fraction * 4.0, 0.2, PI - 0.2, 32, Color(1, 0.86, 0.64, (1.0 - fraction) * 0.3), 1.5, true)
+
+
+func draw_ball(center: Vector2, type: int, with_shadow: bool = true) -> void:
+	if not ball_active and with_shadow:
 		draw_soft_shadow(center + Vector2(4, 8), Vector2(20, 8), 0.22)
 	draw_circle(center + Vector2(1, 2), BALL_RADIUS + 1.0, TYPE_DARK[type])
 	draw_circle(center, BALL_RADIUS, TYPE_COLORS[type])

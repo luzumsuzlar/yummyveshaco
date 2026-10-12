@@ -49,13 +49,15 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 ## Kontrol testi
 
-Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 19 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
+Deliklerin içi katmanlı gölgeyle derinleştirildi; giren top 0,32 saniyede küçülüp kararıyor. Bu görsel değişiklik henüz yeni APK'ya alınmadı; telefondaki 0.1.9 sürümünde yok. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
+
+Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 20 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
 Yeni APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). 12 Ekim'de kullanıcı onayıyla mevcut uygulama kaldırılmadan telefona güncellendi; ekran kilitli olduğundan gerçek oynanış denemesi bekliyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
 
 APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.9-test.apk'`. Yeni paket geçti; eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 19 oyun testinden ayrıdır.
 
-Tüm 19 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez.
+Tüm 20 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez.
 
 Yanlış deliğe girince gerçek ve beklenen sembol belirtilir; kayıp ekranı son hatanın nedenini korur. `res://tests/interaction_smoke.gd` hareketli hedefe tahminli gerçek atışları, Yumi'nin önceden uyarı vermesini, tek atışta bir pati sınırını, havlamayla iptali ve yardım/hata ayrımını kontrol eder.
 

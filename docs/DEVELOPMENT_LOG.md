@@ -131,3 +131,11 @@ ANDROID_TEST.md içindeki eskimiş güncel sürüm/yeniden üretme notları düz
 Kullanıcı telefon bağlı ardından açık başla dedi; önceki bağımsız çalışma yerine telefon yükleme isteği uygulandı. Tek yetkili bağlı Samsung SM-S938B seçildi. Asıl 0.1.9-test APK içerik/manifest/imza kontrolünden tekrar geçti, install -r Success döndü. Önceki kod 9/sürüm 0.1.8, güncellemeden sonra kod 10/sürüm 0.1.9 doğrulandı. Uninstall/clear yapılmadı; kayıtların içerikleri okunmadı veya tek tek doğrulanmadı.
 
 Başlatma isteği Status ok, oyun süreci mevcut. Sürece ait incelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi. Telefon KeyguardShowing=true/AodShowing=true olduğundan gerçek render/oynanış doğrulanmadı; ekran kilidi değiştirilmedi, kullanıcıya kilidi açıp denemesi söylendi. Sonraki adım kullanıcı denemesi/geri bildirimi; kullanıcı dönmüş olduğundan yeni bağımsız geliştirmeye otomatik devam etme. GitHub gönderimi yok, kaynak kullanıcı dosyaları korunuyor.
+
+## Kullanıcı isteği — 12 Ekim 2026, delik derinliği ve düşme
+
+Kullanıcı deliklere biraz derinlik/düşme efekti istedi ve başla dedi. Kod tabanlı çizimde iç boşluk yedi gölge katmanıyla derinleştirildi; mevcut kenar ışığı/ön dudak korunuyor. Doğru veya yanlış deliğe giren top 0,32 saniyede iç merkeze çekilip küçülüyor, hafif dönüyor ve kararıyor. Efekt hedefin güncel çizim merkezini izler; ön dudak efektin önünde çizilir. Yeni raster varlık veya kurulum yok.
+
+Puanlama anı, çarpışma yarıçapı 48, hedef konumları, bölüm kuralları ve mevcut 0,45/0,55 saniyelik atış aralıkları değişmedi. Mola efekti dondurur; son doğru atış kutlamayla birlikte tamamlanır. Menü/yeni bölüm eski efekti temizler, ıskalama düşme üretmez. Yanlış delikte hata puanı normal işlenir; efekt ceza beklemesi eklemez.
+
+Mevcut 19 oyun testi ve yeni hole_drop_smoke.gd geçti (20 toplam; yeni kontrol çalıştırıcıya eklendi). Yeni test doğru/yanlış/son giriş, puan/atış aralığı/yarıçap korunması, mola/devam, menü/yeniden başlatma ve ıskalamayı doğruluyor. hole_drop_preview.gd ile derinlik ve üç düşme anı üretildi; normal görünüm ile ilk/orta düşme kareleri görsel olarak kontrol edildi. Kullanıcı dosyaları, APK'lar, telefon ve GitHub değişmedi. Bu değişiklik yerel kaynakta; kullanıcı telefon güncellemesi isterse yeni sürüm kodlu APK hazırlanmalı.
