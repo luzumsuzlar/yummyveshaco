@@ -1,6 +1,6 @@
 # Android telefon denemesi
 
-12 Ekim 2026 güncel durum: temiz 0.1.9-test (kod 10) APK yerelde hazır; telefona kurulmadı. Telefonda son yüklenen/onaylanan sürüm 0.1.8-test (kod 9), mırlama kullanıcı tarafından duyuldu. Öğretici, mola ve ilerleme kaydı yeni yerel APK'da var, telefonda henüz yok. Aşağıdaki eski tarihli notlar geçmiş denemelerin kaydıdır.
+12 Ekim 2026 güncel durum: kullanıcı telefon bağlı ve başla dedi; temiz 0.1.9-test (kod 10) APK Samsung SM-S938B telefona install -r ile başarıyla güncellendi. Öncesinde 0.1.8-test/kod 9, sonrasında 0.1.9-test/kod 10 doğrulandı. Uygulama kaldırılmadı veya verileri temizlenmedi. Başlatma isteği başarılı ve oyun süreci mevcut; ekran kilidi/AOD açık olduğu için gerçek oyun görüntüsü ve oynanış henüz doğrulanmadı. İncelenen sürece ait başlangıç kayıtlarında SCRIPT ERROR/FATAL EXCEPTION/kaynak yükleme hatası görülmedi; bu tam cihaz testinin yerine geçmez. Mırlamanın kullanıcı tarafından duyulduğu önceki onay 0.1.8 sürümüne aittir. Aşağıdaki eski tarihli notlar geçmiş denemelerin kaydıdır.
 
 7 Ekim 2026: kıvrılmış uyku görseli v2, karakterler ve sahne derinliğini içeren 0.1.3-test paketi hazırlandı. Bağlı Samsung telefona mevcut uygulama kaldırılmadan yüklendi; sürüm kodu 4 doğrulandı, oyun açıldı ve başlangıç kayıtlarında hata görülmedi. Görsel yerleşimin telefondaki son değerlendirmesi kullanıcı denemesini bekliyor.
 
@@ -12,7 +12,7 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan yerel sürüm: `0.1.9-test`, kod `10`. Son yüklenen telefon sürümü: `0.1.8-test`, kod `9`.
+- Hazırlanan ve son yüklenen telefon sürümü: `0.1.9-test`, kod `10`. Telefon oynanış/ergonomi kontrolü bekliyor.
 - Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri yerel 0.1.9 pakettedir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
 - APK: `exports/android/yumi-sako-0.1.9-test.apk` (yaklaşık 36,7 MB). Eski `yumi-sako-test.apk` korunuyor ama referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.

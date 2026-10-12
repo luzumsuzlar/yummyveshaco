@@ -125,3 +125,9 @@ Akış exports/android/yumi-sako-0.1.9-rebuild-check.apk adlı ayrı test çıkt
 Asıl 0.1.9 APK SHA256 83F180E6B9D669B05A8FE6033CF5448D4E545BA04B4D72831E340765BFD05E40 ve eski APK SHA256 DF9E65EC90830F4026AFC984A2D2C12E155908DD9D46E4C5599F5CEF0920BFC5 aynı kaldı. Rebuild deneme çıktısı ayrı tutuldu, yeni önerilen telefon paketi hâlâ yumi-sako-0.1.9-test.apk.
 
 ANDROID_TEST.md içindeki eskimiş güncel sürüm/yeniden üretme notları düzeltildi; beş öncelikli fiziksel kontrol ve raporlama bilgileri eklendi. Önceki paket PCK'sinin dördüncü bölüm ekranı görsel olarak kontrol edildi; yeni oyun/görsel davranış olmadığından tekrar ekran üretimi yapılmadı. package_preview.gd.uid Godot tarafından üretilip yerel kayda dahil edildi. Telefon/GitHub ve kullanıcı dosyaları değişmedi. Yerel hazırlık tamamlandı; cihaz ergonomisi ve gerçek yaşam döngüsü hâlâ kullanıcı denemesi bekliyor.
+
+## Kullanıcı döndü — 12 Ekim 2026, telefon güncellemesi
+
+Kullanıcı telefon bağlı ardından açık başla dedi; önceki bağımsız çalışma yerine telefon yükleme isteği uygulandı. Tek yetkili bağlı Samsung SM-S938B seçildi. Asıl 0.1.9-test APK içerik/manifest/imza kontrolünden tekrar geçti, install -r Success döndü. Önceki kod 9/sürüm 0.1.8, güncellemeden sonra kod 10/sürüm 0.1.9 doğrulandı. Uninstall/clear yapılmadı; kayıtların içerikleri okunmadı veya tek tek doğrulanmadı.
+
+Başlatma isteği Status ok, oyun süreci mevcut. Sürece ait incelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi. Telefon KeyguardShowing=true/AodShowing=true olduğundan gerçek render/oynanış doğrulanmadı; ekran kilidi değiştirilmedi, kullanıcıya kilidi açıp denemesi söylendi. Sonraki adım kullanıcı denemesi/geri bildirimi; kullanıcı dönmüş olduğundan yeni bağımsız geliştirmeye otomatik devam etme. GitHub gönderimi yok, kaynak kullanıcı dosyaları korunuyor.

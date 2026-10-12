@@ -51,7 +51,7 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 19 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
-Yeni yerel APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). Telefona yüklenmedi; telefon hâlâ 0.1.8-test kullanıyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
+Yeni APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). 12 Ekim'de kullanıcı onayıyla mevcut uygulama kaldırılmadan telefona güncellendi; ekran kilitli olduğundan gerçek oynanış denemesi bekliyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
 
 APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.9-test.apk'`. Yeni paket geçti; eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 19 oyun testinden ayrıdır.
 
