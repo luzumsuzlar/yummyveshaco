@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Temiz yerel 0.1.9-test/kod 10 APK üretildi ve içerik/PCK ekran kontrolleri geçti; ayrıntılar docs/PACKAGING_AUDIT.md. Kullanıcı dönene kadar telefon kurulumu/GitHub gönderimi yok. Sonraki dilimde bu paket için tekrar üretilebilir hazırlama/doğrulama adımını ve fiziksel test kontrol listesini toparla; sırf süre doldurmak için zorluk veya yeni mekanik ekleme.
+1. Temiz yerel 0.1.9-test/kod 10 APK, hazırlama/doğrulama betiği ve fiziksel test listesi tamamlandı. Kullanıcı dönene kadar telefon kurulumu/GitHub gönderimi yok. Aynı paketi sırf devam ediyor görünmek için yeniden üretme. Sonraki öncelik gerçek Android açılış/dokunma/mola/kayıt/ses denemesi; yeni somut hata bulgusu veya kullanıcı geri bildirimi olmadan zorluk ve mekanik değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -115,3 +115,13 @@ Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirm
 Yeni APK 128 ZIP girdisiyle geçti: yasak referanslar/tablo/test/çıktı yolları yok, üç oyun betiği ve yedi gerekli doku var. APK imzalama doğrulaması tamamlandı; sürüm/package/arm64 manifestten okundu. Audit koruması gerekli kaynak kontrolleriyle genişletildi. Aynı ayarlı PCK kaynak projesinden ayrı açıldı; dört bölüm, mola ve menü üretildi, ilk bölüm/mola/menü görsel olarak kontrol edildi. 19 oyun testi geçti. PCK masaüstü kontrolü Android APK çalıştırma iddiası değildir.
 
 Yeni dosya exports/android/yumi-sako-0.1.9-test.apk; boyut/hash PACKAGING_AUDIT.md içinde. Telefon/GitHub değişmedi. Godot'un bu taramada ürettiği oyun/test .gd.uid yan dosyaları yerel kaynak kaydına dahil edildi; kullanıcı dosyaları korunuyor. Fiziksel Android denemesi hâlâ kullanıcı dönünce yapılmalı.
+
+## Saatlik devam — 12 Ekim 2026, 07:39 Türkiye
+
+Kullanım izinli; pencere kendiliğinden yenilenmiş, sıfırlama/kredi kullanılmadı. Yeni kullanıcı yönlendirmesi yok. tests/prepare_android.ps1 eklendi: varsayılan salt okunur APK içerik/manifest/imza kontrolü; açık -Build seçeneğiyle 19 oyun testi sonrası yeni bir dosyaya yerel export. Mevcut APK üstüne yazma ve exports/android dışına hedef seçme reddedildiği test edildi. Hatalı/kısmi paket onaylı sayılmaz; betik kurulum, upload, uygulama silme veya preset değişikliği yapmaz.
+
+Akış exports/android/yumi-sako-0.1.9-rebuild-check.apk adlı ayrı test çıktısıyla uçtan uca sınandı: 19 oyun testi, export, 128 girdi/üç betik/yedi doku ve sürüm/kod/ARM64 kontrolleri geçti. İlk ayrı apksigner.bat denemesi terminal Java ortamı bulunmadığından çalışamadı; Godot'un mevcut Android Studio jbr/java.exe yolu kullanılarak imza doğrulaması geçti, global/oturum JAVA_HOME/PATH değiştirilmedi. Aynı doğrudan Java çağrısı hazırlama betiğine eklendi; hem asıl 0.1.9 hem rebuild paketi son betikle doğrulandı. Bu yeniden üretilebilir işlem adımıdır, bit düzeyinde deterministik build iddiası değildir.
+
+Asıl 0.1.9 APK SHA256 83F180E6B9D669B05A8FE6033CF5448D4E545BA04B4D72831E340765BFD05E40 ve eski APK SHA256 DF9E65EC90830F4026AFC984A2D2C12E155908DD9D46E4C5599F5CEF0920BFC5 aynı kaldı. Rebuild deneme çıktısı ayrı tutuldu, yeni önerilen telefon paketi hâlâ yumi-sako-0.1.9-test.apk.
+
+ANDROID_TEST.md içindeki eskimiş güncel sürüm/yeniden üretme notları düzeltildi; beş öncelikli fiziksel kontrol ve raporlama bilgileri eklendi. Önceki paket PCK'sinin dördüncü bölüm ekranı görsel olarak kontrol edildi; yeni oyun/görsel davranış olmadığından tekrar ekran üretimi yapılmadı. package_preview.gd.uid Godot tarafından üretilip yerel kayda dahil edildi. Telefon/GitHub ve kullanıcı dosyaları değişmedi. Yerel hazırlık tamamlandı; cihaz ergonomisi ve gerçek yaşam döngüsü hâlâ kullanıcı denemesi bekliyor.

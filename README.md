@@ -45,9 +45,11 @@ Komut satırından:
 
 Sıcak mutfak, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri sığ derinlik verir. Yumi'nin normal, kıvrılmış uyku ve pati pozları ile Şako'nun temel görseli oyuna bağlıdır. Yürüyüş altı kareden oluşur; sola aynalanır, dikey/çapraz yönlere özel kareler henüz yoktur. Pati hazırlığı, gövde hamlesi ve temas efekti çizim katmanındadır. Atış, sekme, pati, kilit açma ve mırlama sesleri vardır; müzik ve gerçek hayvan kaydı yoktur.
 
-Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistemi yoktur. Henüz yarım denemeyi uygulama tamamen kapandıktan sonra sürdürme yoktur. Son telefon/dağıtım APK'sı 0.1.8-test (kod 9); mırlama kullanıcı tarafından duyuldu olarak doğrulandı. Yeni öğretici, mola ve ilerleme kaydı henüz bu APK'ya alınmadı veya telefona yüklenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir. Bağımsız geliştirme günlüğü: `docs/DEVELOPMENT_LOG.md`.
+Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistemi yoktur. Henüz yarım denemeyi uygulama tamamen kapandıktan sonra sürdürme yoktur. Telefonda son yüklenen sürüm 0.1.8-test (kod 9); mırlama kullanıcı tarafından duyuldu. Öğretici, mola ve ilerleme kaydı yeni yerel 0.1.9-test APK'sında var ama telefona yüklenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir. Bağımsız geliştirme günlüğü: `docs/DEVELOPMENT_LOG.md`.
 
 ## Kontrol testi
+
+Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 19 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
 Yeni yerel APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). Telefona yüklenmedi; telefon hâlâ 0.1.8-test kullanıyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
 

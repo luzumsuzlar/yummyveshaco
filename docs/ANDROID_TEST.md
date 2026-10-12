@@ -1,6 +1,6 @@
 # Android telefon denemesi
 
-11 Ekim 2026 güncel durum: 0.1.8-test (kod 9) bağlı Samsung telefona güncelleme olarak yüklendi ve açıldı; mırlamanın duyulduğu kullanıcı tarafından doğrulandı. Fare, 4. bölüm, bölüm menüsü, belirgin pati ve sesler bu pakette var. Yeni bağlamsal öğretici, mola/arka plan kontrolü ve en iyi süre kaydı yalnız yerel kaynakta; henüz APK'ya alınmadı veya telefona yüklenmedi. Aşağıdaki eski tarihli notlar geçmiş denemelerin kaydıdır.
+12 Ekim 2026 güncel durum: temiz 0.1.9-test (kod 10) APK yerelde hazır; telefona kurulmadı. Telefonda son yüklenen/onaylanan sürüm 0.1.8-test (kod 9), mırlama kullanıcı tarafından duyuldu. Öğretici, mola ve ilerleme kaydı yeni yerel APK'da var, telefonda henüz yok. Aşağıdaki eski tarihli notlar geçmiş denemelerin kaydıdır.
 
 7 Ekim 2026: kıvrılmış uyku görseli v2, karakterler ve sahne derinliğini içeren 0.1.3-test paketi hazırlandı. Bağlı Samsung telefona mevcut uygulama kaldırılmadan yüklendi; sürüm kodu 4 doğrulandı, oyun açıldı ve başlangıç kayıtlarında hata görülmedi. Görsel yerleşimin telefondaki son değerlendirmesi kullanıcı denemesini bekliyor.
 
@@ -12,10 +12,10 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan ve son yüklenen sürüm: `0.1.8-test`, kod `9`. Mırlama telefonda duyuldu olarak doğrulandı.
-- Yeni yerel özellikler henüz bu pakette değildir; kaynak yeniden paketlenirse sürüm kodunu artırın.
+- Hazırlanan yerel sürüm: `0.1.9-test`, kod `10`. Son yüklenen telefon sürümü: `0.1.8-test`, kod `9`.
+- Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri yerel 0.1.9 pakettedir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
-- APK: `exports/android/yumi-sako-test.apk` (yaklaşık 39 MB)
+- APK: `exports/android/yumi-sako-0.1.9-test.apk` (yaklaşık 36,7 MB). Eski `yumi-sako-test.apk` korunuyor ama referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
 
 Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı; yeni kurulum veya global ayar değişikliği yapılmadı. Android için ETC2/ASTC doku içe aktarımı proje ayarında açıldı. APK, Git tarafından yok sayılan `exports/` altında tutulur.
@@ -24,8 +24,12 @@ Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı
 
 Godot kullanıcı ayarlarında mevcut Android SDK, Java ve debug keystore yolları tanımlı olmalıdır. Depodaki export ayarı keystore parolası içermez.
 
+Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular. -Build ile önce 19 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
+
 ```powershell
-& "D:\Works\Tetris\Godot\Godot_v4.7.2-stable_win64_console.exe" --headless --path "D:\Works\kedikopek" --export-debug "Android Test" "D:\Works\kedikopek\exports\android\yumi-sako-test.apk"
+& .\tests\prepare_android.ps1
+# Yeni, daha önce var olmayan yerel dosyaya tekrar üretme:
+& .\tests\prepare_android.ps1 -Build -ApkPath 'exports/android/yumi-sako-yeni-deneme.apk'
 ```
 
 USB hata ayıklama için telefonun kullanıcı tarafından yetkilendirilmiş olması gerekir. Bağlı cihaz kimliğini `adb devices -l` ile seçin; birden çok cihaz varsa hedefi açıkça belirtin. Sonraki güncellemelerde aynı imzayla `adb -s <telefon-kimliği> install -r <apk-yolu>` uygulama verilerini koruyarak yükler. İmza uyuşmazlığında uygulamayı kendiliğinden kaldırmayın; önce verilerin korunmasını değerlendirin.
@@ -33,6 +37,16 @@ USB hata ayıklama için telefonun kullanıcı tarafından yetkilendirilmiş olm
 Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 
 ## Oyuncu kontrol listesi
+
+Öncelikli kısa tur (henüz cihazda yapılmadı):
+
+1. Kullanıcı kurulum istediğinde 0.1.9-test/kod 10 güncellemesini mevcut uygulamayı kaldırmadan kur; imza uyuşmazlığında dur. Dikey görünüm ve menüden dört bölüme giriş kontrolü yap.
+2. Birinci bölümde dokunmanın nişanı sıçratmadığını, sürükleme/bırakmanın tek atış yaptığını ve ikinci parmağın ekstra atış yapmadığını dene.
+3. Top uçarken uygulamayı arka plana al ve dön: top/süre mola halinde kalmalı, DEVAM ET ile sürmeli. Eski dokunuş bırakması atış yapmamalı. Aynısını ekran kilidi ve Android geri tuşuyla dene.
+4. Bir bölümü bitir; uygulamayı kapatıp açınca başarı/en iyi süre görünmeli. Yarım deneme uygulama tamamen kapanınca devam etmez; bu şu an desteklenmiyor. Test için uygulama verilerini silme.
+5. Ses açıkken uyuyan Yumi'nin mırlamasını dinle; mola ve kayıpta eski sesler kesilmeli. SES kapalı tercihi uygulama yeniden açılınca korunmalı.
+
+Sonucu cihaz modeli, sürüm, adım numarası, beklenen/görülen davranış ve varsa ekran görüntüsüyle kaydet. Hiçbir adım otomatik test geçti diye cihazda geçti sayılmaz. Ardından aşağıdaki ayrıntılı turu tamamla.
 
 - Telefon dikeyken hedefler, metinler, AT ve HAV düğmeleri rahat görünüyor mu?
 - Yeni menü kartlarında, özellikle dördüncü bölüm tamamlandıktan sonra açıklama ve en iyi süre birbirinden rahat ayrılıyor mu?
