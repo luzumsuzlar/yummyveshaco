@@ -45,17 +45,17 @@ Komut satırından:
 
 Sıcak mutfak, ahşap dolap, krem paneller ve ayrı hedef simgeleri kullanılır. Temas gölgeleri sığ derinlik verir. Yumi'nin normal, kıvrılmış uyku ve pati pozları ile Şako'nun temel görseli oyuna bağlıdır. Yürüyüş altı kareden oluşur; sola aynalanır, dikey/çapraz yönlere özel kareler henüz yoktur. Pati hazırlığı, gövde hamlesi ve temas efekti çizim katmanındadır. Atış, sekme, pati, kilit açma ve mırlama sesleri vardır; müzik ve gerçek hayvan kaydı yoktur.
 
-Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistemi yoktur. Henüz yarım denemeyi uygulama tamamen kapandıktan sonra sürdürme yoktur. Telefonda son yüklenen sürüm 0.1.8-test (kod 9); mırlama kullanıcı tarafından duyuldu. Öğretici, mola ve ilerleme kaydı yeni yerel 0.1.9-test APK'sında var ama telefona yüklenmedi. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir. Bağımsız geliştirme günlüğü: `docs/DEVELOPMENT_LOG.md`.
+Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistemi yoktur. Henüz yarım denemeyi uygulama tamamen kapandıktan sonra sürdürme yoktur. Telefonda son yüklenen sürüm 0.1.10-test (kod 11); öğretici, mola, kayıt ve delik düşme efekti bu pakettedir. Mırlamanın duyulduğuna ilişkin önceki kullanıcı onayı 0.1.8 sürümüne aittir. Android yönergeleri `docs/ANDROID_TEST.md`, görsel kaynaklar `docs/ART_DIRECTION.md` ve `docs/CHARACTER_ART.md` içindedir. Bağımsız geliştirme günlüğü: `docs/DEVELOPMENT_LOG.md`.
 
 ## Kontrol testi
 
-Deliklerin içi katmanlı gölgeyle derinleştirildi; giren top 0,32 saniyede küçülüp kararıyor. Bu görsel değişiklik henüz yeni APK'ya alınmadı; telefondaki 0.1.9 sürümünde yok. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
+Deliklerin içi katmanlı gölgeyle derinleştirildi; giren top 0,32 saniyede küçülüp kararıyor. 0.1.10-test sürümüyle telefona yüklendi; görünüm/etki değerlendirmesi kullanıcı denemesini bekliyor. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
 
 Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 20 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
-Yeni APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). 12 Ekim'de kullanıcı onayıyla mevcut uygulama kaldırılmadan telefona güncellendi; ekran kilitli olduğundan gerçek oynanış denemesi bekliyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
+Yeni APK: `exports/android/yumi-sako-0.1.10-test.apk` (kod 11). 12 Ekim'de kullanıcı onayıyla mevcut uygulama kaldırılmadan telefona güncellendi ve başlatıldı. Eski APK'lar korunuyor; `yumi-sako-test.apk` kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
 
-APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.9-test.apk'`. Yeni paket geçti; eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 19 oyun testinden ayrıdır.
+APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.10-test.apk'`. Yeni paket geçti; ilk eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 20 oyun testinden ayrıdır.
 
 Tüm 20 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez.
 

@@ -139,3 +139,9 @@ Kullanıcı deliklere biraz derinlik/düşme efekti istedi ve başla dedi. Kod t
 Puanlama anı, çarpışma yarıçapı 48, hedef konumları, bölüm kuralları ve mevcut 0,45/0,55 saniyelik atış aralıkları değişmedi. Mola efekti dondurur; son doğru atış kutlamayla birlikte tamamlanır. Menü/yeni bölüm eski efekti temizler, ıskalama düşme üretmez. Yanlış delikte hata puanı normal işlenir; efekt ceza beklemesi eklemez.
 
 Mevcut 19 oyun testi ve yeni hole_drop_smoke.gd geçti (20 toplam; yeni kontrol çalıştırıcıya eklendi). Yeni test doğru/yanlış/son giriş, puan/atış aralığı/yarıçap korunması, mola/devam, menü/yeniden başlatma ve ıskalamayı doğruluyor. hole_drop_preview.gd ile derinlik ve üç düşme anı üretildi; normal görünüm ile ilk/orta düşme kareleri görsel olarak kontrol edildi. Kullanıcı dosyaları, APK'lar, telefon ve GitHub değişmedi. Bu değişiklik yerel kaynakta; kullanıcı telefon güncellemesi isterse yeni sürüm kodlu APK hazırlanmalı.
+
+## Kullanıcı isteği — 12 Ekim 2026, düşme efektini telefona yükleme
+
+Kullanıcı telefon bağlı ardından başla dedi. Sürüm 0.1.10-test/kod 11 olarak artırıldı, yeni dosya exports/android/yumi-sako-0.1.10-test.apk üretildi; eski APK'lar üstüne yazılmadı. Hazırlama akışında 20 toplu oyun testi, 128 ZIP girdisi/üç betik/yedi doku, manifest ve imza kontrolü geçti. APK SHA256 E20B121D74B9653B7BFCB7AA5168B4E27F000A5104B87924AE307AE664C212DC.
+
+Tek yetkili bağlı Samsung SM-S938B'ye açık seri hedefiyle install -r Success döndü. Öncesinde 0.1.9/kod 10, sonrasında 0.1.10/kod 11 doğrulandı. Başlatma Status ok/LaunchState COLD, süreç ve Godot Engine başlangıcı mevcut. İncelenen sürece ait kayıtlarda script/fatal/kaynak yükleme hatası görülmedi. Uninstall/clear veya kullanıcı profili okuma yapılmadı; veri koruyan güncelleme yolu kullanıldı ama kayıt içeriği tek tek doğrulanmadı. Kullanıcı gerçek düşme hissini deneyecek. GitHub ve ilişkisiz kullanıcı dosyaları değişmedi.
