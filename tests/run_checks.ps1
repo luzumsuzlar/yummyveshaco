@@ -10,6 +10,7 @@ $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $logRoot = Join-Path $projectRoot 'exports\check-logs'
 New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
 $checks = @(
+	'memory_smoke',
 	'menu_pagination_smoke',
 	'progress_expansion_smoke',
 	'hole_drop_smoke',

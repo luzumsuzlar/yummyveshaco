@@ -112,6 +112,24 @@ const LEVELS := [
 		"scatter_targets": true,
 		"intro": "Yumi hedeflere göz dikti! Karışınca durmalarını bekle, yeni düzene nişan al.",
 	},
+	{
+		"name": "5 · GİZLİ ŞİFRE",
+		"menu_description": "Yumi şifreyi kapatır.\nSembolü hatırla, deliği hedefle.",
+		"sequence": [0, 2, 1, 1, 0, 2, 0, 1],
+		"memory_preview": 2.5,
+		"ball_speed": 460.0,
+		"yumi_speed": 72.0,
+		"yumi_active": false,
+		"move_directions": 2,
+		"turn_min": 2.4,
+		"turn_max": 3.6,
+		"vertical_range": 0.0,
+		"pause_chance": 0.0,
+		"dash_chance": 0.0,
+		"deflection_range": 120.0,
+		"moving_holes": false,
+		"intro": "Sembolü hatırla! Yumi 2,5 saniye sonra kapatır; nişan ve atış serbest.",
+	},
 ]
 
 var rng := RandomNumberGenerator.new()
@@ -119,6 +137,7 @@ var hole_positions: Array[Vector2] = []
 var sequence: Array[int] = []
 var level_index := 0
 var level_time := 0.0
+var memory_preview_left := 0.0
 var progress := 0
 var stage_index := 0
 var stage_rotation := 0.0
@@ -615,6 +634,7 @@ func start_level(new_level_index: int = level_index) -> void:
 	tutorial_toy_done = false
 	tutorial_bark_time = 0.0
 	game_state = "playing"
+	memory_preview_left = float(config.get("memory_preview", 0.0))
 	ball_active = false
 	ball_drop_time = 0.0
 	ball_drop_hole = -1
@@ -696,6 +716,11 @@ func _process(delta: float) -> void:
 	if game_state != "playing":
 		return
 
+	# Only ready-to-aim time consumes the clue. Pause, flight and cooldown don't.
+	if can_launch_ball() and memory_preview_left > 0.0:
+		memory_preview_left = maxf(0.0, memory_preview_left - delta)
+		if memory_preview_left == 0.0 and memory_clue_hidden():
+			status_label.text = "Yumi şifreyi kapattı! Hatırladığın deliğe atış yap."
 	level_time += delta
 	tutorial_bark_time = maxf(0.0, tutorial_bark_time - delta)
 	stage_rotation = maxf(0.0, stage_rotation - delta)
@@ -723,7 +748,7 @@ func _process(delta: float) -> void:
 	update_yumi_walk(delta, previous_yumi_position.distance_to(yumi_position))
 	if ball_active:
 		move_ball(delta)
-	game_audio.update_sleep(game_state == "playing" and not yumi_is_active(), delta)
+	game_audio.update_sleep(game_state == "playing" and not yumi_is_active() and not is_memory_level(), delta)
 	update_interface()
 	queue_redraw()
 
@@ -1414,6 +1439,7 @@ func resolve_hole_hit(target_index: int = -1) -> void:
 		if lucky_yumi_goal:
 			yumi_help_count += 1
 		progress += 1
+		memory_preview_left = float(level_config().get("memory_preview", 0.0))
 		ball_active = false
 		bark_available = false
 		shot_delay = 0.45
@@ -1449,6 +1475,8 @@ func resolve_hole_hit(target_index: int = -1) -> void:
 
 
 func progress_hint() -> String:
+	if is_memory_level():
+		return "Yeni sembolü hatırla! Yumi birazdan kapatacak."
 	if bool(level_config().get("scatter_targets", false)):
 		return "Yeni düzene göre %s hedefle." % TYPE_NAMES[sequence[progress]]
 	if level_index == 0:
@@ -1464,6 +1492,7 @@ func register_error(message: String) -> void:
 	bark_available = false
 	yumi_warning_timer = 0.0
 	shot_delay = 0.55
+	memory_preview_left = float(level_config().get("memory_preview", 0.0))
 	errors += 1
 	status_flash = 0.5
 	status_label.text = message
@@ -1535,6 +1564,14 @@ func on_overlay_button_pressed() -> void:
 		start_level(level_index)
 
 
+func is_memory_level() -> bool:
+	return float(level_config().get("memory_preview", 0.0)) > 0.0
+
+
+func memory_clue_hidden() -> bool:
+	return is_memory_level() and memory_preview_left <= 0.0 and not ball_active and progress < sequence.size()
+
+
 func update_interface() -> void:
 	update_tutorial()
 	level_label.text = str(level_config()["name"])
@@ -1548,9 +1585,9 @@ func update_interface() -> void:
 		if index < progress:
 			code_text += "✓  "
 		elif index == progress and game_state == "playing":
-			code_text += "[%s]  " % TYPE_SYMBOLS[sequence[index]]
+			code_text += "[?]  " if memory_clue_hidden() else "[%s]  " % TYPE_SYMBOLS[sequence[index]]
 		else:
-			code_text += "%s  " % TYPE_SYMBOLS[sequence[index]]
+			code_text += "?  " if is_memory_level() else "%s  " % TYPE_SYMBOLS[sequence[index]]
 	code_label.text = code_text + "  %d/%d" % [progress, sequence.size()]
 	launch_button.disabled = not can_launch_ball()
 	toy_button.visible = int(level_config().get("toy_budget", 0)) > 0 and game_state == "playing"
@@ -1561,6 +1598,8 @@ func update_interface() -> void:
 	toy_button.disabled = game_state != "playing" or toys_left <= 0 or toy_active
 	toy_button.text = "FARE AKTİF" if toy_active else ("VAZGEÇ" if toy_selecting else "FARE  %d/2" % toys_left)
 	instruction_label.text = "FARE: yer seç · Sürükle, bırak: atış" if has_toy else "Sürükle, bırak: atış · HAV!: müdahale"
+	if is_memory_level():
+		instruction_label.text = "Sembolü hatırla · Sürükle, bırak: atış"
 	if toy_active:
 		instruction_label.text = "Yumi oyalandı · Sürükle, bırak: atış"
 	bark_button.disabled = game_state != "playing" or not ball_active or not bark_available
@@ -1571,6 +1610,9 @@ func update_interface() -> void:
 			story_label.text = "HEDEF: EN AZ %d SEKME + DOĞRU DELİK" % required_wall_bounces()
 		next_label.text = "Sıradaki:\n%s  %s" % [TYPE_SYMBOLS[sequence[progress]], TYPE_NAMES[sequence[progress]]]
 		next_label.add_theme_color_override("font_color", TYPE_DARK[sequence[progress]])
+		if memory_clue_hidden():
+			next_label.text = "Yumi kapattı:\n?  HATIRLA"
+			next_label.add_theme_color_override("font_color", INK)
 		if stage_rotation > 0.0:
 			ability_label.text = "KASA DÖNÜYOR..."
 			ability_label.add_theme_color_override("font_color", Color("865315"))
@@ -1602,6 +1644,9 @@ func update_interface() -> void:
 		elif level_index == 3 and scatter_count > 0 and not ball_active:
 			ability_label.text = "ATIŞ HAZIR\nSürükle, bırak" if can_launch_ball() else "ATIŞ HAZIRLANIYOR\nBirazdan hazır"
 			ability_label.add_theme_color_override("font_color", Color("2c6838") if can_launch_ball() else Color("865315"))
+		if is_memory_level() and not ball_active:
+			ability_label.text = "ŞİFRE GİZLİ\nAtış serbest" if memory_clue_hidden() else "AKLINDA TUT\n%.1f sn görünür" % memory_preview_left
+			ability_label.add_theme_color_override("font_color", Color("684a86"))
 
 
 func tutorial_hint() -> String:
@@ -1855,7 +1900,7 @@ func draw_paw_impact(motion: Dictionary) -> void:
 
 func draw_yumi() -> void:
 	var p := yumi_position
-	var sleeping := not yumi_is_active() and game_state == "playing"
+	var sleeping := not yumi_is_active() and game_state == "playing" and not is_memory_level()
 	var art := yumi_art_texture()
 	var reaching := art == YUMI_PAW_ART
 	var walking := art == YUMI_WALK_ART
@@ -1885,6 +1930,8 @@ func draw_yumi() -> void:
 		draw_circle(p + Vector2(0, -108), 22, INK)
 		draw_string(font, p + Vector2(-20, -96), "!", HORIZONTAL_ALIGNMENT_CENTER, 40, 34, Color("ffcf5a"))
 	var yumi_caption := "YUMI · Zzz" if sleeping else "YUMI"
+	if is_memory_level() and memory_clue_hidden():
+		yumi_caption = "ŞİFRE BENİM!"
 	if toy_active:
 		yumi_caption = "YAKALADIM!" if toy_feedback()["phase"] == "play" else "FARE BENİM!"
 	elif yumi_is_active() and ball_active and ball_type == 2 and not ball_swatted:
@@ -1897,6 +1944,8 @@ func draw_yumi() -> void:
 
 
 func yumi_art_texture() -> Texture2D:
+	if is_memory_level() and game_state == "playing":
+		return YUMI_PAW_ART if memory_clue_hidden() else YUMI_IDLE_ART
 	if scatter_state == "warning" or (scatter_state == "scatter" and scatter_timer > 1.72):
 		return YUMI_PAW_ART
 	if not yumi_is_active() and game_state == "playing":
@@ -1953,7 +2002,12 @@ func draw_shako_launcher() -> void:
 	draw_circle(muzzle, 18, Color("9db8cf"))
 	draw_shako_face(LAUNCH_POS + Vector2(0, 18))
 	if not ball_active and game_state == "playing" and progress < sequence.size():
-		draw_ball(muzzle + direction * 7.0, sequence[progress])
+		if memory_clue_hidden():
+			var covered_ball := muzzle + direction * 7.0
+			draw_circle(covered_ball, BALL_RADIUS, Color("d4c2dd"))
+			draw_string(ThemeDB.fallback_font, covered_ball + Vector2(-12, 7), "?", HORIZONTAL_ALIGNMENT_CENTER, 24, 20, INK)
+		else:
+			draw_ball(muzzle + direction * 7.0, sequence[progress])
 
 
 func aim_preview_points() -> Array[Vector2]:

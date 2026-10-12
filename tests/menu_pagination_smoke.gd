@@ -30,13 +30,15 @@ func run_checks() -> void:
 	root.add_child(game)
 	game.set_process(false)
 	await process_frame
-	check(not game.menu_next_button.visible and not game.menu_page_label.visible, "Four-level menu retains its original layout")
-	check(game.menu_characters[0].visible, "Four-level menu retains characters")
-	# UI-only fixtures: no fifth level is claimed playable, no real profile is used.
-	for index in range(4, 9):
+	check(game.menu_next_button.visible and game.menu_page_label.text == "1 / 2", "Five-level roster exposes page navigation")
+	check(not game.menu_characters[0].visible, "Characters do not overlap page controls")
+	# UI-only fixtures beyond the actual roster; no real profile is used.
+	for index in range(game.LEVELS.size(), 9):
 		var card: Button = game.add_level_menu_card(index, {"name": "%d · DENEME KARTI" % (index + 1)})
 		card.pressed.disconnect(game.start_level.bind(index))
 		card.pressed.connect(func(): selected_fixture = index)
+	game.level_cards[4].pressed.disconnect(game.start_level.bind(4))
+	game.level_cards[4].pressed.connect(func(): selected_fixture = 4)
 	game.show_level_menu()
 	await process_frame
 	check(game.menu_page == 0 and game.menu_page_label.text == "1 / 3", "Nine cards form three pages")

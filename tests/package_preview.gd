@@ -25,7 +25,7 @@ func verify_pack() -> void:
 		game.free()
 		quit(1)
 		return
-	for level in range(4):
+	for level in range(game.LEVELS.size()):
 		game.start_level(level)
 		if game.hole_positions.size() != 3 or game.KITCHEN_BACKGROUND.get_width() < 500:
 			failures += 1

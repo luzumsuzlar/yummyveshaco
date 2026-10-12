@@ -23,7 +23,7 @@ func run_checks() -> void:
 	game.set_process(false)
 	await process_frame
 	check(game.game_state == "menu" and game.level_menu.visible, "Normal launch opens level menu")
-	check(game.level_cards.size() == 4, "All four levels are available")
+	check(game.level_cards.size() == game.LEVELS.size(), "All defined levels are available")
 	for card in game.level_cards:
 		check(Rect2(Vector2.ZERO, game.SCREEN_SIZE).encloses(card.get_rect()), "Cards fit portrait display")
 		check(card.size.y >= 48, "Cards have finger-sized hit areas")
@@ -43,12 +43,14 @@ func run_checks() -> void:
 	game._process(5.0)
 	game.launch_ball()
 	check(game.level_time == old_time and not game.ball_active, "Menu does not run game or launch balls")
-	for index in range(4):
+	for index in range(game.LEVELS.size()):
 		game.level_cards[index].pressed.emit()
 		check(game.level_index == index and game.game_state == "playing" and not game.level_menu.visible, "Card opens correct level")
 		check(game.menu_button.visible and game.restart_button.visible, "Playing exposes navigation")
 		game.menu_button.pressed.emit()
 		check(game.game_state == "menu" and not game.launch_button.visible, "Return hides gameplay controls")
+	game.start_level(0)
+	game.show_level_menu()
 	click(Vector2(250, 710), true)
 	click(Vector2(250, 710), false)
 	check(game.level_index == 3 and game.game_state == "playing" and not game.ball_active, "Real card click opens fourth level without shooting")
@@ -98,7 +100,7 @@ func run_checks() -> void:
 		check(game.toys_left == 2 and not game.toy_selecting, "Next attempt gets clean toy state")
 	# Exercise all result buttons through GUI, including last -> first.
 	# Completion is forced here only to isolate navigation, not prove playability.
-	for index in range(4):
+	for index in range(game.LEVELS.size()):
 		game.start_level(index)
 		game.progress = game.sequence.size()
 		game.level_time = 70.0 + index
@@ -107,7 +109,7 @@ func run_checks() -> void:
 		check(game.game_state == "success" and game.overlay.visible, "Each completion opens its result screen")
 		click(game.overlay_button.position + game.overlay_button.size / 2, true)
 		click(game.overlay_button.position + game.overlay_button.size / 2, false)
-		check(game.level_index == (index + 1) % 4 and game.game_state == "playing", "Actual result click advances or wraps to first level")
+		check(game.level_index == (index + 1) % game.LEVELS.size() and game.game_state == "playing", "Actual result click advances or wraps to first level")
 		check(not game.ball_active and not game.overlay.visible and not game.pause_panel.visible, "Transition click cannot launch a shot or keep an old modal")
 		check(game.progress == 0 and game.errors == 0 and game.barks_left == 3, "Each next level resets attempt and bark budget")
 		check(game.toys_left == (2 if game.level_index == 2 else 0), "Next level applies its own toy budget")

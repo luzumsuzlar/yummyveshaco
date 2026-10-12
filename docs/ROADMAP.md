@@ -31,9 +31,9 @@ Hazırlık, pati, dönüş ve sakinleşme okunabilir olsun. Üçüncü bölümde
 
 Hareketli/karışmış deliklerde ve Yumi'nin sektirdiği toplarda düşüş kontrolü; yönlere uygun yürüyüş; pati ve ses geçişleri. Kullanıcı tarafından onaylanmış görünümü gerekçesiz değiştirme. Yeni ses veya efekt aynı anda eklenip eski sorunu gizlememeli. Her değişiklik kaynak testleri + görsel kontrol, ardından kullanıcı istediğinde cihaz denemesi görmeli.
 
-## 5. Beşinci bölüm — henüz başlanmadı
+## 5. Beşinci bölüm — yerel hafıza prototipi
 
-Kayıt ve portre menü altyapısı hazır: bölüm sayısı dinamik, dört kartlık sayfalar ek kartları taşır. Beşinci oynanabilir bölüm henüz eklenmedi; önizlemedeki deneme kartı oynanış kanıtı değildir.
+Kayıt ve portre menü altyapısı hazır: bölüm sayısı dinamik, dört kartlık sayfalar ek kartları taşır. Gizli Şifre yerel kaynakta beşinci bölüm olarak açılır; APK'ya alınmadı. Tek yeni kural, hazır atışta 2,5 saniye görünen sembolün gizlenmesi. Delikler sabit, Yumi topa müdahale etmiyor. LEVEL_5_DESIGN.md kapsamı ve test ölçütlerini açıklar. İnsan hafıza başarısı/zorluk ve gerçek telefon denemesi bekliyor.
 
 İlk dört bölümün önemli giriş/tempo sorunları çözülmeden uygulanmayacak. Tek bir büyük Yumi yaramazlığı etrafında tasarla; iki top, yeni top türü ve hareketli delik kurallarını aynı anda ekleme. Önce kısa tasarım ve mevcut kurallardan farkı netleştir, ardından prototip/test.
 

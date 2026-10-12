@@ -37,7 +37,7 @@ func run_checks() -> void:
 	root.add_child(game)
 	game.set_process(false)
 	await process_frame
-	for level in range(4):
+	for level in range(game.LEVELS.size()):
 		game.start_level(level)
 		game.shot_delay = 0.0
 		touch(Vector2(270, 400), true)
