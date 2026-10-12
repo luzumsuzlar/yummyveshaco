@@ -1535,7 +1535,7 @@ func finish_game(success: bool) -> void:
 			overlay_subtitle.text = "%s tamamlandı. Sıradaki bölüm yeni bir kural ekliyor." % str(level_config()["name"])
 			overlay_button.text = "SONRAKİ BÖLÜM"
 		else:
-			overlay_subtitle.text = "Dört bölümlük prototip tamamlandı. Şako kilidi açtı; Yumi hâlâ masum görünüyor."
+			overlay_subtitle.text = "%d bölümlük prototip tamamlandı. Şako kilidi açtı; Yumi hâlâ masum görünüyor." % LEVELS.size()
 			overlay_button.text = "BAŞA DÖN"
 	else:
 		game_state = "failed"

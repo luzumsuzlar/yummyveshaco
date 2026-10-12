@@ -17,6 +17,11 @@ func capture() -> void:
 	game.pause_game()
 	await save_preview(game, "paused")
 	game.resume_game()
+	game.progress = game.sequence.size()
+	game.level_time = 58.0
+	game.finish_game(true)
+	game._process(2.3)
+	await save_preview(game, "fifth-success")
 	game.show_level_menu()
 	await save_preview(game, "fifth-menu")
 	game.free()

@@ -21,6 +21,16 @@ func capture() -> void:
 	game.game_progress.recovered_from_backup = true
 	game.show_level_menu()
 	await save_preview(game, "recovered-menu")
+	game.game_progress.recovered_from_backup = false
+	game.start_level(4)
+	game.progress = game.sequence.size()
+	game.level_time = 58.0
+	game.game_progress.unsaved_changes = true
+	game.finish_game(true)
+	game._process(2.3)
+	await save_preview(game, "fifth-unsaved-result")
+	game.show_level_menu()
+	await save_preview(game, "fifth-unsaved-menu")
 	game.free()
 	quit()
 
