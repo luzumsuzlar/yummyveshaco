@@ -8,6 +8,7 @@ func capture() -> void:
 	root.add_child(game)
 	game.set_process(false)
 	game.start_level(2)
+	game.shot_delay = 0.0
 	DirAccess.make_dir_recursive_absolute("res://exports/toy-preview")
 	game.toggle_toy_selection()
 	await save_preview(game, "selection")
@@ -15,6 +16,21 @@ func capture() -> void:
 	game.move_yumi(0.3)
 	game.update_yumi_walk(0.3, 48.6)
 	await save_preview(game, "chase")
+	game.yumi_position = game.toy_position - Vector2(0, 50)
+	game.yumi_position.x -= 8.0
+	game.move_yumi(0.1)
+	game.yumi_velocity = Vector2.ZERO
+	game.yumi_walk_moving = false
+	game.toy_time_left = 4.0
+	game.toy_play_left = 2.5
+	game.update_interface()
+	await save_preview(game, "playing")
+	game.toy_play_left = 0.7
+	game.update_interface()
+	await save_preview(game, "expiring")
+	game.move_yumi(0.8)
+	game.update_interface()
+	await save_preview(game, "expired")
 	game.free()
 	quit()
 

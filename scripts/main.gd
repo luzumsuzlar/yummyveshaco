@@ -1106,13 +1106,26 @@ func place_toy(position: Vector2) -> void:
 	yumi_warning_timer = 0.0
 	yumi_warning_started = false
 	yumi_swipe_flash = 0.0
-	status_label.text = "Yumi fareye gidiyor! Şimdi atış fırsatı."
+	status_label.text = "Yumi fareye gidiyor! Şimdi atış fırsatı." if can_launch_ball() else ("Yumi fareye gidiyor; top uçuşta." if ball_active else "Yumi fareye gidiyor; yeni atış hazırlanıyor.")
 	update_interface()
 	queue_redraw()
 
 
+func toy_feedback() -> Dictionary:
+	# Read-only presentation of the existing travel / play timers.
+	# Travel can end early on arrival, so it is not shown as a fixed countdown.
+	if not toy_active:
+		return {"phase": "inactive", "remaining": 0.0, "fraction": 0.0}
+	var arrived := yumi_position.distance_to(toy_position - Vector2(0, 50)) <= 5.0
+	if not arrived:
+		return {"phase": "travel", "remaining": toy_time_left, "fraction": 1.0}
+	var remaining := minf(toy_time_left, toy_play_left)
+	return {"phase": "play", "remaining": remaining, "fraction": clampf(remaining / 2.5, 0.0, 1.0)}
+
+
 func move_yumi(delta: float) -> void:
 	if toy_active:
+		var was_travelling: bool = toy_feedback()["phase"] == "travel"
 		toy_time_left = maxf(0.0, toy_time_left - delta)
 		# The chosen point is on the floor; Yumi's origin is above her feet.
 		var destination := toy_position - Vector2(0, 50)
@@ -1129,6 +1142,8 @@ func move_yumi(delta: float) -> void:
 			toy_active = false
 			choose_yumi_direction(true)
 			status_label.text = "Yumi fareyi bıraktı, tekrar topun peşinde!"
+		elif was_travelling and toy_feedback()["phase"] == "play":
+			status_label.text = "Yumi fareyi yakaladı! Süre bitmeden nişan al." if can_launch_ball() else "Yumi fareyi yakaladı, bir süre oyalanacak."
 		return
 	if not yumi_is_active():
 		yumi_velocity = Vector2.ZERO
@@ -1544,8 +1559,10 @@ func update_interface() -> void:
 	bark_button.position.x = 372.0 if has_toy else 288.0
 	bark_button.size.x = 140.0 if has_toy else 224.0
 	toy_button.disabled = game_state != "playing" or toys_left <= 0 or toy_active
-	toy_button.text = "VAZGEÇ" if toy_selecting else "FARE  %d/2" % toys_left
+	toy_button.text = "FARE AKTİF" if toy_active else ("VAZGEÇ" if toy_selecting else "FARE  %d/2" % toys_left)
 	instruction_label.text = "FARE: yer seç · Sürükle, bırak: atış" if has_toy else "Sürükle, bırak: atış · HAV!: müdahale"
+	if toy_active:
+		instruction_label.text = "Yumi oyalandı · Sürükle, bırak: atış"
 	bark_button.disabled = game_state != "playing" or not ball_active or not bark_available
 	bark_button.text = "HAV!  %d/3" % barks_left
 
@@ -1557,6 +1574,14 @@ func update_interface() -> void:
 		if stage_rotation > 0.0:
 			ability_label.text = "KASA DÖNÜYOR..."
 			ability_label.add_theme_color_override("font_color", Color("865315"))
+		elif toy_active:
+			var feedback := toy_feedback()
+			if feedback["phase"] == "travel":
+				var shot_hint := "Atış hazır" if can_launch_ball() else ("Top uçuyor" if ball_active else "Atış hazırlanıyor")
+				ability_label.text = "FAREYE GİDİYOR\n%s" % shot_hint
+			else:
+				ability_label.text = "FAREYLE OYNUYOR\n%.1f sn kaldı" % float(feedback["remaining"])
+			ability_label.add_theme_color_override("font_color", Color("9c502a") if feedback["phase"] == "play" and float(feedback["remaining"]) <= 1.0 else Color("684a86"))
 		elif ball_active:
 			ability_label.text = "HAV! düğmesi / E" if bark_available else "Bu atışta HAV yok"
 			ability_label.add_theme_color_override("font_color", Color("2c6838") if bark_available else Color("856d53"))
@@ -1669,7 +1694,14 @@ func draw_toy() -> void:
 	draw_circle(p + Vector2(10, -10), 7, Color("e8c6d8"))
 	draw_circle(p + Vector2(16, -2), 2, INK)
 	draw_circle(p + Vector2(23, 3), 3, Color("c87992"))
-	draw_arc(p, 32, 0, TAU, 32, Color(0.6, 0.4, 0.75, 0.4), 2, true)
+	var feedback := toy_feedback()
+	draw_arc(p, 32, 0, TAU, 32, Color(0.6, 0.4, 0.75, 0.25), 2, true)
+	if feedback["phase"] == "play":
+		var ring_color := Color("d78538") if float(feedback["remaining"]) <= 1.0 else Color("9a70b8")
+		draw_arc(p, 32, -PI / 2, -PI / 2 + TAU * float(feedback["fraction"]), 40, ring_color, 4, true)
+	else:
+		# Attention pulse, not a misleading six-second promise.
+		draw_arc(p, 32 + sin(level_time * 6.0) * 2.0, 0, TAU, 32, Color("9a70b8"), 3, true)
 
 
 func draw_cupboard() -> void:
@@ -1854,7 +1886,7 @@ func draw_yumi() -> void:
 		draw_string(font, p + Vector2(-20, -96), "!", HORIZONTAL_ALIGNMENT_CENTER, 40, 34, Color("ffcf5a"))
 	var yumi_caption := "YUMI · Zzz" if sleeping else "YUMI"
 	if toy_active:
-		yumi_caption = "FARE BENİM!"
+		yumi_caption = "YAKALADIM!" if toy_feedback()["phase"] == "play" else "FARE BENİM!"
 	elif yumi_is_active() and ball_active and ball_type == 2 and not ball_swatted:
 		yumi_caption = "YUMAK BENİM!"
 	if game_state == "celebrating":

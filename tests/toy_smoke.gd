@@ -42,6 +42,13 @@ func run_checks() -> void:
 	game.handle_touch(touch(0, Vector2(400, 500), true))
 	game.handle_touch(touch(0, Vector2(400, 500), false))
 	check(game.toy_active and game.toys_left == 1 and not game.ball_active, "Release places without launching")
+	check(game.toy_feedback()["phase"] == "travel", "Travel has a distinct visual phase")
+	check(game.ability_label.text.contains("FAREYE GİDİYOR") and game.ability_label.text.contains("Atış hazır"), "Travel exposes current shot readiness")
+	check(game.toy_button.text == "FARE AKTİF" and game.toy_button.disabled, "Active toy is distinct from remaining charges")
+	game.shot_delay = 0.1
+	game.update_interface()
+	check(game.ability_label.text.contains("Atış hazırlanıyor") and game.launch_button.disabled, "Cooldown cannot advertise a ready shot")
+	game.shot_delay = 0.0
 	game.yumi_warning_timer = 0.01
 	game.ball_active = true
 	game.ball_type = 2
@@ -53,9 +60,30 @@ func run_checks() -> void:
 	var distance: float = game.yumi_position.distance_to(destination)
 	game.move_yumi(0.1)
 	check(game.yumi_position.distance_to(destination) < distance, "Toy overrides yarn pursuit")
+	game.yumi_position = destination - Vector2(8, 0)
+	game.move_yumi(0.1)
+	check(game.status_label.text.contains("yakaladı"), "Arrival replaces the stale travel message")
+	game.toy_time_left = 4.0
+	game.toy_play_left = 2.5
+	game.ball_active = false
+	game.update_interface()
+	check(game.toy_feedback()["phase"] == "play" and game.ability_label.text.contains("2.5 sn kaldı"), "Arrival shows actual play time, not the total travel cap")
+	game.toy_time_left = 0.7
+	game.update_interface()
+	check(is_equal_approx(game.toy_feedback()["remaining"], 0.7), "Earlier total timeout limits displayed play time")
+	check(game.ability_label.text.contains("0.7 sn kaldı"), "Last-second feedback reflects the limiting timer")
+	var feedback: Dictionary = game.toy_feedback()
+	game.pause_game()
+	game._process(20.0)
+	check(game.toy_feedback() == feedback, "Pause freezes toy and its feedback")
+	game.resume_game()
+	game.toy_time_left = 4.0
 	for step in range(45):
 		game.move_yumi(0.1)
 	check(not game.toy_active, "Distraction expires and patrol resumes")
+	game.update_interface()
+	check(game.toy_feedback()["phase"] == "inactive" and game.toy_button.text == "FARE  1/2", "Expiry removes the active feedback and restores charge count")
+	check(not game.ability_label.text.contains("FAREYLE"), "Expired timer cannot linger in the ability panel")
 	game.ball_active = false
 	game.toggle_toy_selection()
 	game.place_toy(Vector2(120, 550))

@@ -23,6 +23,8 @@ Tamamlanma: dört bölümün deneme kayıtları var; en belirgin sorun seçildi 
 
 ## 3. Yumi ve oyuncak fare — ikinci aşamanın ardından
 
+Yerel kaynakta fareye gidiş ve fareyle oyun ayrı gösteriliyor; yakaladıktan sonra gerçek kalan süre ve tükenen halka var. Süre/iki kullanım hakkı değişmedi. Otomatik ve portre görsel kontrol geçti; oyuncunun açıklamasız anlayıp anlamadığı fiziksel denemede bekliyor.
+
 Hazırlık, pati, dönüş ve sakinleşme okunabilir olsun. Üçüncü bölümde fareye verilen tepki oyuncunun bilinçli olarak yararlanabildiği bir davranış olsun. Önce mevcut oyalama davranışını dene; işe yaramadığı nokta görülürse değiştir. HAV şimdilik genişletilmeyecek. Oyuncu ne olduğunu açıklama almadan anlatabiliyorsa bu aşama başarılıdır.
 
 ## 4. Görsel/ses tutarlılığı
