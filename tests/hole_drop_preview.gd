@@ -13,7 +13,7 @@ func capture() -> void:
 	game.ball_type = game.sequence[0]
 	game.ball_position = game.hole_positions[game.ball_type] + Vector2(0, 20)
 	game.resolve_hole_hit(game.ball_type)
-	for phase in [0.04, 0.16, 0.28]:
+	for phase in [0.04, 0.16, 0.30, 0.36, 0.42]:
 		game.ball_drop_time = game.BALL_DROP_DURATION - phase
 		await save_frame(game, "drop-%d" % int(phase * 100))
 	game.free()

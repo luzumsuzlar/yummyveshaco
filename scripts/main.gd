@@ -6,7 +6,7 @@ const HOLE_RADIUS := 48.0
 const HOLE_BASE_X := [116.0, 270.0, 424.0]
 const LAUNCH_POS := Vector2(270.0, 790.0)
 const BALL_RADIUS := 18.0
-const BALL_DROP_DURATION := 0.32
+const BALL_DROP_DURATION := 0.44
 const YUMI_HOME := Vector2(180.0, 510.0)
 const YUMI_MIN_X := 100.0
 const YUMI_MAX_X := 440.0
@@ -1907,15 +1907,45 @@ func draw_bark_wave() -> void:
 
 func draw_ball_drop(hole_center: Vector2) -> void:
 	var fraction := clampf(1.0 - ball_drop_time / BALL_DROP_DURATION, 0.0, 1.0)
-	var eased := smoothstep(0.0, 1.0, fraction)
-	var center := hole_center + ball_drop_offset * (1.0 - eased) + Vector2(2, 7) * eased
-	var scale_factor := lerpf(1.0, 0.06, eased)
-	draw_set_transform(center, fraction * 0.65, Vector2.ONE * scale_factor)
-	draw_ball(Vector2.ZERO, ball_drop_type, false)
-	draw_circle(Vector2.ZERO, BALL_RADIUS + 1.0, Color(0.035, 0.035, 0.035, eased * 0.95))
-	draw_set_transform(Vector2.ZERO)
+	var pose := ball_drop_pose(fraction)
+	var center: Vector2 = hole_center + pose["offset"]
+	var radius: float = BALL_RADIUS * pose["scale"]
+	var mouth_radius := HOLE_RADIUS - 10.0
+	var cut_y := hole_center.y + sqrt(maxf(0.0, mouth_radius * mouth_radius - pow(center.x - hole_center.x, 2)))
+	# Keep the sphere's size; the front of the opening hides it from bottom up.
+	draw_drop_disc(center + Vector2(1, 1), radius + 1.0, cut_y, TYPE_DARK[ball_drop_type])
+	draw_drop_disc(center, radius, cut_y, TYPE_COLORS[ball_drop_type])
+	draw_drop_disc(center + Vector2(2, 4), radius * 0.72, cut_y, TYPE_DARK[ball_drop_type].lightened(0.16))
+	if center.y + radius * 0.65 < cut_y:
+		draw_type_icon(center, ball_drop_type, radius * 0.6, TYPE_DARK[ball_drop_type])
+	draw_drop_disc(center + Vector2(-6, -7) * pose["scale"], radius * 0.18, cut_y, Color(1, 1, 1, 0.8))
+	draw_drop_disc(center, radius + 1.0, cut_y, Color(0.04, 0.03, 0.02, float(pose["depth"]) * 0.22))
 	# A subtle mouth ripple, drawn under the front rim rather than over the HUD.
 	draw_arc(hole_center, HOLE_RADIUS - 11.0 + fraction * 4.0, 0.2, PI - 0.2, 32, Color(1, 0.86, 0.64, (1.0 - fraction) * 0.3), 1.5, true)
+
+
+func ball_drop_pose(fraction: float) -> Dictionary:
+	var entry := smoothstep(0.0, 0.22, fraction)
+	var fall := clampf((fraction - 0.22) / 0.78, 0.0, 1.0)
+	return {"offset": ball_drop_offset.lerp(Vector2(0, -8), entry) + Vector2(0, 86 * fall * fall), "scale": lerpf(1.0, 0.84, fall), "depth": fall}
+
+
+func draw_drop_disc(center: Vector2, radius: float, cut_y: float, color: Color) -> void:
+	# Clip each sphere layer against the foreground mouth, not a fade-to-black.
+	var polygon := PackedVector2Array()
+	var previous := center + Vector2(radius, 0)
+	for point in range(1, 49):
+		var angle := TAU * float(point) / 48.0
+		var current := center + Vector2(cos(angle), sin(angle)) * radius
+		var previous_inside := previous.y <= cut_y
+		var current_inside := current.y <= cut_y
+		if previous_inside != current_inside:
+			polygon.append(previous.lerp(current, (cut_y - previous.y) / (current.y - previous.y)))
+		if current_inside:
+			polygon.append(current)
+		previous = current
+	if polygon.size() >= 3:
+		draw_colored_polygon(polygon, color)
 
 
 func draw_ball(center: Vector2, type: int, with_shadow: bool = true) -> void:

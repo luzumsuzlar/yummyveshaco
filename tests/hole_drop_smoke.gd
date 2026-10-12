@@ -22,6 +22,12 @@ func run_checks() -> void:
 	check(game.progress == 1 and game.errors == 0, "Goal still scores immediately")
 	check(is_equal_approx(game.shot_delay, 0.45), "Drop adds no shot delay")
 	check(game.ball_drop_time == game.BALL_DROP_DURATION, "Goal starts drop")
+	var early: Dictionary = game.ball_drop_pose(0.22)
+	var middle: Dictionary = game.ball_drop_pose(0.7)
+	var late: Dictionary = game.ball_drop_pose(1.0)
+	check(float(middle["scale"]) > 0.85 and float(late["scale"]) >= 0.83, "Sphere does not shrink away")
+	check(middle["offset"].y > early["offset"].y and late["offset"].y > middle["offset"].y, "Fall moves visibly downward")
+	check(late["offset"].y - game.BALL_RADIUS * float(late["scale"]) > game.HOLE_RADIUS - 10.0, "Sphere finishes below foreground opening")
 	check(game.hole_positions == original_positions and game.HOLE_RADIUS == 48.0, "Visual depth leaves targets unchanged")
 	game._process(0.08)
 	var paused_time: float = game.ball_drop_time
@@ -29,7 +35,7 @@ func run_checks() -> void:
 	game._process(1.0)
 	check(game.ball_drop_time == paused_time, "Pause freezes falling ball")
 	game.resume_game()
-	game._process(0.4)
+	game._process(0.5)
 	check(game.ball_drop_time == 0.0, "Drop ends after resume")
 	game.start_level(0)
 	game.ball_type = game.sequence[0]
@@ -44,7 +50,7 @@ func run_checks() -> void:
 	game.ball_position = game.hole_positions[game.ball_type]
 	game.resolve_hole_hit(game.ball_type)
 	check(game.game_state == "celebrating" and game.ball_drop_time > 0.0, "Final goal keeps drop during celebration")
-	game._process(0.4)
+	game._process(0.5)
 	check(game.ball_drop_time == 0.0, "Celebration advances drop")
 	game.start_level(0)
 	check(game.ball_drop_hole == -1 and game.ball_drop_time == 0.0, "Restart clears drop")

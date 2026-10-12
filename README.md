@@ -49,7 +49,7 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 ## Kontrol testi
 
-Deliklerin içi katmanlı gölgeyle derinleştirildi; giren top 0,32 saniyede küçülüp kararıyor. 0.1.10-test sürümüyle telefona yüklendi; görünüm/etki değerlendirmesi kullanıcı denemesini bekliyor. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
+Deliklerin içi katmanlı gölgeyle derinleştirildi. Telefonda 0.1.10-test sürümündeki ilk küçülme efekti var. Kullanıcının video referansına göre yerel kaynakta güncellendi: top 0,44 saniyede boyutunu büyük ölçüde koruyup aşağı düşüyor ve ön kenarın arkasında alttan başlayarak örtülüyor; bu yeni sürüm henüz telefona yüklenmedi. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
 
 Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 20 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
