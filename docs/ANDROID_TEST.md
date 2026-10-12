@@ -45,6 +45,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 - İkinci bölümde duvar sekmesi çizgisi ve zorunlu sekme sayısı anlaşılır mı?
 - Uygulamadan çıkıp geri dönünce görüntü ve kontroller korunuyor mu?
 - Yeni mola sürümü yüklendikten sonra: telefon arka plana alınınca top/süre duruyor mu; geri dönünce DEVAM ET bekleniyor mu?
+- Nişan sürüklerken mola verip devam edince eski parmağı bırakmak atış yapmıyor mu; yeni sürükleme aynı açıdan rahat devam ediyor mu? Fare seçimi/yerleştirmede de eski dokunuş hak tüketmiyor mu?
 - Yeni kayıt sürümü yüklendikten sonra: tamamlanan bölümün en iyi süresi uygulama yeniden açıldığında menüde duruyor mu?
 - Yeni sonuç ekranında kaybın nedeni ve yanlış delik/beklenen sembol net okunuyor mu; Yumi'nin yanlış yönlendirmesi ayırt ediliyor mu?
 - Fare seçimi/oyalama sürerken bölüm biterse seçim kapanıyor mu; eski parmak bırakma sonuç ekranında işlem yapmıyor mu; yeni denemede iki fare hakkı geliyor mu?

@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Sonraki dilimde mola/yeniden başlatma sonrası klavye ve dokunmatik nişanın temiz durumdan sürdüğünü kontrol et. Ses tercihi/test izolasyonu ve ses geçişleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Sonraki dilimde paylaşım paketi/export kapsamını salt okunur incele: test çıktıları veya ilişkisiz referans/kişisel Excel-JPG dosyaları pakete dahil olmamalı. Yeni kurulum, kullanıcı dosyasına değişiklik veya telefona yükleme yapma. Mola/yeniden başlatma girişleri ve ses geçişleri tamamlandı. Gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -48,6 +48,7 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - d2da9d3: geçici yazma/bütünlük kontrolü/yedekten dönüş (16 test).
 - ddfeb0a: görünür kayıt hatası/oturum uyarısı ve sonuçta oyuncak temizliği (17 test).
 - b619cd8: menü kartı metin aralıkları ve dört bölüm sonuç düğmesi geçişleri.
+- 661a7a2: ses tercihini testten ayırma ve sonuçta eski ses kanallarını kesme (18 test).
 
 ## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
 
@@ -92,3 +93,9 @@ Kullanım izinli; yeni kullanıcı yönlendirmesi yok. Ses testleri başlangıç
 Sonuç geçişinde eski efekt kanalları tamamen kesilmiyordu. Önce iki başarısız testle eksik stop_all geçişi doğrulandı; kayıp ve başarı önce bütün kanalları kesiyor, başarı ardından unlock efektini oynatıyor. Mola sırasında susma ve moladan sonra mırlama gecikmesi de doğrulandı. Telefonun onaylanan ses tonları/seviyeleri değiştirilmedi.
 
 18 toplu kontrol geçti. audio_state_preview.gd gerçek masaüstü oynatıcı bayraklarıyla mırlama başlama/mola durma ve kayıpta efekt durmayı doğruladı; test kanalları sessize yakın -80 dB kullanıldı, sistem sesi/kayıtlı tercih değişmedi. SES açık/kapalı ekranları üretildi, kapalı düğmesi görsel olarak kontrol edildi. Bu insanın duyulabilirlik ölçümü veya telefon testi değildir. SOUND_EFFECTS.md içindeki eski duyulabilirlik bekliyor notu kullanıcı onayıyla güncellendi. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi.
+
+## Saatlik devam — 12 Ekim 2026, 04:39 Türkiye
+
+Kullanım izinli; yeni kullanıcı yönlendirmesi yok. input_lifecycle_smoke.gd ile dört bölümde gerçek Viewport giriş yolu üzerinden P/Esc/Space/R/E ve dokunma/sürükleme/bırakma olayları sınandı. Mola sonrası eski bırakma, temiz yeni sürükleme, yeniden başlatma, tuş tekrarları, tek havlama sınırı ve fare seçimi/yerleştirme/süre korunması geçti. Yeni oyun hatası bulunmadı; davranış değişmeden regresyon güvencesi eklendi.
+
+19 toplu kontrol geçti. Mola önizlemesi yeniden üretildi ve okunabilir düğmeler/durum metni görsel olarak kontrol edildi. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi. Fiziksel Android mola/dokunma denemesi hâlâ kullanıcı döndüğünde yapılmalı.
