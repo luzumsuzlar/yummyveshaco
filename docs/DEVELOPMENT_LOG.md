@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Sonraki dilimde paylaşım paketi/export kapsamını salt okunur incele: test çıktıları veya ilişkisiz referans/kişisel Excel-JPG dosyaları pakete dahil olmamalı. Yeni kurulum, kullanıcı dosyasına değişiklik veya telefona yükleme yapma. Mola/yeniden başlatma girişleri ve ses geçişleri tamamlandı. Gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. APK kapsam incelemesi tamamlandı: eski APK'da kullanılmayan iki referans JPG ve eski uyku görseli bulundu. Sonraki dilimde kullanıcı kaynaklarını silmeden export kapsamını daralt, farklı adla yerel paket üret ve tests/audit_apk.ps1 ile içeriğini doğrula; ayrıntılar docs/PACKAGING_AUDIT.md. Yeni kurulum, kullanıcı dosyasına değişiklik veya telefona yükleme yapma. Gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -99,3 +99,11 @@ Sonuç geçişinde eski efekt kanalları tamamen kesilmiyordu. Önce iki başar�
 Kullanım izinli; yeni kullanıcı yönlendirmesi yok. input_lifecycle_smoke.gd ile dört bölümde gerçek Viewport giriş yolu üzerinden P/Esc/Space/R/E ve dokunma/sürükleme/bırakma olayları sınandı. Mola sonrası eski bırakma, temiz yeni sürükleme, yeniden başlatma, tuş tekrarları, tek havlama sınırı ve fare seçimi/yerleştirme/süre korunması geçti. Yeni oyun hatası bulunmadı; davranış değişmeden regresyon güvencesi eklendi.
 
 19 toplu kontrol geçti. Mola önizlemesi yeniden üretildi ve okunabilir düğmeler/durum metni görsel olarak kontrol edildi. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi. Fiziksel Android mola/dokunma denemesi hâlâ kullanıcı döndüğünde yapılmalı.
+
+## Saatlik devam — 12 Ekim 2026, 05:38 Türkiye
+
+Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirmesi yoktu. Mevcut APK'nin 132 ZIP girdisi salt okunur incelendi. sleep.jpg, Generated Image JPG ve eski yumi-sleep-v1.png toplam altı import/doku girdisiyle pakette; güncel oyun bunları kullanmıyor. Excel ve test/belge/çıktı yolları girdiler arasında bulunmadı. Özel dosya içerikleri açılmadı. all_resources seçimi ve dar dışlama filtresi kaynakları gereksiz dahil ediyor; Git'te izlenmemek paket dışında kalma güvencesi değil.
+
+tests/audit_apk.ps1 salt okunur dağıtım kontrolü eklendi: bilinen referanslar, kişisel tablo uzantıları ve test/belge yolları varsa paket reddedilir; bilinmeyen ZIP/PCK düzeninde temiz diye onay verilmez. Eski APK'da altı girdinin listelenmesi ve varsayılan kontrolün paketi reddetmesi doğrulandı. SHA256 önce/sonra aynı; APK değiştirilmedi. Tam gizlilik taraması veya oynanabilirlik testi değildir.
+
+Bu dilimde oyun/export ayarı değiştirilmedi, yeni APK üretilmedi. 19 oyun testi tekrar çalıştırılmadı, yeni ekran olmadığından görsel test yapılmadı. Telefon/GitHub ve kullanıcı dosyaları korundu. Sonraki iş temiz export kapsamı ve ayrı yerel APK doğrulaması; eski paket yeni paylaşımlar için önerilmiyor.
