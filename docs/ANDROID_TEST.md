@@ -51,7 +51,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 - Fare seçimi/oyalama sürerken bölüm biterse seçim kapanıyor mu; eski parmak bırakma sonuç ekranında işlem yapmıyor mu; yeni denemede iki fare hakkı geliyor mu?
 
 Bu sonuçlar kullanıcı denemesiyle kaydedilecek. Masaüstü sentetik dokunma testleri gerçek telefon ergonomisini kanıtlamaz.
-# Yeni yerel test paketi — 12 Ekim 2026
+
+## Yeni yerel test paketi — 12 Ekim 2026
 
 `exports/android/yumi-sako-0.1.9-test.apk` (kod 10) hazırlandı; telefona kurulmadı. Telefonda son onaylanan sürüm hâlâ 0.1.8-test/kod 9. Yeni pakette öğretici, mola/arka plan/geri tuşu, ilerleme kaydı, dokunma kenar durumları ve sonuç ses temizliği var. Kapsam kontrolü, 19 masaüstü oyun testi ve aynı ayarlı PCK ekran kontrolü geçti. Bunlar Android'de açılış, gerçek dokunma, mırlama duyulabilirliği veya arka plan/uygulama öldürme denemesi yerine geçmez. Eski APK korunuyor; yeni paylaşımlarda referansları çıkarılmış 0.1.9 paket kullanılmalı. Kurulum yalnız kullanıcı dönüp istediğinde yapılacak.
-
