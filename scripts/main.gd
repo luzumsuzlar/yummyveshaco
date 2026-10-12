@@ -1393,7 +1393,7 @@ func register_error(message: String) -> void:
 func finish_game(success: bool) -> void:
 	if success and game_state == "playing" and progress >= sequence.size():
 		new_time_record = game_progress.record_completion(level_index, level_time)
-	game_audio.update_sleep(false, 0.0)
+	game_audio.stop_all()
 	scatter_state = ""
 	toy_button.hide()
 	toy_selecting = false

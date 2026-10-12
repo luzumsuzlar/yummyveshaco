@@ -18,6 +18,8 @@ func run_checks() -> void:
 	var audio = game.game_audio
 	DirAccess.make_dir_recursive_absolute("res://exports/audio-preview")
 	audio.settings_path = "res://exports/audio-preview/test-settings.cfg"
+	check(not audio.persistence_enabled, "Script mode does not read or write real sound preferences")
+	audio.persistence_enabled = true
 	audio.set_muted(false, false)
 	game.update_sound_button()
 	audio.effect_played.connect(func(effect: String): events.append(effect))
@@ -69,6 +71,7 @@ func run_checks() -> void:
 	check(events.size() == count_before and game.ball_active, "Muted game remains playable")
 	var reloaded = game.GAME_AUDIO.new()
 	reloaded.settings_path = audio.settings_path
+	reloaded.persistence_enabled = true
 	root.add_child(reloaded)
 	check(reloaded.muted, "Mute setting survives reopening")
 	reloaded.free()

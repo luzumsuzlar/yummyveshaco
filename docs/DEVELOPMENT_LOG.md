@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Sonraki dilimde ses tercihinin testlerden etkilenmediğini ve sessiz/mola/sonuç geçişlerinde seslerin kapandığını kontrol et. Bölüm kartları ve dört bölüm sonuç geçişleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Sonraki dilimde mola/yeniden başlatma sonrası klavye ve dokunmatik nişanın temiz durumdan sürdüğünü kontrol et. Ses tercihi/test izolasyonu ve ses geçişleri aşağıda tamamlandı. Yeni bölüm eklemeden önce gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -47,6 +47,7 @@ Nişan alanının içinde yer alan ses ve mola düğmelerinin üstüne parmağı
 - ed617ac: hata nedenini sonuç ekranında koruma, hareketli hedef/Yumi kontrolleri (15 test).
 - d2da9d3: geçici yazma/bütünlük kontrolü/yedekten dönüş (16 test).
 - ddfeb0a: görünür kayıt hatası/oturum uyarısı ve sonuçta oyuncak temizliği (17 test).
+- b619cd8: menü kartı metin aralıkları ve dört bölüm sonuç düğmesi geçişleri.
 
 ## Saatlik devam — 11 Ekim 2026, 23:35 Türkiye
 
@@ -83,3 +84,11 @@ Bölüm kartlarında başlık, açıklama ve tamamlanma satırlarının boşlukl
 Dört bölümün sonuç düğmeleri GUI tıklama yoluyla sınandı: doğru sonraki bölüm, son bölümden birinciye dönüş, eski panelin kapanması, tıklamanın atışa dönüşmemesi, ilerleme/hata/havlama/fare haklarının yeni bölüm kuralıyla sıfırlanması. Bu gezinme testlerinde başarı durumu bilerek kuruldu; gerçek bölüm oynanabilirliği iddiası değil, geçiş izolasyonudur.
 
 17 toplu kontrol geçti. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi; değişiklikler yerel kaydedildi.
+
+## Saatlik devam — 12 Ekim 2026, 03:39 Türkiye
+
+Kullanım izinli; yeni kullanıcı yönlendirmesi yok. Ses testleri başlangıçta gerçek muted tercihini okuyabildiğinden testler oyuncu seçimine bağımlıydı. --script modunda gerçek tercih okuma/yazma varsayılan olarak kapatıldı; ayar testleri kendi dosyasını ve açık persistence_enabled iznini kullanır. Yanlış tipli muted alanı bool'a zorla çevrilmez.
+
+Sonuç geçişinde eski efekt kanalları tamamen kesilmiyordu. Önce iki başarısız testle eksik stop_all geçişi doğrulandı; kayıp ve başarı önce bütün kanalları kesiyor, başarı ardından unlock efektini oynatıyor. Mola sırasında susma ve moladan sonra mırlama gecikmesi de doğrulandı. Telefonun onaylanan ses tonları/seviyeleri değiştirilmedi.
+
+18 toplu kontrol geçti. audio_state_preview.gd gerçek masaüstü oynatıcı bayraklarıyla mırlama başlama/mola durma ve kayıpta efekt durmayı doğruladı; test kanalları sessize yakın -80 dB kullanıldı, sistem sesi/kayıtlı tercih değişmedi. SES açık/kapalı ekranları üretildi, kapalı düğmesi görsel olarak kontrol edildi. Bu insanın duyulabilirlik ölçümü veya telefon testi değildir. SOUND_EFFECTS.md içindeki eski duyulabilirlik bekliyor notu kullanıcı onayıyla güncellendi. Telefon/APK/GitHub ve kullanıcı dosyaları değişmedi.

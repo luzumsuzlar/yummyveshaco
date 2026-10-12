@@ -8,6 +8,7 @@ const DURATIONS := {"launch": 0.16, "bounce": 0.09, "paw": 0.22, "unlock": 0.65,
 
 var muted := false
 var settings_path := SETTINGS_PATH
+var persistence_enabled := not OS.get_cmdline_args().has("--script")
 var streams: Dictionary = {}
 var voices: Array[AudioStreamPlayer] = []
 var next_voice := 0
@@ -17,9 +18,7 @@ var purr_wait := 2.0
 
 
 func _ready() -> void:
-	var settings := ConfigFile.new()
-	if settings.load(settings_path) == OK:
-		muted = bool(settings.get_value("audio", "muted", false))
+	load_settings()
 	for effect in DURATIONS:
 		streams[effect] = synthesize(effect)
 	for index in range(6):
@@ -33,6 +32,17 @@ func _ready() -> void:
 	add_child(purr_voice)
 
 
+func load_settings() -> void:
+	if not persistence_enabled:
+		return
+	muted = false
+	var settings := ConfigFile.new()
+	if settings.load(settings_path) == OK:
+		var stored = settings.get_value("audio", "muted", false)
+		if typeof(stored) == TYPE_BOOL:
+			muted = stored
+
+
 func _exit_tree() -> void:
 	stop_all()
 
@@ -41,7 +51,7 @@ func set_muted(value: bool, persist: bool = true) -> void:
 	muted = value
 	if muted:
 		stop_all()
-	if persist:
+	if persist and persistence_enabled:
 		var settings := ConfigFile.new()
 		settings.set_value("audio", "muted", muted)
 		var result := settings.save(settings_path)
