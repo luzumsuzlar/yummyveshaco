@@ -223,6 +223,7 @@ func _ready() -> void:
 	game_audio = GAME_AUDIO.new()
 	add_child(game_audio)
 	game_progress = GAME_PROGRESS.new()
+	game_progress.level_count = LEVELS.size()
 	add_child(game_progress)
 	rng.randomize()
 	for x_position in HOLE_BASE_X:

@@ -1,5 +1,11 @@
 # Bağımsız geliştirme günlüğü
 
+## Güncel yetki — 12 Ekim 2026, yeniden bağımsız devam
+
+Kullanıcı bilgisayar başından ayrılacağını söyleyip kendisi dur diyene kadar mantıklı geliştirmeyi ve kullanım yenilenince devam etmeyi istedi. Bu yeni yetki önceki kullanıcı dönene kadar sınırının yerine geçer; yalnız sohbete dönmesi yetkiyi bitirmez. Dur/durdur/mola isteğinde çalışmayı ve devam görevini durdur; yeni yönlendirmesine uy. Yerel kaynak/test/görsel kontrol/geri alınabilir Git kayıtları serbest. Alt ajan, telefon yüklemesi, GitHub gönderimi, dış paylaşım/mesaj, yeni ücretli servis/kurulum/mağaza yayını yok. Kullanım izinli değilse kredi/sıfırlama tüketmeden sonraki kontrol beklenir.
+
+Eski görev uygulamada güncellenemedi (bulunamadı); aynı kimlikli yeni saatlik thread heartbeat oluşturuldu: yumi-ako-geli-tirmeye-devam, ACTIVE. Aynı-sohbet devam, sessiz değişmeyen durum bildirimi, kaynakları koruma ve dur talimatı yeni promptta var. Bilgisayar ve uygulama açık olmalı; kesintisiz yürütme veya limit yenilenmesinin zaman garantisi verilmedi. Kullanım bu tur izinli, sıfırlama/kredi tüketilmedi.
+
 ## Yetki ve sınırlar — 11 Ekim 2026
 
 Kullanıcı kendisi dönene kadar kararları asistana bıraktı; kullanım limiti yenilenince devam edilmesini ve ardından istediği düzeltmeleri bildireceğini söyledi. Açık başla onayı verildi. Bu kapsamda yerel uygulama/test/dokümantasyon ve geri alınabilir Git kayıtları yapılabilir. GitHub'a gönderme, telefona yükleme, yeni ücretli servis veya kurulum yok. İlişkisiz Excel/JPG dosyaları ve sources/ referansları korunacak.
@@ -175,3 +181,13 @@ Kullanıcı aşamalı planı onaylayıp işlemleri yap dedi. ROADMAP.md ile tama
 Son kaynak değişikliği bekleme mesajları olduğundan yeni 0.1.12-test/kod 13 APK ayrı adla üretildi. 20 toplu oyun testi ve 128 girdi/üç betik/yedi doku içerik, manifest, imza kontrolleri geçti. SHA256 C875C0CF5E24F0B9EED59FB8B9AFDED48DA71544DD264FFB476F30267364368E. Tek yetkili bağlı Samsung SM-S938B'ye install -r Success döndü; öncesinde 0.1.11/kod 12, sonrasında 0.1.12/kod 13 doğrulandı. Uygulama kaldırılmadı, veriler temizlenmedi; profil içeriği ayrıca okunmadı.
 
 Başlatma Status ok ve süreç mevcut. İncelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi; render başlangıcı satırı bu kontrolde yok, kilit policy showing=true. Kullanıcı kilidi açıp dört bölümü deneyecek. Mesajların görsel kontrolü önceki kaynak diliminde yapıldı; bu tur oyun çizimi değişmedi. Gerçek cihaz turu, süre/ergonomi verisi ve sonraki aşamalar bekliyor. GitHub, eski APK'lar, referans video ve kullanıcı dosyaları korundu.
+
+## Yenilenen devamın ilk dilimi — 12 Ekim 2026
+
+Kullanıcının ilk dört bölüm temposunu normal bulduğu ve yeni düşüşü beğendiği kaydedildi. 47,5 saniyenin tek bölüm/toplam kapsamı ile hata sayısı belirsiz; bölüm bazlı veri uydurulmadı. Bekleme konusunun çözüldüğü kullanıcı tarafından belirtildi. Bu geri bildirim kısmi cihaz onayıdır, bütün deneme listesinin tamamlanması değil.
+
+Beşinci bölüm hazırlığında kayıt kodunun range(4)/index>=4 sınırına sabitlendiği bulundu. level_count varsayılan 4, main içinde gerçek LEVELS sayısı aktarılıyor. Kayıt taraması geçerli level_N bölümlerini (üst sınır 100) okur; checksum tamsayı indeksleri sıralar, mevcut dört bölümlük checksum aynı kalır. Daha az bölüm sunan yeni kodlu bir roster ek bölüm kaydını koruyabilir. Bu eski 0.1.12 APK'nın gelecekte beş bölümlük kaydı okuyacağı garantisi değildir; scanner değişikliği yalnız yeni kaynak kodda vardır.
+
+progress_expansion_smoke.gd yalnız kendi exports/progress-expansion dosyasında dört bölümlük format/checksum, beşinci sonucun yazılması, dört bölümlük roster ile gizli sonucun korunması ve yeniden beş bölüme dönüşü sınar. Gerçek user:// kayıtları okunmadı/yazılmadı. Otomatik test sayısı 21 oldu. Menü hâlâ dört kart, beşinci oynanabilir bölüm eklenmedi; ilk dört bölümün tempo/çarpışma kuralları korunuyor. Sonraki somut dilim: beşinci kartın portre menüye sığması için geri uyumlu gezinme düzeni, ardından tek fikirli beşinci bölüm kısa tasarımı/prototipi. Aynı APK tekrar üretilmeyecek, telefon/GitHub değişmeyecek.
+
+Bu dilimde 21 toplu testin tamamı geçti. menu_preview ile dört kartın portre yerleşimi ve örnek tamamlanma kayıtlarının gösterimi görsel olarak doğrulandı; önizlemedeki 64,3/82,7 saniye sentetik test değerleridir, kullanıcı ölçümü değildir. Telefon testi yapılmadı. Değişiklikler geri alınabilir yerel Git kaydına alınıyor.

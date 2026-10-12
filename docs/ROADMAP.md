@@ -2,6 +2,8 @@
 
 12 Ekim 2026. İlk hedef: dört bölümlük, anlaşılır ve telefonda güvenilir bir test sürümü. Bu plan takvim sözü değildir; her aşama aşağıdaki kanıtla tamamlanır.
 
+Son kullanıcı kararı: ilk dört bölümün temposu normal bulundu; süreyi artırmak için değer değiştirme. Kullanıcı kendisi dur diyene kadar mantıklı yerel geliştirmeye yeniden yetki verdi. Ayrıntılı oyuncu verisi hâlâ kısmi; bunu kesin denge doğrulaması olarak sunmadan, mevcut bölümleri koruyan altyapı/Yumi cilası ve tek fikirli beşinci bölüm hazırlığına ilerlenebilir.
+
 ## 1. Dört bölümlük sürümü doğrula — şu anki aşama
 
 - Son bekleme mesajları, kullanıcı tarafından beğenilen düşüş ve mevcut dört bölüm aynı APK'da olsun.
@@ -37,4 +39,4 @@ Temiz, sürümü belli APK ve kısa geri bildirim listesi hazırlanır. Kullanı
 
 ## Çalışma sınırı
 
-GitHub gönderimi, dış mesaj/paylaşım, yeni servis/kurulum ve mağaza yayını ayrı kullanıcı isteği gerektirir. Kullanıcı dönmüş durumda; eski saatlik bağımsız çalışma talimatı yeni yönlendirmelerin yerine geçmez. İlişkisiz Excel/JPG ve sources/ referansları korunur. Fiziksel deneme sonuçları elde edilmeden sonraki aşamayı tamamlandı diye işaretleme.
+12 Ekim'deki yenilenen yetki kullanıcı dur diyene kadar geçerli; sadece sohbete dönmesi yetkiyi bitirmez, yeni yönlendirmesine uyulur. GitHub gönderimi, dış mesaj/paylaşım, telefon yüklemesi, yeni servis/kurulum ve mağaza yayını ayrı kullanıcı isteği gerektirir. Kullanım izinli değilse kredi/sıfırlama tüketmeden sonraki saatlik kontrol beklenir. Bilgisayar/uygulama açık olmalıdır; kesintisiz çalışma veya otomatik limit yenileme garantisi yok. İlişkisiz Excel/JPG, referans video ve sources/ referansları korunur. Fiziksel deneme sonuçları elde edilmeden cihaz kontrolünü tamamlandı diye işaretleme.

@@ -1,6 +1,8 @@
 # Telefon denemesi notları
 
-Durum: henüz doldurulmadı. Otomatik test verisi gerçek oyuncu denemesi olarak yazılmayacak.
+Durum: 12 Ekim'de ilk nitel kullanıcı geri bildirimi alındı; ayrıntılı deneme satırları henüz doldurulmadı. Otomatik test verisi gerçek oyuncu denemesi olarak yazılmayacak.
+
+Kullanıcı “4 bölümü oynadım. 47.5 saniye sürdü” dedi, ardından ilk dört bölüm için temponun normal olduğunu belirtti. 47,5 saniyenin tek bölüm mü/toplam mı olduğu ve hata sayısı netleşmedi; bu nedenle hiçbir bölüm satırına sayısal ölçüm olarak aktarılmadı. Mevcut tempo korunacak. Video referanslı düşüş daha iyi olarak onaylandı; dördüncü bölüm bekleme konusu kullanıcı tarafından çözüldü olarak bildirildi. Bunlar bütün cihaz testlerinin veya yeni oyuncu dengesinin tamamlandığı anlamına gelmez.
 
 APK sürümü: … · Cihaz: … · Tarih: … · Oyuncu: isteğe bağlı takma ad …
 

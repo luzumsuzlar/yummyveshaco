@@ -61,7 +61,7 @@ Yeni APK: `exports/android/yumi-sako-0.1.12-test.apk` (kod 13). 12 Ekim'de kulla
 
 APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.12-test.apk'`. Yeni paket geçti; ilk eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 20 oyun testinden ayrıdır.
 
-Tüm 20 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez.
+Tüm 21 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez. Kayıt sistemi bölüm sayısını LEVELS listesinden alır; beşinci bölüm için kayıt uyumluluk hazırlığı kaynakta yapıldı, oyunda hâlâ dört bölüm var ve yeni kaynak henüz APK'ya alınmadı.
 
 Yanlış deliğe girince gerçek ve beklenen sembol belirtilir; kayıp ekranı son hatanın nedenini korur. `res://tests/interaction_smoke.gd` hareketli hedefe tahminli gerçek atışları, Yumi'nin önceden uyarı vermesini, tek atışta bir pati sınırını, havlamayla iptali ve yardım/hata ayrımını kontrol eder.
 

@@ -1,5 +1,7 @@
 extends Node
 
+const MAX_LEVEL_COUNT := 100
+var level_count := 4
 var storage_path := "user://progress.cfg"
 var persistence_enabled := not OS.get_cmdline_args().has("--script")
 var best_times: Dictionary = {}
@@ -35,8 +37,17 @@ func read_snapshot(path: String) -> Dictionary:
 		return {}
 	var best_values: Dictionary = {}
 	var count_values: Dictionary = {}
-	for index in range(4):
-		var section := "level_%d" % (index + 1)
+	# Read all valid saved sections, even when an older build exposes fewer levels.
+	# Otherwise a fifth-level save would fail its checksum in a four-level build.
+	for section in file.get_sections():
+		if not section.begins_with("level_"):
+			continue
+		var number := section.trim_prefix("level_")
+		if not number.is_valid_int():
+			continue
+		var index := number.to_int() - 1
+		if index < 0 or index >= MAX_LEVEL_COUNT or section != "level_%d" % (index + 1):
+			continue
 		var best = file.get_value(section, "best_seconds", 0.0)
 		var count = file.get_value(section, "completions", 0)
 		if typeof(best) not in [TYPE_INT, TYPE_FLOAT] or typeof(count) != TYPE_INT:
@@ -55,7 +66,9 @@ func read_snapshot(path: String) -> Dictionary:
 
 func snapshot_checksum(best_values: Dictionary, count_values: Dictionary) -> String:
 	var payload := ""
-	for index in range(4):
+	var indexes := best_values.keys()
+	indexes.sort()
+	for index in indexes:
 		if best_values.has(index):
 			payload += "%d:%s:%d;" % [index, var_to_str(float(best_values[index])), int(count_values[index])]
 	return payload.sha256_text()
@@ -89,7 +102,7 @@ func save_progress() -> Error:
 	return DirAccess.rename_absolute(temporary, storage_path)
 
 func record_completion(index: int, seconds: float) -> bool:
-	if index < 0 or index >= 4 or not is_finite(seconds) or seconds <= 0.0 or seconds > 86400.0:
+	if index < 0 or index >= clampi(level_count, 1, MAX_LEVEL_COUNT) or not is_finite(seconds) or seconds <= 0.0 or seconds > 86400.0:
 		return false
 	var previous := float(best_times.get(index, INF))
 	best_times[index] = minf(previous, seconds)
