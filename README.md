@@ -64,6 +64,8 @@ APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yum
 
 Tüm 23 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez. Kayıt sistemi bölüm sayısını LEVELS listesinden alır. Menü dört kartlık sayfaları destekler. Yerel kaynakta beş bölüm var; mevcut 0.1.12 APK dört bölüm içerir. Hafıza uçuş testi otomatik nişan kullanır, insanın hatırlama başarısını ölçmez.
 
+Beş bölümlük ec5f8e2 kaynağı ayrı masaüstü PCK içinden kaynak klasörüne dönmeden açılarak kontrol edildi. Sonuç ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu PCK Android APK değildir; yeni kaynak telefona yüklenmedi.
+
 Yanlış deliğe girince gerçek ve beklenen sembol belirtilir; kayıp ekranı son hatanın nedenini korur. `res://tests/interaction_smoke.gd` hareketli hedefe tahminli gerçek atışları, Yumi'nin önceden uyarı vermesini, tek atışta bir pati sınırını, havlamayla iptali ve yardım/hata ayrımını kontrol eder.
 
 Godot konsol sürümüyle `--headless --path "D:\Works\kedikopek" --script res://tests/portrait_smoke.gd` çalıştırılabilir. Test; ilk dört gerçek top uçuşunu, dokunma/sürükleme/bırakmayı, ikinci parmağı, GUI atış ve havlama düğmelerini, hakların tükenmesini, hareketli deliklerin sınırlarını ve başarı/yeniden deneme akışını kontrol eder. Sentetik dokunma testi gerçek cihaz testinin yerine geçmez.

@@ -23,3 +23,11 @@ Yukarıdaki ilk incelemenin takip işi tamamlandı. Yeni dosya `exports/android/
 Aynı export ayarıyla ayrı PCK üretildi. tests/package_preview.gd dış betik olarak, kaynak proje yerine exports dizininden --main-pack ile çalıştırıldı; source-only test dosyasının görünmemesi ve gerçek profil/tercih erişiminin kapalı olması doğrulandı. Dört bölüm, mola ve menü paket kaynaklarıyla açıldı; ekranlar exports/package-preview içine üretildi. İlk bölüm, mola ve menü görsel olarak kontrol edildi. Bu masaüstü PCK kontrolüdür; APK'nin Android'de açıldığını veya gerçek dokunmayı doğrulamaz. 19 kaynak oyun testi de geçti.
 
 Eski APK'nın SHA256 değeri aynı kaldı. Kullanıcı Excel/JPG dosyaları, telefon ve GitHub değişmedi. Yeni APK telefon testi bekliyor; paketin kapsam kontrolü tam gizlilik garantisi değildir.
+
+## Beş bölümlük kaynak bağımlılığı kontrolü — 12 Ekim 2026
+
+Yerel kaynak ec5f8e2 ile yeni ve ayrı `exports/android/yumi-sako-five-level-ec5f8e2.pck` üretildi (Android export filtresiyle yalnız kaynak paketi; APK değildir). Boyut 8.324.572 bayt; SHA256 `AD78530F556B3ABE9A9A7233B7E8E902B40E50368082795B6219FD16CE72F4FA`. Önceki PCK ve APK dosyaları korunuyor. Son Android APK 0.1.12 hash'i `C875C0CF5E24F0B9EED59FB8B9AFDED48DA71544DD264FFB476F30267364368E` olarak aynı.
+
+Geliştirme klasörü yerine exports çalışma dizininden `--main-pack` ve dış `tests/package_preview.gd` ile açıldı. Kontrol `--expected-levels=5 --output=D:/Works/kedikopek/exports/package-preview-ec5f8e2` aldı; source-only test kaynağının görünmediğini ve gerçek profil/ses tercih erişiminin kapalı olduğunu doğruladı. 28 görünür paket kaynak yolu bilinen tests/docs/exports/sources, tablo/JPG ve eski uyku referanslarına karşı tarandı; yasak yol bulunmadı. Bu dar kapsam kontrolüdür, bütün olası özel kaynakları tanıma garantisi değil.
+
+Beş bölüm, gizli sembolün atışı kilitlememesi, mola, ikinci menü sayfası ve fare geri bildirimi paket kaynaklarıyla açıldı; 0 hata. İlk bölüm, gizli şifre, menü ve fare ekranları görsel incelendi. Bu masaüstü Godot/OpenGL testidir; Android yükleme, manifest/imza veya fiziksel dokunma/ses testi yapılmadı. Android APK üretilmedi. Bir sonraki kullanıcı telefon güncellemesinde yeni sürüm kodu ve ayrı APK gerekir; bu PCK'yi telefona kurulabilir paket diye sunma.
