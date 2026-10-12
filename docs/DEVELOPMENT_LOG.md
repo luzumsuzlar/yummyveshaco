@@ -153,3 +153,9 @@ Kullanıcı Mobile_game_ball_falling_hole_20261012091913.mp4 referansındaki dü
 Yerel düşme 0,44 saniyeye çıkarıldı: ilk girişte merkeze yerleşme, ardından hızlanan 86 piksel aşağı hareket, yalnız %16 küçülme ve en fazla hafif %22 kararma. Küre katmanları ön açıklık sınırında kesiliyor; alt bölüm fiziksel kenarın arkasına giriyor. Puanlama, mevcut 0,45 saniyelik atış aralığı, hedef/çarpışma alanı korunuyor. ball_drop_pose yordamıyla görünümün hareketi test edilebilir hale getirildi.
 
 20 toplu oyun testi geçti. Düşme testi topun büyük kalmasını, aşağı hareketini ve sonunda ön kenarın tamamen altında kalmasını da doğruluyor. Yeni önizlemede giriş/orta/örtülme kareleri görsel olarak incelendi. Kaynak video, kullanıcı dosyaları, APK'lar, telefon ve GitHub değişmedi; telefonda hâlâ eski efektli 0.1.10 sürümü var. Kullanıcı telefon güncellemesi isterse yeni sürüm koduyla paketle. Video çözümleme yardımcı betiği tests/extract_video_reference.ps1 yerel kaynak kaydına alındı, APK dışlama kapsamındadır.
+
+## Kullanıcı isteği — 12 Ekim 2026, video referanslı efekti telefona yükleme
+
+Kullanıcı telefon bağlı başla dedi. Yeni 0.1.11-test/kod 12 APK ayrı dosyada üretildi; 20 toplu oyun testi, paket içerik/manifest/imza kontrolleri geçti. SHA256 BB06F6B7EF0B89DA6F3783E3FD794C6CE1EC3298CD7D65B7A734445D1E207319. Mevcut 0.1.10/kod 11 üzerine seri hedefli install -r Success döndü; telefonda 0.1.11/kod 12 doğrulandı. Uygulama kaldırılmadı, veri temizlenmedi; gerçek profil içeriği ayrıca okunmadı.
+
+Başlatma Status ok ve oyun süreci mevcut, incelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi. Ancak bu denemede Godot Engine render başlangıcı satırı yok ve kilit policy showing=true; gerçek görüntü/oynanış doğrulandı diye sunulmadı. Kullanıcı kilidi açıp yeni düşüşü deneyecek. Eski APK'lar, kullanıcı dosyaları ve GitHub korundu. En yeni paket exports/android/yumi-sako-0.1.11-test.apk.
