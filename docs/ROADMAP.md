@@ -31,6 +31,8 @@ Hareketli/karışmış deliklerde ve Yumi'nin sektirdiği toplarda düşüş kon
 
 ## 5. Beşinci bölüm — henüz başlanmadı
 
+Kayıt ve portre menü altyapısı hazır: bölüm sayısı dinamik, dört kartlık sayfalar ek kartları taşır. Beşinci oynanabilir bölüm henüz eklenmedi; önizlemedeki deneme kartı oynanış kanıtı değildir.
+
 İlk dört bölümün önemli giriş/tempo sorunları çözülmeden uygulanmayacak. Tek bir büyük Yumi yaramazlığı etrafında tasarla; iki top, yeni top türü ve hareketli delik kurallarını aynı anda ekleme. Önce kısa tasarım ve mevcut kurallardan farkı netleştir, ardından prototip/test.
 
 ## 6. Arkadaş testi

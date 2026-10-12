@@ -34,10 +34,12 @@ const SCATTER_BOUNDS := Rect2(82, 242, 376, 170)
 const TARGET_SPACING := 112.0
 const GAME_AUDIO := preload("res://scripts/game_audio.gd")
 const GAME_PROGRESS := preload("res://scripts/game_progress.gd")
+const MENU_CARDS_PER_PAGE := 4
 
 const LEVELS := [
 	{
 		"name": "1 · MAMA DOLABI",
+		"menu_description": "Nişan al, kilidi çöz. Yumi uyanıyor!",
 		"sequence": [0, 1, 2, 0, 2, 0, 1, 2, 1, 2, 0, 1],
 		"stage_size": 4,
 		"bark_budget": 3,
@@ -57,6 +59,7 @@ const LEVELS := [
 	},
 	{
 		"name": "2 · DUVAR OYUNU",
+		"menu_description": "Duvarlardan sektirerek hedefe ulaş.",
 		"sequence": [0, 2, 1, 0, 1, 2, 0, 2, 2, 0, 1, 2],
 		"stage_size": 4,
 		"max_wall_bounces": 2,
@@ -77,6 +80,7 @@ const LEVELS := [
 	},
 	{
 		"name": "3 · KAYAN KİLİT",
+		"menu_description": "Kayan hedefler ve oyuncak fare.",
 		"toy_budget": 2,
 		"sequence": [0, 2, 1, 0, 2],
 		"yumi_speed": 162.0,
@@ -93,6 +97,7 @@ const LEVELS := [
 	},
 	{
 		"name": "4 · YUMİ'NİN YARAMAZLIĞI",
+		"menu_description": "Yumi hedefleri dağıtır.\nYeni düzene nişan al.",
 		"sequence": [0, 1, 2, 0, 2, 1, 0, 2],
 		"yumi_speed": 115.0,
 		"yumi_active": true,
@@ -203,6 +208,11 @@ var toy_button: Button
 var level_menu: ColorRect
 var menu_button: Button
 var level_cards: Array[Button] = []
+var menu_page := 0
+var menu_previous_button: Button
+var menu_next_button: Button
+var menu_page_label: Label
+var menu_characters: Array[TextureRect] = []
 var game_audio: Node
 var sound_button: Button
 var tutorial_label: Label
@@ -404,29 +414,8 @@ func build_level_menu() -> void:
 	make_label("YUMI & ŞAKO", 38, Color("874719"), Vector2(24, 48), Vector2(492, 60), level_menu)
 	make_label("Hangi yaramazlığa hazırsın?", 22, INK, Vector2(24, 116), Vector2(492, 38), level_menu)
 	make_label("BÖLÜM SEÇ", 17, Color("8e6544"), Vector2(24, 172), Vector2(300, 28), level_menu)
-	var descriptions := ["Nişan al, kilidi çöz. Yumi uyanıyor!", "Duvarlardan sektirerek hedefe ulaş.", "Kayan hedefler ve oyuncak fare.", "Yumi hedefleri dağıtır.\nYeni düzene nişan al."]
 	for index in range(LEVELS.size()):
-		var card := make_action_button("", Vector2(22, 218 + index * 150), Vector2(496, 132), CREAM)
-		card.reparent(level_menu, false)
-		card.pressed.connect(start_level.bind(index))
-		level_cards.append(card)
-		var thumbnail := Control.new()
-		thumbnail.position = Vector2(14, 16)
-		thumbnail.size = Vector2(112, 100)
-		thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(thumbnail)
-		thumbnail.draw.connect(draw_level_thumbnail.bind(thumbnail, index))
-		var name_label := make_label(str(LEVELS[index]["name"]), 18, INK, Vector2(142, 12), Vector2(332, 32), card, true)
-		name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		name_label.size = Vector2(332, 32)
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var description := make_label(descriptions[index], 16, Color("856044"), Vector2(142, 48), Vector2(324, 49), card, true)
-		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		description.size = Vector2(324, 49)
-		var progress_text := make_label("", 14, Color("856044"), Vector2(142, 105), Vector2(324, 23), card)
-		progress_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		progress_labels.append(progress_text)
+		add_level_menu_card(index, LEVELS[index])
 	for item in [[YUMI_IDLE_ART, 158.0], [SHAKO_IDLE_ART, 282.0]]:
 		var character := TextureRect.new()
 		character.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -437,7 +426,63 @@ func build_level_menu() -> void:
 		character.size = Vector2(100, 100)
 		character.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		level_menu.add_child(character)
+		menu_characters.append(character)
+	menu_previous_button = make_action_button("‹ ÖNCEKİ", Vector2(22, 838), Vector2(162, 64), CREAM)
+	menu_previous_button.reparent(level_menu, false)
+	menu_previous_button.pressed.connect(change_menu_page.bind(-1))
+	menu_next_button = make_action_button("SONRAKİ ›", Vector2(356, 838), Vector2(162, 64), CREAM)
+	menu_next_button.reparent(level_menu, false)
+	menu_next_button.pressed.connect(change_menu_page.bind(1))
+	menu_page_label = make_label("", 18, INK, Vector2(188, 838), Vector2(164, 64), level_menu)
 	menu_footer_label = make_label("Test sürümü · Tüm bölümler açık", 15, INK, Vector2(24, 926), Vector2(492, 24), level_menu)
+	layout_level_menu_cards()
+
+
+func add_level_menu_card(index: int, level_data: Dictionary) -> Button:
+	var card := make_action_button("", Vector2.ZERO, Vector2(496, 132), CREAM)
+	card.reparent(level_menu, false)
+	card.pressed.connect(start_level.bind(index))
+	level_cards.append(card)
+	var thumbnail := Control.new()
+	thumbnail.position = Vector2(14, 16)
+	thumbnail.size = Vector2(112, 100)
+	thumbnail.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(thumbnail)
+	thumbnail.draw.connect(draw_level_thumbnail.bind(thumbnail, index))
+	var name_label := make_label(str(level_data["name"]), 18, INK, Vector2(142, 12), Vector2(332, 32), card, true)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var description := make_label(str(level_data.get("menu_description", "Kilidi çöz, yeni yaramazlığı keşfet.")), 16, Color("856044"), Vector2(142, 48), Vector2(324, 49), card, true)
+	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var progress_text := make_label("", 14, Color("856044"), Vector2(142, 105), Vector2(324, 23), card)
+	progress_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	progress_labels.append(progress_text)
+	return card
+
+
+func layout_level_menu_cards() -> void:
+	var page_count := maxi(1, ceili(float(level_cards.size()) / MENU_CARDS_PER_PAGE))
+	menu_page = clampi(menu_page, 0, page_count - 1)
+	for index in range(level_cards.size()):
+		var on_page := index / MENU_CARDS_PER_PAGE == menu_page
+		level_cards[index].position = Vector2(22, 218 + (index % MENU_CARDS_PER_PAGE) * 150)
+		level_cards[index].visible = on_page
+		level_cards[index].disabled = not on_page
+	var paginated := page_count > 1
+	menu_previous_button.visible = paginated
+	menu_next_button.visible = paginated
+	menu_page_label.visible = paginated
+	menu_previous_button.disabled = menu_page == 0
+	menu_next_button.disabled = menu_page == page_count - 1
+	menu_page_label.text = "%d / %d" % [menu_page + 1, page_count]
+	for character in menu_characters:
+		character.visible = not paginated
+
+
+func change_menu_page(direction: int) -> void:
+	if game_state != "menu":
+		return
+	menu_page += direction
+	layout_level_menu_cards()
 
 
 func draw_level_thumbnail(canvas: Control, index: int) -> void:
@@ -479,6 +524,8 @@ func show_level_menu() -> void:
 	for control in [title_label, level_label, code_label, status_label, instruction_label, next_label, ability_label, time_label, story_label, launch_button, bark_button, toy_button, restart_button, menu_button, overlay]:
 		control.hide()
 	level_menu.show()
+	menu_page = level_index / MENU_CARDS_PER_PAGE
+	layout_level_menu_cards()
 	for index in range(progress_labels.size()):
 		progress_labels[index].text = game_progress.summary(index)
 		progress_labels[index].add_theme_color_override("font_color", Color("2c6838") if game_progress.best_times.has(index) else Color("856044"))

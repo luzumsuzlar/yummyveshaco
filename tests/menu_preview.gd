@@ -16,6 +16,12 @@ func capture() -> void:
 	await save_preview(game, "navigation")
 	game.finish_game(false)
 	await save_preview(game, "loss-navigation")
+	# UI fixture only: this does not introduce a playable fifth level.
+	game.add_level_menu_card(4, {"name": "5 · DENEME KARTI", "menu_description": "Yeni bölümler için menü önizlemesi."})
+	game.show_level_menu()
+	await save_preview(game, "pagination-first")
+	game.change_menu_page(1)
+	await save_preview(game, "pagination-second")
 	game.free()
 	quit()
 

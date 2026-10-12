@@ -55,13 +55,13 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 Deliklerin içi katmanlı gölgeyle derinleştirildi. Kullanıcının video referansına göre top 0,44 saniyede boyutunu büyük ölçüde koruyup aşağı düşüyor ve ön kenarın arkasında alttan başlayarak örtülüyor. Bu efekt 0.1.11-test/kod 12 ile telefona yüklendi; gerçek görünüm değerlendirmesi kullanıcı denemesini bekliyor. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
 
-Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 20 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
+Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 22 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.
 
 Yeni APK: `exports/android/yumi-sako-0.1.12-test.apk` (kod 13). 12 Ekim'de kullanıcı onayıyla mevcut uygulama kaldırılmadan telefona güncellendi; başlatma isteği başarılı ve oyun süreci mevcut. Eski APK'lar korunuyor; `yumi-sako-test.apk` kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
 
-APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.12-test.apk'`. Yeni paket geçti; ilk eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 20 oyun testinden ayrıdır.
+APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.12-test.apk'`. Yeni paket geçti; ilk eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 22 oyun testinden ayrıdır.
 
-Tüm 21 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez. Kayıt sistemi bölüm sayısını LEVELS listesinden alır; beşinci bölüm için kayıt uyumluluk hazırlığı kaynakta yapıldı, oyunda hâlâ dört bölüm var ve yeni kaynak henüz APK'ya alınmadı.
+Tüm 22 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez. Kayıt sistemi bölüm sayısını LEVELS listesinden alır. Menü dört kartlık sayfaları destekler; dört bölümlük görünüm aynı kalır, ek bölümlerde Önceki/Sonraki açılır. Beşinci bölüm için kayıt/menü hazırlığı kaynakta yapıldı, oyunda hâlâ dört bölüm var ve yeni kaynak henüz APK'ya alınmadı.
 
 Yanlış deliğe girince gerçek ve beklenen sembol belirtilir; kayıp ekranı son hatanın nedenini korur. `res://tests/interaction_smoke.gd` hareketli hedefe tahminli gerçek atışları, Yumi'nin önceden uyarı vermesini, tek atışta bir pati sınırını, havlamayla iptali ve yardım/hata ayrımını kontrol eder.
 
