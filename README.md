@@ -49,6 +49,8 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 ## Kontrol testi
 
+4. bölüm için yerel kaynakta karışma geri bildirimi netleştirildi: Yumi dönüşü, kısa hazırlık ve gerçekten hazır atış ayrı mesajlarla gösterilir. Bekleme süreleri değişmedi; bu mesaj değişikliği henüz telefondaki 0.1.11 paketinde yok.
+
 Deliklerin içi katmanlı gölgeyle derinleştirildi. Kullanıcının video referansına göre top 0,44 saniyede boyutunu büyük ölçüde koruyup aşağı düşüyor ve ön kenarın arkasında alttan başlayarak örtülüyor. Bu efekt 0.1.11-test/kod 12 ile telefona yüklendi; gerçek görünüm değerlendirmesi kullanıcı denemesini bekliyor. Hedef yarıçapı, puanlama ve atış aralıkları değişmedi.
 
 Yerel paket hazırlama: `& .\tests\prepare_android.ps1` mevcut APK'yı değiştirmeden içerik/sürüm/mimari/imza kontrolü yapar. `-Build -ApkPath 'exports/android/yeni-dosya.apk'` 20 oyun testinden sonra yeni bir dosyaya paket üretir ve kontrol eder; mevcut APK üstüne yazmaz, telefona kurmaz. Fiziksel cihaz kontrolü ayrı adımdır.

@@ -80,6 +80,28 @@ func run_checks() -> void:
 	check(game.progress == 1 and game.errors == 0, "Ball hits target at its actual height")
 	game.start_level(3)
 	check(game.scatter_count == 0 and game.scatter_state == "" and game.hole_positions[0] == Vector2(116, 250), "Restart resets layout and prank budget")
+	# A stopped layout must not imply the cat's return or cooldown is finished.
+	game.scatter_count = 1
+	game.scatter_state = "return"
+	game.yumi_position = game.YUMI_HOME + Vector2(0, -60)
+	game.shot_delay = 0.0
+	game.update_interface()
+	check(game.ability_label.text.contains("YUMI DÖNÜYOR") and game.launch_button.disabled, "Return explains why stopped targets cannot fire yet")
+	game._process(0.25)
+	check(game.scatter_state == "" and game.ability_label.text.contains("ATIŞ HAZIRLANIYOR") and game.launch_button.disabled, "Return cooldown is not advertised as ready")
+	game._process(0.3)
+	check(game.ability_label.text.contains("ATIŞ HAZIR") and not game.launch_button.disabled, "Ready message agrees with actual firing permission")
+	var press := InputEventScreenTouch.new()
+	press.index = 0
+	press.position = Vector2(270, 610)
+	press.pressed = true
+	game.handle_touch(press)
+	game.update_touch_aim(Vector2(310, 610))
+	check(game.aim_angle > 0.0, "Fresh touch aims after return")
+	press.pressed = false
+	press.position = Vector2(310, 610)
+	game.handle_touch(press)
+	check(game.ball_active, "Fresh touch fires after return")
 	for level in range(3):
 		game.start_level(level)
 		game.begin_scatter()

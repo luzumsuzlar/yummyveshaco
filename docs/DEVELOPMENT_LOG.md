@@ -159,3 +159,11 @@ Yerel düşme 0,44 saniyeye çıkarıldı: ilk girişte merkeze yerleşme, ardı
 Kullanıcı telefon bağlı başla dedi. Yeni 0.1.11-test/kod 12 APK ayrı dosyada üretildi; 20 toplu oyun testi, paket içerik/manifest/imza kontrolleri geçti. SHA256 BB06F6B7EF0B89DA6F3783E3FD794C6CE1EC3298CD7D65B7A734445D1E207319. Mevcut 0.1.10/kod 11 üzerine seri hedefli install -r Success döndü; telefonda 0.1.11/kod 12 doğrulandı. Uygulama kaldırılmadı, veri temizlenmedi; gerçek profil içeriği ayrıca okunmadı.
 
 Başlatma Status ok ve oyun süreci mevcut, incelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi. Ancak bu denemede Godot Engine render başlangıcı satırı yok ve kilit policy showing=true; gerçek görüntü/oynanış doğrulandı diye sunulmadı. Kullanıcı kilidi açıp yeni düşüşü deneyecek. Eski APK'lar, kullanıcı dosyaları ve GitHub korundu. En yeni paket exports/android/yumi-sako-0.1.11-test.apk.
+
+## Kullanıcı isteği — 12 Ekim 2026, dördüncü bölüm bekleme mesajları
+
+Kullanıcı video referanslı düşüşü daha iyi olarak onayladı. Ardından dördüncü bölüm karışması sonrası girişin çalışmadığını bildirdi; kaynak teşhisinde karışma/dönüş testleri geçti, Yumi dönüşü ve geçiş sırasında başlayan dokunuşun geçersiz kalması açıklandı. Kullanıcı sorunun çözüldüğünü söyledi; kalıcı kilitlenme doğrulanmış bir hata olarak kaydedilmedi. Bekleme mesajını netleştirme önerisinden sonra başla dedi.
+
+Karışma fiziği ve giriş kuralları değişmeden durum mesajları ayrıldı. Hedefler durunca durum satırı Yumi geri dönüyor der; dönüş/kısa 0,25 saniye hazırlık sırasında kapalı atış hazır gibi sunulmaz. Gerçek can_launch_ball izni açıldığında sağ kutu yeşil ATIŞ HAZIR / Sürükle, bırak gösterir. Normal uçuşta havlama bilgisi korunur. Dar sağ kutuda dönüş başlığı YUMI DÖNÜYOR olarak kısaltıldı.
+
+20 toplu oyun testi geçti; scatter_smoke.gd içine dönüş/kısa hazırlık/hazır mesajı ile düğme durumu uyumu ve dönüş sonrası yeni dokunmayla nişan/atış kontrolleri eklendi. Son metin kısaltmasından sonra scatter testi tekrar sınandı. scatter_preview.gd dönüş ve hazır kareleriyle genişletildi, metin ve etkin düğme görsel olarak kontrol edildi. Telefon, APK'lar, GitHub ve kullanıcı dosyaları değişmedi; yeni mesajlar yalnız kaynakta. Kullanıcı yeni telefon güncellemesi isterse sürüm kodunu artırarak paketle.

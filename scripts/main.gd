@@ -1013,7 +1013,7 @@ func update_scatter(delta: float) -> void:
 				scatter_state = "settle"
 			else:
 				scatter_state = "return"
-			status_label.text = "Hedefler duruluyor. Yeni düzeni incele; atış birazdan!"
+			status_label.text = "Hedefler yerleşiyor. Yeni düzeni incele." if scatter_state == "settle" else "Delikler durdu. Yumi geri dönüyor; atış birazdan."
 	elif scatter_state == "settle":
 		var complete := true
 		for index in range(3):
@@ -1022,6 +1022,7 @@ func update_scatter(delta: float) -> void:
 		if complete:
 			scatter_velocities.assign([Vector2.ZERO, Vector2.ZERO, Vector2.ZERO])
 			scatter_state = "return"
+			status_label.text = "Delikler durdu. Yumi geri dönüyor; atış birazdan."
 	elif scatter_state == "return":
 		yumi_position = yumi_position.move_toward(YUMI_HOME, 300.0 * delta)
 		if yumi_position.distance_to(YUMI_HOME) < 1.0:
@@ -1517,7 +1518,17 @@ func update_interface() -> void:
 		if level_index == 1 and stage_rotation <= 0.0:
 			ability_label.text = "SEKME: %d/2\nKalan HAV: %d" % [wall_bounces if ball_active else 0, barks_left]
 		if scatter_state != "":
-			ability_label.text = "HEDEFLER KARIŞIYOR\nAtış birazdan"
+			match scatter_state:
+				"approach", "warning":
+					ability_label.text = "YUMI HAZIRLANIYOR\nAtış kapalı"
+				"scatter", "settle":
+					ability_label.text = "DELİKLER HAREKETLİ\nDurmalarını bekle"
+				"return":
+					ability_label.text = "YUMI DÖNÜYOR\nAtış birazdan"
+			ability_label.add_theme_color_override("font_color", Color("865315"))
+		elif level_index == 3 and scatter_count > 0 and not ball_active:
+			ability_label.text = "ATIŞ HAZIR\nSürükle, bırak" if can_launch_ball() else "ATIŞ HAZIRLANIYOR\nBirazdan hazır"
+			ability_label.add_theme_color_override("font_color", Color("2c6838") if can_launch_ball() else Color("865315"))
 
 
 func tutorial_hint() -> String:

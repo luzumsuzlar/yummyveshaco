@@ -20,9 +20,14 @@ func capture() -> void:
 	for step in range(40):
 		game._process(1.0 / 60.0)
 	await save_preview(game, "bouncing")
+	while game.scatter_state != "return":
+		game._process(1.0 / 60.0)
+	await save_preview(game, "returning")
 	while game.scatter_state != "":
 		game._process(1.0 / 60.0)
 	await save_preview(game, "resting")
+	game._process(0.3)
+	await save_preview(game, "ready")
 	game.free()
 	quit()
 
