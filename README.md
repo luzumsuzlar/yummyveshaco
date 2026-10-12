@@ -49,7 +49,9 @@ Tamamlanan bölümler ve en iyi süreler yerel kaydedilir; yıldız/kilit sistem
 
 ## Kontrol testi
 
-APK paylaşım kontrolü: `& .\tests\audit_apk.ps1`. Mevcut eski APK'da kullanılmayan referans görselleri bulunduğu için bu kontrol bilerek hata verir; yeni paylaşım için temiz paket hazırlanmalı. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 19 oyun testinden ayrıdır.
+Yeni yerel APK: `exports/android/yumi-sako-0.1.9-test.apk` (kod 10). Telefona yüklenmedi; telefon hâlâ 0.1.8-test kullanıyor. Öğretici, mola, kayıt ve giriş/ses düzeltmeleri bu yeni pakette. Eski `yumi-sako-test.apk` korunuyor ama kullanılmayan referans görselleri içerdiğinden yeni paylaşımlarda kullanılmamalı.
+
+APK paylaşım kontrolü: `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.9-test.apk'`. Yeni paket geçti; eski paket bilerek reddedilir. İnceleme ve sınırlar `docs/PACKAGING_AUDIT.md` içinde. Bu kontrol aşağıdaki 19 oyun testinden ayrıdır.
 
 Tüm 19 otomatik kontrol: PowerShell'de `& .\tests\run_checks.ps1`. Başka Godot konumu için `-GodotPath` parametresi kullanılabilir. Bu testler gerçek oyuncu ilerleme ve ses tercihlerini okumaz/yazmaz; kayıt testleri yalnız açıkça seçilmiş test dosyalarına yazabilir. Fiziksel telefon testinin yerine geçmez.
 

@@ -29,6 +29,19 @@ try {
     if ($forbidden.Count -gt 0 -and -not $AuditOnly) {
         throw 'Package contains reference/private/test resources. Build and audit a clean package before sharing.'
     }
+    if (-not $AuditOnly) {
+        foreach ($scriptName in @('main', 'game_audio', 'game_progress')) {
+            if ($entries -notcontains "assets/scripts/$scriptName.gdc") {
+                throw "Required current game script missing: $scriptName"
+            }
+        }
+        foreach ($textureName in @('kitchen-background-v1', 'cupboard-v1', 'yumi-idle-v1', 'yumi-sleep-v2', 'yumi-paw-v1', 'yumi-walk-v1', 'shako-idle-v1')) {
+            if (-not ($entries -match ('^assets/\.godot/imported/' + [regex]::Escape($textureName) + '\.png-[^/]+\.ctex$'))) {
+                throw "Required game texture missing: $textureName"
+            }
+        }
+        Write-Host 'All three current game scripts and seven game textures are present.'
+    }
     if ($forbidden.Count -eq 0) {
         Write-Host 'No listed forbidden resources found. This is not a full privacy or playability guarantee.'
     }

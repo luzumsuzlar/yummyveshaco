@@ -24,7 +24,7 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. APK kapsam incelemesi tamamlandı: eski APK'da kullanılmayan iki referans JPG ve eski uyku görseli bulundu. Sonraki dilimde kullanıcı kaynaklarını silmeden export kapsamını daralt, farklı adla yerel paket üret ve tests/audit_apk.ps1 ile içeriğini doğrula; ayrıntılar docs/PACKAGING_AUDIT.md. Yeni kurulum, kullanıcı dosyasına değişiklik veya telefona yükleme yapma. Gerçek oyuncu verisi olmadan zorluk değerlerini gelişigüzel değiştirme.
+1. Temiz yerel 0.1.9-test/kod 10 APK üretildi ve içerik/PCK ekran kontrolleri geçti; ayrıntılar docs/PACKAGING_AUDIT.md. Kullanıcı dönene kadar telefon kurulumu/GitHub gönderimi yok. Sonraki dilimde bu paket için tekrar üretilebilir hazırlama/doğrulama adımını ve fiziksel test kontrol listesini toparla; sırf süre doldurmak için zorluk veya yeni mekanik ekleme.
 2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
@@ -107,3 +107,11 @@ Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirm
 tests/audit_apk.ps1 salt okunur dağıtım kontrolü eklendi: bilinen referanslar, kişisel tablo uzantıları ve test/belge yolları varsa paket reddedilir; bilinmeyen ZIP/PCK düzeninde temiz diye onay verilmez. Eski APK'da altı girdinin listelenmesi ve varsayılan kontrolün paketi reddetmesi doğrulandı. SHA256 önce/sonra aynı; APK değiştirilmedi. Tam gizlilik taraması veya oynanabilirlik testi değildir.
 
 Bu dilimde oyun/export ayarı değiştirilmedi, yeni APK üretilmedi. 19 oyun testi tekrar çalıştırılmadı, yeni ekran olmadığından görsel test yapılmadı. Telefon/GitHub ve kullanıcı dosyaları korundu. Sonraki iş temiz export kapsamı ve ayrı yerel APK doğrulaması; eski paket yeni paylaşımlar için önerilmiyor.
+
+## Saatlik devam — 12 Ekim 2026, 06:35 Türkiye
+
+Kullanım izinli; kredi/sıfırlama kullanılmadı, yeni kullanıcı yönlendirmesi yok. Kaynak kullanıcı görselleri ve tabloları silmeden export filtresi daraltıldı. İlk seçili-sahne denemesi preload görsellerini/betiklerini eksik bıraktı; paket kontrolü reddetti. all_resources geri korunup açık dışlamalarla yeni 0.1.9-test/kod 10 APK farklı adla üretildi; mevcut 0.1.8 APK aynı SHA256 ile korundu.
+
+Yeni APK 128 ZIP girdisiyle geçti: yasak referanslar/tablo/test/çıktı yolları yok, üç oyun betiği ve yedi gerekli doku var. APK imzalama doğrulaması tamamlandı; sürüm/package/arm64 manifestten okundu. Audit koruması gerekli kaynak kontrolleriyle genişletildi. Aynı ayarlı PCK kaynak projesinden ayrı açıldı; dört bölüm, mola ve menü üretildi, ilk bölüm/mola/menü görsel olarak kontrol edildi. 19 oyun testi geçti. PCK masaüstü kontrolü Android APK çalıştırma iddiası değildir.
+
+Yeni dosya exports/android/yumi-sako-0.1.9-test.apk; boyut/hash PACKAGING_AUDIT.md içinde. Telefon/GitHub değişmedi. Godot'un bu taramada ürettiği oyun/test .gd.uid yan dosyaları yerel kaynak kaydına dahil edildi; kullanıcı dosyaları korunuyor. Fiziksel Android denemesi hâlâ kullanıcı dönünce yapılmalı.
