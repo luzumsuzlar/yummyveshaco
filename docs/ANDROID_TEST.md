@@ -1,5 +1,7 @@
 # Android telefon denemesi
 
+Güncel paket — 12 Ekim 2026: 0.1.12-test/kod 13, son dördüncü bölüm bekleme/hazır mesajlarını içerir. Kullanıcı ilerleme planındaki işlemleri yap dedi; bağlı Samsung SM-S938B'ye uygulama kaldırılmadan install -r Success ile güncellendi. Kod/sürüm ve oyun süreci doğrulandı, başlatma Status ok döndü. 20 oyun testi ve paket içerik/manifest/imza kontrolleri geçti. İncelenen başlangıç kayıtlarında script/fatal/kaynak yükleme hatası görülmedi; render başlangıcı satırı bu kontrolde yok, kilit policy showing=true. Telefonun kilidini kullanıcı açmalı; bütün cihaz testleri ve süre ölçümleri tamamlandı diye sunulamaz. Fiziksel test kayıtları PLAYTEST_NOTES.md, aşama sırası ROADMAP.md içinde. Aşağıdaki notlar önceki paketlerin geçmişidir.
+
 Son durum — 12 Ekim 2026: video referansına göre aşağı düşme/ön kenar örtülmesi içeren 0.1.11-test/kod 12 Samsung SM-S938B'ye install -r ile başarıyla güncellendi. Önceki sürüm 0.1.10/kod 11 idi. 20 oyun testi ve yeni paket içerik/manifest/imza kontrolleri geçti. Başlatma Status ok ve oyun süreci mevcut; incelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi, ancak bu denemede Godot Engine render başlangıcı logu görülmedi. Kilit policy showing=true; gerçek ekran/efekt değerlendirmesi kullanıcı kilidi açıp denediğinde yapılacak. Uygulama kaldırılmadı veya verileri temizlenmedi. En yeni APK: exports/android/yumi-sako-0.1.11-test.apk. Aşağıdaki sürüm notları geçmiş denemelerdir.
 
 12 Ekim 2026 son güncelleme: kullanıcı telefon bağlı/başla dediğinde düşme efektini içeren 0.1.10-test/kod 11 hazırlandı ve Samsung SM-S938B'ye install -r ile başarıyla kuruldu. Önceki telefondaki sürüm 0.1.9/kod 10 idi. Başlatma Status ok/LaunchState COLD döndü; oyun süreci ve Godot Engine başlangıcı doğrulandı. İncelenen başlangıç kayıtlarında script/fatal/kaynak yükleme hatası görülmedi. 20 oyun testi, paket içerik/manifest/imza kontrolleri geçti. Uygulama kaldırılmadı, veri temizlenmedi; kayıt içeriği ayrıca incelenmedi. Gerçek düşme hissi/dokunma/mola/ses değerlendirmesi kullanıcı denemesini bekliyor. Aşağıdaki 0.1.9 notu bir önceki denemedir.
@@ -16,10 +18,10 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan ve son yüklenen telefon sürümü: `0.1.10-test`, kod `11`. Telefon oynanış/ergonomi kontrolü bekliyor.
+- Hazırlanan ve son yüklenen telefon sürümü: `0.1.12-test`, kod `13`. Telefon oynanış/ergonomi kontrolü bekliyor.
 - Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri yerel 0.1.9 pakettedir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
-- APK: `exports/android/yumi-sako-0.1.10-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
+- APK: `exports/android/yumi-sako-0.1.12-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
 
 Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı; yeni kurulum veya global ayar değişikliği yapılmadı. Android için ETC2/ASTC doku içe aktarımı proje ayarında açıldı. APK, Git tarafından yok sayılan `exports/` altında tutulur.

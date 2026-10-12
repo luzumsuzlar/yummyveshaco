@@ -24,8 +24,8 @@ Dokunmatik kenar durumunda hata doğrulandı ve düzeltildi: atış beklemesi, k
 
 ## Sıradaki işler
 
-1. Temiz yerel 0.1.9-test/kod 10 APK, hazırlama/doğrulama betiği ve fiziksel test listesi tamamlandı. Kullanıcı dönene kadar telefon kurulumu/GitHub gönderimi yok. Aynı paketi sırf devam ediyor görünmek için yeniden üretme. Sonraki öncelik gerçek Android açılış/dokunma/mola/kayıt/ses denemesi; yeni somut hata bulgusu veya kullanıcı geri bildirimi olmadan zorluk ve mekanik değiştirme.
-2. Fiziksel Android mola/geri tuşu ve uygulamayı yeniden açınca başarı kaydının korunması, kullanıcı döndüğünde yeni APK ile denenecek.
+1. Kullanıcı döndü; güncel yetki/aşama için son kayıtları ve docs/ROADMAP.md dosyasını kullan. 0.1.12-test/kod 13 telefona yüklendi. Kaynak testleri geçiyor; gerçek dört bölüm cihaz turu ve tempo denemeleri kullanıcı geri bildirimi bekliyor. Aynı paketi tekrar üretme veya sırf devam ediyor görünmek için zorluk/mekanik ekleme.
+2. Deneme sonuçlarını docs/PLAYTEST_NOTES.md şablonuyla kaydet. Başarı süresi, kayıp, mola ve yardım ayrımını koru; cihaz denemesi olmadan bir aşamayı tamamlandı sayma. GitHub gönderimi/dış paylaşım ayrı istek gerektirir.
 
 ## Saatlik devam — 11 Ekim 2026, 22:30 Türkiye
 
@@ -167,3 +167,11 @@ Kullanıcı video referanslı düşüşü daha iyi olarak onayladı. Ardından d
 Karışma fiziği ve giriş kuralları değişmeden durum mesajları ayrıldı. Hedefler durunca durum satırı Yumi geri dönüyor der; dönüş/kısa 0,25 saniye hazırlık sırasında kapalı atış hazır gibi sunulmaz. Gerçek can_launch_ball izni açıldığında sağ kutu yeşil ATIŞ HAZIR / Sürükle, bırak gösterir. Normal uçuşta havlama bilgisi korunur. Dar sağ kutuda dönüş başlığı YUMI DÖNÜYOR olarak kısaltıldı.
 
 20 toplu oyun testi geçti; scatter_smoke.gd içine dönüş/kısa hazırlık/hazır mesajı ile düğme durumu uyumu ve dönüş sonrası yeni dokunmayla nişan/atış kontrolleri eklendi. Son metin kısaltmasından sonra scatter testi tekrar sınandı. scatter_preview.gd dönüş ve hazır kareleriyle genişletildi, metin ve etkin düğme görsel olarak kontrol edildi. Telefon, APK'lar, GitHub ve kullanıcı dosyaları değişmedi; yeni mesajlar yalnız kaynakta. Kullanıcı yeni telefon güncellemesi isterse sürüm kodunu artırarak paketle.
+
+## İlerleme planını uygulama — 12 Ekim 2026
+
+Kullanıcı aşamalı planı onaylayıp işlemleri yap dedi. ROADMAP.md ile tamamlanma ölçütleri ve bağımlılık sırası, PLAYTEST_NOTES.md ile dört bölüm/iki deneme kaydı ve kısa sorular hazırlandı. Veriler henüz boş; otomatik atış süreleri gerçek oyuncu verisi olarak yazılmadı. 60–90 saniye ilk bölüm hedefi varsayım olarak belirtildi, ölçülmüş sonuç değil. Sonraki Yumi cilası/beşinci bölüm gerçek geri bildirimden sonra; kullanıcıya tamamı yapılmış gibi sunulmadı.
+
+Son kaynak değişikliği bekleme mesajları olduğundan yeni 0.1.12-test/kod 13 APK ayrı adla üretildi. 20 toplu oyun testi ve 128 girdi/üç betik/yedi doku içerik, manifest, imza kontrolleri geçti. SHA256 C875C0CF5E24F0B9EED59FB8B9AFDED48DA71544DD264FFB476F30267364368E. Tek yetkili bağlı Samsung SM-S938B'ye install -r Success döndü; öncesinde 0.1.11/kod 12, sonrasında 0.1.12/kod 13 doğrulandı. Uygulama kaldırılmadı, veriler temizlenmedi; profil içeriği ayrıca okunmadı.
+
+Başlatma Status ok ve süreç mevcut. İncelenen başlangıç loglarında script/fatal/kaynak yükleme hatası görülmedi; render başlangıcı satırı bu kontrolde yok, kilit policy showing=true. Kullanıcı kilidi açıp dört bölümü deneyecek. Mesajların görsel kontrolü önceki kaynak diliminde yapıldı; bu tur oyun çizimi değişmedi. Gerçek cihaz turu, süre/ergonomi verisi ve sonraki aşamalar bekliyor. GitHub, eski APK'lar, referans video ve kullanıcı dosyaları korundu.
