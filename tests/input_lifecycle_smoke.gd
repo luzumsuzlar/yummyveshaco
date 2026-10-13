@@ -88,6 +88,45 @@ func run_checks() -> void:
 	game._process(20.0)
 	key(KEY_P)
 	check(game.toy_active and game.toy_time_left == toy_time, "Placed toy time survives pause unchanged")
+	# Finish a real launched shot while another field gesture remains held.
+	# Test routing and counters, not the flight trajectory or phone ergonomics.
+	var cues: Array[String] = []
+	game.game_audio.effect_played.connect(func(effect: String): cues.append(effect))
+	for level in range(game.LEVELS.size()):
+		for success in [true, false]:
+			game.start_level(level)
+			game.shot_delay = 0
+			game.level_time = 7.0
+			game.progress = game.sequence.size() - 1 if success else 0
+			game.errors = 0 if success else 2
+			var completed_before: int = game.game_progress.completions.get(level, 0)
+			key(KEY_SPACE)
+			touch(Vector2(300, 500), true)
+			check(game.ball_active and game.active_touch_index == 0 and not game.touch_can_launch, "In-flight held touch is tracked without arming another shot")
+			game.wall_bounces = game.required_wall_bounces()
+			var hole: int = game.ball_type if success else (game.ball_type + 1) % 3
+			game.ball_position = game.hole_positions[hole]
+			cues.clear()
+			game.resolve_hole_hit(hole)
+			check(game.active_touch_index == -1 and not game.touch_can_launch, "Result cancels held input in level %d" % level)
+			check(cues == (["unlock"] if success else []), "Result emits only its intended sound")
+			var expected_count := completed_before + (1 if success else 0)
+			check(game.game_progress.completions.get(level, 0) == expected_count, "Only a successful finish records completion")
+			if success: game._process(2.3)
+			drag(Vector2(350, 500))
+			touch(Vector2(350, 500), false)
+			key(KEY_SPACE)
+			check(not game.ball_active and game.game_state == ("success" if success else "failed"), "Result ignores old field release and space")
+			check(game.level_time == 7.0 and game.game_progress.completions.get(level, 0) == expected_count, "Result input cannot add time or duplicate completion")
+			game.overlay_button.pressed.emit()
+			game.shot_delay = 0
+			cues.clear()
+			touch(Vector2(350, 500), false)
+			check(not game.ball_active and cues.is_empty() and game.aim_angle == 0, "Stale release cannot fire or sound in the next attempt")
+			touch(Vector2(300, 500), true)
+			drag(Vector2(330, 500))
+			touch(Vector2(330, 500), false)
+			check(game.ball_active and cues == ["launch"], "Fresh result-to-play gesture launches exactly once")
 	game.free()
 	print("Input lifecycle smoke: %d failures" % failures)
 	quit(1 if failures else 0)
