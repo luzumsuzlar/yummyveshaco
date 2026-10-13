@@ -1,5 +1,7 @@
 # Telefon denemesi notları
 
+13 Ekim 2026, 0.1.14 güncellemesinden sonra kullanıcı önerilen Yumi temizlenmesi, fareyle oyun ve Şako tepkileri denemelerine “hepsi tamam devamet” yanıtını verdi. Bu hareket seti için olumlu nitel cihaz geri bildirimidir; ayrıntılı yaşam döngüsü listesi/sayısal ölçüm yerine geçmez. Sonradan eklenen ortak kutlama henüz bu onayın kapsamında değildir.
+
 13 Ekim 2026, 0.1.13 güncellemesinden sonraki kullanıcı geri bildirimi: beşinci bölüme kadar oynadı, sorun olmadığını söyledi. Beşinci bölümde sembol gizlendikten sonra atış yaptığını fakat deneyimde pek fark hissetmediğini belirtti. Bu tek oyuncu nitel gözlemidir; bütün cihaz kontrolleri veya tasarım başarısı değildir. Sayısal süre/hata kaydı verilmedi. Hafıza kuralının erken atışla atlandığı varsayılmamalı; mevcut durumda belirgin farklılık yaratmadığı not edilmeli.
 
 Durum: 12 Ekim'de ilk nitel kullanıcı geri bildirimi alındı; ayrıntılı deneme satırları henüz doldurulmadı. Otomatik test verisi gerçek oyuncu denemesi olarak yazılmayacak.

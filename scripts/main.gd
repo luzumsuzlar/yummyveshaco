@@ -1838,20 +1838,39 @@ func draw_toy() -> void:
 		draw_arc(p, 32 + sin(level_time * 6.0) * 2.0, 0, TAU, 32, Color("9a70b8"), 3, true)
 
 
+func celebration_visual_active() -> bool:
+	return game_state in ["celebrating", "success"] or (game_state == "paused" and paused_from_state == "celebrating")
+
+
+func shared_celebration_pose() -> Dictionary:
+	var together := smoothstep(1.45, 1.95, celebration_time) if celebration_visual_active() else 0.0
+	var nod := sin(clampf((celebration_time - 1.45) / 0.75, 0.0, 1.0) * PI) * together
+	return {"together": together, "nod": nod, "opening": smoothstep(0.0, 0.4, celebration_time)}
+
+
 func draw_cupboard() -> void:
 	# Shallow extrusion and floor contact; target coordinates stay unchanged.
 	draw_soft_shadow(Vector2(274, 343), Vector2(225, 14), 0.20)
 	draw_colored_polygon(PackedVector2Array([Vector2(496, 194), Vector2(513, 202), Vector2(513, 340), Vector2(496, 332)]), Color("765039"))
 	draw_colored_polygon(PackedVector2Array([Vector2(44, 326), Vector2(496, 326), Vector2(508, 342), Vector2(56, 342)]), Color("875a39"))
 	draw_texture_rect(CUPBOARD_ART, Rect2(32, 184, 476, 158), false)
-	if game_state == "celebrating" or game_state == "success":
-		var opening := clampf(celebration_time / 0.4, 0.0, 1.0)
+	if celebration_visual_active():
+		var opening: float = shared_celebration_pose()["opening"]
+		# Warm reveal behind the bowl, using the existing celebration clock.
+		for layer in range(3):
+			draw_style_box(rounded_box(Color(1.0, 0.78, 0.28, 0.05 * opening), 24), Rect2(142 - layer * 8, 392 - layer * 8, 256 + layer * 16, 118 + layer * 16))
 		draw_rect(Rect2(154, 400, 232, 102), Color("2c211e"))
 		draw_rect(Rect2(154 - opening * 50, 400, 46, 102), Color("75513a"))
 		draw_rect(Rect2(340 + opening * 50, 400, 46, 102), Color("75513a"))
 		draw_colored_polygon(PackedVector2Array([Vector2(236, 465), Vector2(304, 465), Vector2(293, 491), Vector2(247, 491)]), Color("ffcf5a"))
 		for crumb in range(5):
 			draw_circle(Vector2(244 + crumb * 12, 465), 6, Color("a76f45"))
+		var together: float = shared_celebration_pose()["together"]
+		for index in range(3):
+			var star := Vector2(242 + index * 28, 448 - sin(index * 1.8) * 10 - together * 12)
+			var color := Color(1.0, 0.9, 0.5, together * 0.8)
+			draw_line(star - Vector2(4, 0), star + Vector2(4, 0), color, 2, true)
+			draw_line(star - Vector2(0, 5), star + Vector2(0, 5), color, 2, true)
 
 
 func draw_background() -> void:
@@ -2002,8 +2021,10 @@ func draw_yumi() -> void:
 	if reaching and toy_play_pose()["playing"]:
 		direction = float(toy_play_pose()["direction"])
 	var visual_origin := p + Vector2(shift.x * direction, shift.y)
+	var friendly_nod: float = shared_celebration_pose()["nod"]
+	visual_origin.y += friendly_nod * 2.0
 	# Align each source pose around the unchanged gameplay center.
-	draw_set_transform(visual_origin, float(motion["angle"]) * direction if reaching else 0.0, Vector2(direction, 1))
+	draw_set_transform(visual_origin, float(motion["angle"]) * direction if reaching else -friendly_nod * 0.055, Vector2(direction, 1))
 	if walking:
 		draw_texture_rect_region(art, yumi_art_rect(), yumi_walk_region())
 	elif art == YUMI_GROOM_ART:
@@ -2032,8 +2053,10 @@ func draw_yumi() -> void:
 		yumi_caption = "YAKALADIM!" if toy_feedback()["phase"] == "play" else "FARE BENİM!"
 	elif yumi_is_active() and ball_active and ball_type == 2 and not ball_swatted:
 		yumi_caption = "YUMAK BENİM!"
-	if game_state == "celebrating":
+	if celebration_visual_active():
 		yumi_caption = "BEN Mİ?" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
+		if celebration_time >= 1.7:
+			yumi_caption = "PAYLAŞALIM!"
 	if not (motion["big"] and float(motion["impact"]) > 0.0):
 		draw_style_box(rounded_box(CREAM, 8), Rect2(visual_origin + Vector2(-70, -85), Vector2(140, 24)))
 		draw_string(font, visual_origin + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, INK)
@@ -2170,7 +2193,7 @@ func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
 	var frame: int = pose["frame"]
 	if frame >= 0:
 		var anchor: Vector2 = SHAKO_REACTION_ANCHORS[frame] * (118.0 / 512.0)
-		draw_set_transform(head + Vector2(0, -float(pose["lift"])), 0.0, Vector2(float(pose["direction"]), 1))
+		draw_set_transform(head + Vector2(0, -float(pose["lift"])), float(shared_celebration_pose()["nod"]) * 0.055, Vector2(float(pose["direction"]), 1))
 		draw_texture_rect_region(SHAKO_REACTION_ART, Rect2(Vector2(-anchor.x, 30.0 - anchor.y), Vector2(118, 118)), shako_reaction_region(frame))
 		draw_set_transform(Vector2.ZERO)
 	else:
@@ -2179,6 +2202,8 @@ func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
 	var caption := "ŞAKO"
 	if celebrating:
 		caption = "YUMI?!" if yumi_help_count > 0 and celebration_time < 0.5 else "MAMA!"
+		if celebration_time >= 1.7:
+			caption = "BİRLİKTE!"
 	draw_style_box(rounded_box(CREAM, 8), Rect2(head + Vector2(-48, 38), Vector2(96, 24)))
 	draw_string(font, head + Vector2(-48, 55), caption, HORIZONTAL_ALIGNMENT_CENTER, 96, 16, INK)
 

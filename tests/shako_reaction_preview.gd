@@ -8,7 +8,7 @@ func capture() -> void:
 	root.add_child(game)
 	game.set_process(false)
 	DirAccess.make_dir_recursive_absolute("res://exports/shako-reaction-preview")
-	for name in ["attention", "surprise-left", "surprise-right", "joy", "celebration", "paused-celebration"]:
+	for name in ["attention", "surprise-left", "surprise-right", "joy", "celebration", "shared-celebration", "paused-celebration"]:
 		game.start_level(2)
 		game.shot_delay = 0
 		if name.begins_with("surprise"):
@@ -20,7 +20,7 @@ func capture() -> void:
 			game.shako_joy_left = 0.25
 		elif name.contains("celebration"):
 			game.finish_game(true)
-			game._process(0.8)
+			game._process(0.8 if name == "celebration" else 1.8)
 			if name.begins_with("paused"): game.pause_game()
 		game.update_interface()
 		game.queue_redraw()
@@ -30,5 +30,5 @@ func capture() -> void:
 			quit(1)
 			return
 	game.free()
-	print("Six Shako reaction previews saved")
+	print("Seven Shako/shared celebration previews saved")
 	quit()

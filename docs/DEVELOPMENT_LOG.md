@@ -323,3 +323,11 @@ Dört sentetik ZIP (tam, grooming eksik, Şako eksik, eski küme) ve eski kümey
 Kullanıcı yönlendirmesiyle yeni 0.1.14-test/kod 15 APK ayrı dosyada hazırlandı. 25 oyun testi, 132 ZIP girdisi, üç betik/dokuz doku, yasak kaynak, ARM64 manifest ve imza kontrolü geçti. SHA256 6C7D97C435F4CDD1A25B931290A6A99A15BE92E52D463AC8CD6A4B70E0CE72BD. exports/android/yumi-sako-0.1.14-test.apk; eski APK'lar korundu.
 
 Samsung SM-S938B R5CY12R9VBK önce kod14/0.1.13, install -r Success sonrasında kod15/0.1.14 olarak doğrulandı. Başlatma Status ok, süreç28537. İncelenen son süreç kayıtlarında seçilen script/fatal/parse/polygon/yükleme hata desenleri görülmedi; Godot başlangıç satırı da bu dar log örneğinde yoktu. Gerçek görünüm veya bütün telefon testleri doğrulandı iddiası yok. Uygulama kaldırılmadı/veri temizlenmedi; profil içeriği ayrıca okunmadı. Yumi temizlenmesi, Şako tepkileri, oyuncak fare teması ve mola görünümü cihazda kullanıcı değerlendirmesini bekliyor. GitHub gönderimi yok; kullanıcı senaryosu/ilişkisiz dosyalar korunuyor. Otomasyon aynı paketi tekrar kurmasın.
+
+## Kullanıcı onayı ve devam — 13 Ekim 2026, ortak kutlama
+
+Kullanıcı 0.1.14 denemesi ardından “hepsi tamam devamet” dedi. Önerilen üç görsel davranış için olumlu nitel cihaz geri bildirimi PLAYTEST_NOTES içine işlendi; bütün cihaz testleri veya sayısal denge kanıtı sayılmadı.
+
+Mevcut 2,2 saniyelik kutlamanın son kısmına Yumi/Şako küçük karşılıklı eğilmesi, PAYLAŞALIM/BİRLİKTE tepkisi, mama kabı parıltısı eklendi. Dolap açılışı smoothstep ile yumuşatıldı. Kutlama molasında açık dolabın kaybolduğu çizim koşulu da düzeltildi; ortak görsel yardımcı kutlama/mola/sonuç durumunu tutarlı kullanır. Oynanış süreleri, ilk dört bölüm ve düşüş korunuyor. Mevcut çizimler ve kod kullanıldı, yeni raster yok.
+
+25 test geçti; Şako testi ortak tepki/mola/açık dolap durumuyla genişletildi. Yedi Godot önizlemesi üretildi; ortak kutlama ve moladaki hali görsel incelendi, çizim hata kaydı boş. Önizlemelerdeki 0/5 sentetik durumdur. Bu dilim yeni APK'ya alınmadı ve telefona kurulmadı. Kullanıcının senaryo düzenlemesi ve ilişkisiz dosyalar korunuyor; yeni Şako test UID'leri projeye ait metaveri olarak kaydediliyor. Sonraki iş kullanıcı istediğinde kutlamanın cihazda okunabilirliğini değerlendirmek; sırf içerik çoğaltmak için bölüm eklememek.

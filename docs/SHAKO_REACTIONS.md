@@ -1,5 +1,7 @@
 # Şako'nun tepkileri — 13 Ekim 2026
 
+0.1.14 telefon hareketleri kullanıcıdan “hepsi tamam” geri bildirimi aldı. Sonraki yerel dilimde ortak kutlama eklendi: mevcut 2,2 saniyenin son kısmında küçük karşılıklı eğilme, PAYLAŞALIM/BİRLİKTE yazıları ve mama kabında parıltı. Dolap açılışı yumuşatıldı; kutlama molasında açık dolap ve tepkiler donmuş kalır. Bu son dilim henüz telefona yüklenmedi; yeni raster varlık gerektirmedi. 25 test ve yedi Godot görüntüsüyle doğrulandı.
+
 Kullanıcının onayladığı üç tepki yerel oyuna bağlandı:
 
 - Atış hazırken iki dikkat pozu: topa yukarı bakış ve küçük baş/kulak değişimi. Atış, fare seçimi ve karışma sırasında bu pozlar kullanılmaz.
