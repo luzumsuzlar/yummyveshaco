@@ -1,6 +1,8 @@
 # Android telefon denemesi
 
-Yerel kaynak durumu — 12 Ekim 2026: kaynakta beş bölüm, sayfalı menü ve fare geri bildirimi var; 23 otomatik kontrol geçiyor. Bunlar yeni APK'ya alınmadı. Telefona son yüklenen paket 0.1.12-test/kod 13 ve dört bölümlü. Kullanıcı ilk dört bölüm temposunu normal buldu, düşüşü beğendi, bekleme konusunun çözüldüğünü söyledi; aşağıdaki bütün cihaz adımları tamamlandı sayılmaz. Yeni kurulum bu bağımsız geliştirme sırasında yapılmayacak; kullanıcı istediğinde yeni kodlu paket ayrı dosyada hazırlanmalı.
+Güncel durum — 13 Ekim 2026: beş bölüm, sayfalı menü ve fare geri bildirimi içeren 0.1.13-test/kod 14, kullanıcının telefon bağlı mesajı üzerine Samsung SM-S938B'ye uygulama kaldırılmadan yüklendi. 23 otomatik oyun testi ve paket içerik/manifest/imza kontrolleri geçti. Kullanıcı beşinci bölüme kadar oynayıp sorun görmediğini, beşinci bölümde sembol gizlendikten sonra attığını ancak çok fark hissetmediğini bildirdi. Bu kısmi oyuncu doğrulamasıdır; aşağıdaki bütün cihaz adımları tamamlandı sayılmaz. İlk dört bölüm temposu ve beğenilen düşüş korunuyor. Bağımsız devam çalışması yeni telefon kurulumu yapmaz.
+
+## Önceki paket kayıtları
 
 Güncel paket — 12 Ekim 2026: 0.1.12-test/kod 13, son dördüncü bölüm bekleme/hazır mesajlarını içerir. Kullanıcı ilerleme planındaki işlemleri yap dedi; bağlı Samsung SM-S938B'ye uygulama kaldırılmadan install -r Success ile güncellendi. Kod/sürüm ve oyun süreci doğrulandı, başlatma Status ok döndü. 20 oyun testi ve paket içerik/manifest/imza kontrolleri geçti. İncelenen başlangıç kayıtlarında script/fatal/kaynak yükleme hatası görülmedi; render başlangıcı satırı bu kontrolde yok, kilit policy showing=true. Telefonun kilidini kullanıcı açmalı; bütün cihaz testleri ve süre ölçümleri tamamlandı diye sunulamaz. Fiziksel test kayıtları PLAYTEST_NOTES.md, aşama sırası ROADMAP.md içinde. Aşağıdaki notlar önceki paketlerin geçmişidir.
 
@@ -20,10 +22,10 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan ve son yüklenen telefon sürümü: `0.1.12-test`, kod `13`. Telefon oynanış/ergonomi kontrolü bekliyor.
-- Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri yerel 0.1.9 pakettedir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
+- Hazırlanan ve son yüklenen telefon sürümü: `0.1.13-test`, kod `14`. Kullanıcı ilk beş bölümü denedi; ayrıntılı yaşam döngüsü/ergonomi kontrol listesi henüz bütünüyle doğrulanmadı.
+- Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri bu pakete dahildir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
-- APK: `exports/android/yumi-sako-0.1.12-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
+- APK: `exports/android/yumi-sako-0.1.13-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
 
 Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı; yeni kurulum veya global ayar değişikliği yapılmadı. Android için ETC2/ASTC doku içe aktarımı proje ayarında açıldı. APK, Git tarafından yok sayılan `exports/` altında tutulur.
@@ -32,7 +34,7 @@ Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı
 
 Godot kullanıcı ayarlarında mevcut Android SDK, Java ve debug keystore yolları tanımlı olmalıdır. Depodaki export ayarı keystore parolası içermez.
 
-Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular. -Build ile önce güncel 23 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Yeni kaynak için export sürüm kodu ayrıca artırılmalıdır; mevcut 13 koduyla yeni telefon güncellemesi sunma. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
+Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular. -Build ile önce güncel 23 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Yeni kaynak için export sürüm kodu ayrıca artırılmalıdır; mevcut 14 koduyla farklı bir telefon güncellemesi sunma. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
 
 ```powershell
 & .\tests\prepare_android.ps1
@@ -48,7 +50,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 
 Öncelikli kısa tur (tamamı doğrulanmadı):
 
-1. Önce denenen APK'nın sürümünü kaydet; eski 0.1.9 paketine dönme. Mevcut telefon paketi 0.1.12-test/kod 13'tür. Dikey görünüm ve o paketteki dört bölüme giriş kontrolü yap. Beş bölümlük yeni kaynak ancak kullanıcı istediğinde yeni kodlu APK olarak hazırlanır; kurulumda mevcut uygulamayı kaldırma, imza uyuşmazlığında dur.
+1. Önce denenen APK'nın sürümünü kaydet; eski paketlere dönme. Mevcut telefon paketi 0.1.13-test/kod 14'tür ve beş bölüm içerir. Dikey görünüm ve iki sayfalı menüden bölümlere giriş kontrolü yap; bu tur için tekrar kurulum gerekmez. Gelecekteki farklı güncelleme yeni kodla hazırlanır; kurulumda mevcut uygulamayı kaldırma, imza uyuşmazlığında dur.
 2. Birinci bölümde dokunmanın nişanı sıçratmadığını, sürükleme/bırakmanın tek atış yaptığını ve ikinci parmağın ekstra atış yapmadığını dene.
 3. Top uçarken uygulamayı arka plana al ve dön: top/süre mola halinde kalmalı, DEVAM ET ile sürmeli. Eski dokunuş bırakması atış yapmamalı. Aynısını ekran kilidi ve Android geri tuşuyla dene.
 4. Bir bölümü bitir; uygulamayı kapatıp açınca başarı/en iyi süre görünmeli. Yarım deneme uygulama tamamen kapanınca devam etmez; bu şu an desteklenmiyor. Test için uygulama verilerini silme.
@@ -74,7 +76,7 @@ Sonucu cihaz modeli, sürüm, adım numarası, beklenen/görülen davranış ve 
 
 Bu sonuçlar kullanıcı denemesiyle kaydedilecek. Masaüstü sentetik dokunma testleri gerçek telefon ergonomisini kanıtlamaz.
 
-## Beşinci bölüm — yalnız yeni kaynak paketlenip kullanıcı istediğinde
+## Beşinci bölüm — mevcut 0.1.13 telefon paketinde kalan kontroller
 
 - İkinci menü sayfasından Gizli Şifre'ye gir; geri dönünce aynı sayfa açık mı?
 - Sembol gizlenmeden ve gizlendikten sonra atış yap. Gizlenirken sürüklemeye devam edince nişan aynı açıda mı, bırakınca tek top çıkıyor mu?
@@ -83,7 +85,7 @@ Bu sonuçlar kullanıcı denemesiyle kaydedilecek. Masaüstü sentetik dokunma t
 - Hata sonrası aynı sembol, başarı sonrası yeni sembol tekrar görünüyor mu? Başarı kaydı yeniden açılışta beşinci kartta duruyor mu?
 - 2,5 saniye gösterim anlaşılır mı? Kaç atışı sembol açıkken yaptın, kaçını hatırlayarak? Hızlı atışlar bölümü sıradan nişan oyununa mı çeviriyor? Sonuç görülmeden süreyi kısaltma/zorluğu artırma.
 
-Bu kontrol listesi uygulanmış sonuç değildir. Yeni APK şu an üretilmedi ve telefona yüklenmedi.
+Kullanıcı bölümü oynadı ve sembol gizlendikten sonra atış yaptığını doğruladı; çok fark hissetmediğini söyledi. Dolayısıyla erken atışın gizlemeyi atlaması bu geri bildirimi açıklamaz. Listenin bütün kenar durumları veya sayısal sonuçları doğrulanmış değildir. Mekaniğin çalışması, hafıza fikrinin yeterince hissedildiği anlamına gelmez; yalnız bu yoruma dayanarak süreyi kısaltmayın.
 
 ## Geçmiş yerel paket notu — 12 Ekim 2026, 0.1.9 hazırlanırken
 

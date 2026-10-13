@@ -21,7 +21,7 @@ APK sürümü: … · Cihaz: … · Tarih: … · Oyuncu: isteğe bağlı takma 
 | 4 — Yumi'nin yaramazlığı | 1 | … | … | … | … |
 | 4 — Yumi'nin yaramazlığı | 2 | … | … | … | … |
 
-Beşinci bölüm şu an yalnız yerel kaynakta; mevcut 0.1.12 APK'da yok. Kullanıcı yeni paket istediğinde aşağıdaki denemeler eklenebilir. Satırlar sonuç değildir.
+Beşinci bölüm 0.1.13 APK'da var ve kullanıcı denedi. Aşağıdaki ayrıntılı sayısal satırlar henüz doldurulmadı; üstteki nitel gözlemi ölçüm gibi bu satırlara aktarma.
 
 | Bölüm | Deneme | Sonuç | Süre ve ölçüm yöntemi | Hata | Açık sembolle / hatırlayarak atış sayısı |
 |---|---|---|---|---|---|

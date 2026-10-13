@@ -1,5 +1,7 @@
 # 5 · Yumi'nin gizli şifresi — yerel prototip
 
+13 Ekim güncel durum: 0.1.13-test/kod 14 ile telefona yüklendi. Kullanıcı gizlendikten sonra atış yaptığını ama pek deneyim farkı hissetmediğini söyledi. Kuralın çalışması tasarımın etkili olmasıyla aynı şey değil; erken atışla atlama gerekçesi bu gözlemi açıklamaz. Mevcut davranış korunuyor, otomatik süre kısaltması yapılmadı.
+
 Tek yeni kural: sıradaki sembol atış hazır olduktan sonra 2,5 saniye görünür, ardından Yumi kapatır. Oyuncu aynı nişan/sürükle-bırak kontrolüyle hatırladığı deliği hedefler. Doğru atışta yeni sembol, yanlış/ıskalamada aynı sembol yeniden gösterilir. Üç hata kuralı değişmez. Mola sayacı dondurur; menüye dönüş ve yeniden başlatma temiz bir deneme açar.
 
 Delikler sabit; tek normal top; duvar sekmesi şartı, delik karıştırma, yeni top türü ve oyuncak fare yok. Yumi bu bölümde topa müdahale etmez: yeni hafıza kuralını tek başına öğrenmek için. İlk dört bölümün değerleri değişmez. Sekiz doğru atışlık sıra yalnız prototip başlangıcıdır, gerçek oyuncu süre dengesi iddiası değildir.

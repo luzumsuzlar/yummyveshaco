@@ -33,7 +33,7 @@ Hareketli/karışmış deliklerde ve Yumi'nin sektirdiği toplarda düşüş kon
 
 ## 5. Beşinci bölüm — yerel hafıza prototipi
 
-Kayıt ve portre menü altyapısı hazır: bölüm sayısı dinamik, dört kartlık sayfalar ek kartları taşır. Gizli Şifre yerel kaynakta beşinci bölüm olarak açılır; APK'ya alınmadı. Tek yeni kural, hazır atışta 2,5 saniye görünen sembolün gizlenmesi. Delikler sabit, Yumi topa müdahale etmiyor. LEVEL_5_DESIGN.md kapsamı ve test ölçütlerini açıklar. İnsan hafıza başarısı/zorluk ve gerçek telefon denemesi bekliyor.
+Kayıt ve portre menü altyapısı hazır: bölüm sayısı dinamik, dört kartlık sayfalar ek kartları taşır. Gizli Şifre 0.1.13-test/kod 14 ile telefona alındı. Tek yeni kural, hazır atışta 2,5 saniye görünen sembolün gizlenmesi. Delikler sabit, Yumi topa müdahale etmiyor. Kullanıcı beşinci bölüme kadar sorun görmediğini, sembol gizlendikten sonra atmasına rağmen belirgin fark hissetmediğini söyledi. Erken atışla kuralı atlama varsayımı bu denemeyi açıklamıyor. LEVEL_5_DESIGN.md ve FIVE_LEVEL_GAME_SCENARIO_TR.md mevcut davranışı tanımlar; deneyim farkı için yeni tasarım gerekçesi değerlendirilmeli. Tek gözlemden bütün oyuncular için zorluk/fayda sonucu çıkarma.
 
 İlk dört bölümün önemli giriş/tempo sorunları çözülmeden uygulanmayacak. Tek bir büyük Yumi yaramazlığı etrafında tasarla; iki top, yeni top türü ve hareketli delik kurallarını aynı anda ekleme. Önce kısa tasarım ve mevcut kurallardan farkı netleştir, ardından prototip/test.
 
