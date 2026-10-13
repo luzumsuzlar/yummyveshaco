@@ -1,5 +1,7 @@
 # Telefon denemesi notları
 
+13 Ekim 2026, 0.1.13 güncellemesinden sonraki kullanıcı geri bildirimi: beşinci bölüme kadar oynadı, sorun olmadığını söyledi. Beşinci bölümde sembol gizlendikten sonra atış yaptığını fakat deneyimde pek fark hissetmediğini belirtti. Bu tek oyuncu nitel gözlemidir; bütün cihaz kontrolleri veya tasarım başarısı değildir. Sayısal süre/hata kaydı verilmedi. Hafıza kuralının erken atışla atlandığı varsayılmamalı; mevcut durumda belirgin farklılık yaratmadığı not edilmeli.
+
 Durum: 12 Ekim'de ilk nitel kullanıcı geri bildirimi alındı; ayrıntılı deneme satırları henüz doldurulmadı. Otomatik test verisi gerçek oyuncu denemesi olarak yazılmayacak.
 
 Kullanıcı “4 bölümü oynadım. 47.5 saniye sürdü” dedi, ardından ilk dört bölüm için temponun normal olduğunu belirtti. 47,5 saniyenin tek bölüm mü/toplam mı olduğu ve hata sayısı netleşmedi; bu nedenle hiçbir bölüm satırına sayısal ölçüm olarak aktarılmadı. Mevcut tempo korunacak. Video referanslı düşüş daha iyi olarak onaylandı; dördüncü bölüm bekleme konusu kullanıcı tarafından çözüldü olarak bildirildi. Bunlar bütün cihaz testlerinin veya yeni oyuncu dengesinin tamamlandığı anlamına gelmez.

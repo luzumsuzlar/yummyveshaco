@@ -1,5 +1,7 @@
 # Yumi & Şako
 
+Yazılımcıya devir için ilk beş bölümün Türkçe uygulama senaryosu: [FIVE_LEVEL_GAME_SCENARIO_TR.md](docs/FIVE_LEVEL_GAME_SCENARIO_TR.md). Mevcut davranışı, durum geçişlerini ve tasarım değerlendirmesini ayrı tanımlar.
+
 Godot 4 ile geliştirilen hızlı, neşeli bir refleks-bulmaca oyununun ilk oynanabilir prototipi.
 
 ## Oynanış
