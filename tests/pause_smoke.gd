@@ -64,15 +64,18 @@ func run_checks() -> void:
 	game.show_level_menu()
 	check(game.game_state == "menu" and not game.pause_panel.visible, "Menu return dismisses modal")
 	check(not ProjectSettings.get_setting("application/config/quit_on_go_back"), "Android back does not auto-quit")
-	for role in ["sleep", "walk", "memory", "groom"]:
+	for role in ["sleep", "walk", "memory", "groom-entry", "groom-lick", "groom-wash", "groom-recovery"]:
 		game.start_level(0 if role == "sleep" else (4 if role == "memory" else 2))
 		game.shot_delay = 0
 		match role:
+			"sleep": game.level_time = 0.8
 			"walk": game.update_yumi_walk(0.1, 8.0)
 			"memory": game.memory_preview_left = 0
-			"groom":
+			_:
+				game.yumi_groom_variant = 1 if role == "groom-wash" else 0
 				game.yumi_groom_wait = 0
 				game.update_yumi_groom(0.1)
+				game.yumi_groom_time = {"groom-entry": 0.001, "groom-lick": 0.6, "groom-wash": 1.1, "groom-recovery": game.yumi_groom_duration() - 0.01}[role]
 		var texture: Texture2D = game.yumi_art_texture()
 		var rect: Rect2 = game.yumi_art_rect()
 		var phase: float = game.yumi_walk_phase
