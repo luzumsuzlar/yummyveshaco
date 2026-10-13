@@ -1,0 +1,19 @@
+# Yumi — sakin an hareketleri, 13 Ekim 2026
+
+Yerel kaynakta ilk hareket seti: pati yalama (2,8 sn), aynı patiyle yüz temizleme (2,4 sn), göz kırpma/kulak eğme (1,2 sn). Altı farklı kareden üç küçük sekans oluşturulur. Bunlar yeni saldırı veya oyuncuyu bekleten bir kural değildir. İlk dört bölümde uyanık Yumi, top yokken 3,5 saniyelik uygun sakin zaman sonrası yerinde oturup hareketini yapar. Tamamlanan hareketlerden sonra 6–8 saniye ara verilir. Uyuyan Yumi ve beşinci bölümün şifre kapatma rolü önceliğini korur.
+
+Atış her zaman mevcut kuralla yapılabilir; fırlatıldığı anda temizlenme kesilir. Yumi'nin gezinmesi yalnız top yokken kısa süre durur, eski hız/yön ve hareket sayaçlarıyla devam eder. Bu sebeple bekleyip nişan alan oyuncu o an kediyi sabit görebilir; çarpışma boyutu, uçuş fiziği, pati uyarı süresi, delik düzeni ve atış sayıları değişmez. Fare, delik karıştırma, aşama geçişi ve saldırı uyarısı hareketi keser. Mola animasyonu dondurur; menü ve yeniden başlatma temizler. Kozmetik seçim oyun rastgelelik kaynağını tüketmez.
+
+## Görsel ve uygulama
+
+- `assets/art/characters/yumi-groom-v1.png`: yerleşik imagegen ile mevcut Yumi temel pozu kimlik referansı alınarak üretilmiş gerçek alfa kanallı 1535 × 1024 atlas. Üç sütun/iki satır; kaynak dosya değiştirilmeden korunur. İstenen genişlikten bir piksel sapma, gerçek boyuttan hesaplanan kesirli atlas bölgeleriyle karşılanır.
+- Her karenin ayak çıpası ayrı hizalanır. 158 mantıksal piksel çizim kutusu, görünür karakter boyunu mevcut poza yaklaştırır. Baş ve tüy çiziminde kareler arası küçük farklar var; elle temizlenmiş tam profesyonel animasyon sayılmamalıdır.
+- `tests/groom_smoke.gd`: atış kesmesi, hareketin dönmesi, mola, önemli olayların önceliği, uyku/hafıza ayrımı, atlas/çıpa ve rastgelelik kontrolü. Toplam 24 kontrol geçti.
+- `tests/groom_preview.gd`: üç sekans için 24 gerçek Godot görüntüsü; `exports/groom-preview/`. Pati yalama ve yüz temizleme kareleri oyun boyutunda görsel olarak incelendi. İlk iki üretim kare ayrımı nedeniyle seçilmedi; yalnız son seçilen atlas projeye alındı.
+- Android APK üretilmedi, telefona kurulmadı. Cihazdaki 0.1.13 bu hareketleri içermez. Yeni paket hazırlanırken yeni doku dahil edilip denetlenmeli.
+
+## Son üretim yönergesi (yerleşik imagegen)
+
+Reference: `assets/art/characters/yumi-idle-v1.png`; `transparent_background: true`.
+
+Create a transparent animation atlas for this same orange kitten. SIX SMALL isolated kitten poses in a STRICT 3 by 2 GRID. Landscape canvas 1536x1024. CRITICAL: each kitten must occupy ONLY central 65% of its 512x512 cell. LARGE EMPTY TRANSPARENT GAPS between cats, at least 70px clear on every cell edge. Entire tails must fit INSIDE cells, NO adjacent sprite overlap. Same full-body size every pose, same foot baseline 430px within each cell. Input is character identity/style reference: amber eyes, cream muzzle chest toes and tail tip, orange tabby, softly painted. Front seated view. Top row left to right: (1) paw lifted in front of mouth, (2) small pink tongue licking that same lifted paw, (3) same paw rubbing cheek with eyes closed. Bottom row left to right: (4) same paw rubs beside closed eye, (5) both paws down with eyes closed in relaxed blink, (6) both paws down with open eyes and one ear tilted listening. The lifted paw must always be screen-left. All poses natural, no extra paws. No background color, no glow, no ground, no shadow, no text/grid. True alpha transparent empty space essential. Favor SMALLER sprites with HUGE separation over filling canvas.

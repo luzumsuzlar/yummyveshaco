@@ -1,5 +1,7 @@
 # Yumi ve Şako — karakter görselleri v1
 
+13 Ekim 2026: yerel kaynağa altı karelik pati yalama, yüz temizleme ve göz kırpma/kulak tepkisi eklendi. Davranış, görsel, üretim yönergesi ve doğrulama `docs/YUMI_GROOMING.md` içinde. Henüz telefona yüklenmedi. Aşağıdaki eski sürüm/kurulum notları tarihsel kayıtlardır.
+
 ## Yürüyüş döngüsü
 
 `assets/art/characters/yumi-walk-v1.png`: yerleşik image_gen ile üretilmiş 1536 × 1024 şeffaf PNG; 3 sütun × 2 satır, altı adet 512 × 512 kare. Kaynak PNG değiştirilmeden korunur; oyun atlas bölgelerini ayrı çizer. Üretim şeması aşağıdaki yönergelerde kayıtlıdır. Bu çalışma GIF dosyası değil, oyun içinde kontrol edilen ilk yürüyüş döngüsüdür.

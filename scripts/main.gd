@@ -27,6 +27,8 @@ const YUMI_IDLE_ART := preload("res://assets/art/characters/yumi-idle-v1.png")
 const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v2.png")
 const YUMI_PAW_ART := preload("res://assets/art/characters/yumi-paw-v1.png")
 const YUMI_WALK_ART := preload("res://assets/art/characters/yumi-walk-v1.png")
+const YUMI_GROOM_ART := preload("res://assets/art/characters/yumi-groom-v1.png")
+const YUMI_GROOM_ANCHORS := [Vector2(250, 498), Vector2(235, 498), Vector2(250, 498), Vector2(242, 465), Vector2(244, 465), Vector2(251, 466)]
 const YUMI_WALK_ANCHORS := [Vector2(280, 476), Vector2(266, 480), Vector2(254, 480), Vector2(274, 444), Vector2(252, 448), Vector2(258, 452)]
 const SHAKO_IDLE_ART := preload("res://assets/art/characters/shako-idle-v1.png")
 const TOY_AREA := Rect2(100, 498, 340, 124)
@@ -195,6 +197,9 @@ var yumi_speed := 100.0
 var yumi_velocity := Vector2.RIGHT
 var yumi_walk_phase := 0.0
 var yumi_walk_moving := false
+var yumi_groom_time := 0.0
+var yumi_groom_wait := 3.5
+var yumi_groom_variant := 0
 var yumi_move_timer := 0.0
 var yumi_pause_timer := 0.0
 var yumi_dash_timer := 0.0
@@ -524,6 +529,7 @@ func draw_level_thumbnail(canvas: Control, index: int) -> void:
 
 
 func show_level_menu() -> void:
+	yumi_groom_time = 0.0
 	ball_drop_time = 0.0
 	ball_drop_hole = -1
 	pause_panel.hide()
@@ -669,6 +675,9 @@ func start_level(new_level_index: int = level_index) -> void:
 	touch_can_launch = false
 	last_pointer_position = Vector2(LAUNCH_POS.x, HOLE_Y)
 	yumi_position = YUMI_HOME
+	yumi_groom_time = 0.0
+	yumi_groom_wait = 3.5
+	yumi_groom_variant = 0
 	yumi_walk_phase = 0.0
 	yumi_walk_moving = false
 	yumi_direction = 1.0
@@ -741,9 +750,10 @@ func _process(delta: float) -> void:
 
 	update_holes()
 	var previous_yumi_position := yumi_position
+	update_yumi_groom(delta)
 	if scatter_state != "":
 		update_scatter(delta)
-	else:
+	elif yumi_groom_time <= 0.0:
 		move_yumi(delta)
 	update_yumi_walk(delta, previous_yumi_position.distance_to(yumi_position))
 	if ball_active:
@@ -902,6 +912,8 @@ func can_launch_ball() -> bool:
 func launch_ball() -> void:
 	if not can_launch_ball():
 		return
+	yumi_groom_time = 0.0
+	yumi_groom_wait = 5.0
 	touch_can_launch = false
 	ball_type = sequence[progress]
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
@@ -1228,6 +1240,47 @@ func move_yumi(delta: float) -> void:
 		yumi_move_timer = minf(yumi_move_timer, 0.35)
 	if absf(yumi_velocity.x) > 5.0:
 		yumi_direction = signf(yumi_velocity.x)
+
+
+func yumi_can_groom() -> bool:
+	return game_state == "playing" and yumi_is_active() and not is_memory_level() and not ball_active and ball_drop_time <= 0.0 and scatter_state.is_empty() and stage_rotation <= 0.0 and shot_delay <= 0.0 and not toy_active and not toy_selecting and yumi_warning_timer <= 0.0 and yumi_swipe_flash <= 0.0 and bark_flash <= 0.0
+
+
+func update_yumi_groom(delta: float) -> void:
+	# Idle acting never consumes gameplay RNG or delays a shot. Movement resumes
+	# with its existing velocity/timers as soon as a ball or another event arrives.
+	if game_state == "paused":
+		return
+	if not yumi_can_groom():
+		yumi_groom_time = 0.0
+		yumi_groom_wait = 3.5
+		return
+	if yumi_groom_time > 0.0:
+		yumi_groom_time += delta
+		if yumi_groom_time >= yumi_groom_duration():
+			yumi_groom_time = 0.0
+			yumi_groom_variant = (yumi_groom_variant + 1) % 3
+			yumi_groom_wait = 6.0 + float(yumi_groom_variant)
+		return
+	yumi_groom_wait = maxf(0.0, yumi_groom_wait - delta)
+	if yumi_groom_wait <= 0.0:
+		yumi_groom_time = 0.001
+
+
+func yumi_groom_duration() -> float:
+	return [2.8, 2.4, 1.2][yumi_groom_variant]
+
+
+func yumi_groom_frame() -> int:
+	var frames: Array = [[0, 1, 0, 1, 0, 1, 4, 5], [0, 1, 2, 3, 2, 3, 4, 5], [5, 4, 4, 5]][yumi_groom_variant]
+	var fraction := clampf(yumi_groom_time / yumi_groom_duration(), 0.0, 0.999)
+	return frames[int(fraction * frames.size())]
+
+
+func yumi_groom_region() -> Rect2:
+	var frame := yumi_groom_frame()
+	var cell := Vector2(YUMI_GROOM_ART.get_width() / 3.0, YUMI_GROOM_ART.get_height() / 2.0)
+	return Rect2(Vector2(frame % 3, frame / 3) * cell, cell)
 
 
 func update_yumi_walk(delta: float, distance: float) -> void:
@@ -1912,6 +1965,8 @@ func draw_yumi() -> void:
 	draw_set_transform(visual_origin, float(motion["angle"]) * direction if reaching else 0.0, Vector2(direction, 1))
 	if walking:
 		draw_texture_rect_region(art, yumi_art_rect(), yumi_walk_region())
+	elif art == YUMI_GROOM_ART:
+		draw_texture_rect_region(art, yumi_art_rect(), yumi_groom_region())
 	elif reaching:
 		draw_animated_paw(yumi_art_rect(), motion["arm"])
 	else:
@@ -1954,10 +2009,15 @@ func yumi_art_texture() -> Texture2D:
 		return YUMI_PAW_ART
 	if game_state == "playing" and yumi_walk_moving:
 		return YUMI_WALK_ART
+	if yumi_groom_time > 0.0 and (yumi_can_groom() or game_state == "paused"):
+		return YUMI_GROOM_ART
 	return YUMI_IDLE_ART
 
 
 func yumi_art_rect() -> Rect2:
+	if yumi_art_texture() == YUMI_GROOM_ART:
+		var anchor: Vector2 = YUMI_GROOM_ANCHORS[yumi_groom_frame()] * (158.0 / 512.0)
+		return Rect2(Vector2(-anchor.x, 67.0 - anchor.y), Vector2(158, 158))
 	if yumi_art_texture() == YUMI_WALK_ART:
 		var anchor: Vector2 = YUMI_WALK_ANCHORS[yumi_walk_frame()] * (144.0 / 512.0)
 		return Rect2(Vector2(-anchor.x, 57.0 - anchor.y), Vector2(144, 144))
