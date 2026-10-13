@@ -1,5 +1,7 @@
 # Android telefon denemesi
 
+Son kurulum — 13 Ekim 2026: kullanıcı telefon bağlı dedi; **0.1.14-test/kod 15**, Samsung SM-S938B'ye mevcut uygulama kaldırılmadan başarıyla güncellendi. Yumi temizlenmesi, Şako tepkileri ve fareyle pati oyunu bu pakettedir. 25 test, dokuz doku, içerik/manifest/imza kontrolü geçti. Başlatma Status ok, sürüm ve süreç doğrulandı; gerçek oynanış/animasyon okunabilirliği kullanıcı denemesini bekliyor. APK: `exports/android/yumi-sako-0.1.14-test.apk`. Aşağıdaki 0.1.13 kurulum ve kaynakta-bekliyor ifadeleri bu kurulum öncesinin kayıtlarıdır. Güncel paketi varsayılan Current ile denetleyin; Legacy013 yalnız eski APK içindir.
+
 Güncel durum — 13 Ekim 2026: beş bölüm, sayfalı menü ve fare geri bildirimi içeren 0.1.13-test/kod 14, kullanıcının telefon bağlı mesajı üzerine Samsung SM-S938B'ye uygulama kaldırılmadan yüklendi. 23 otomatik oyun testi ve paket içerik/manifest/imza kontrolleri geçti. Kullanıcı beşinci bölüme kadar oynayıp sorun görmediğini, beşinci bölümde sembol gizlendikten sonra attığını ancak çok fark hissetmediğini bildirdi. Bu kısmi oyuncu doğrulamasıdır; aşağıdaki bütün cihaz adımları tamamlandı sayılmaz. İlk dört bölüm temposu ve beğenilen düşüş korunuyor. Bağımsız devam çalışması yeni telefon kurulumu yapmaz.
 
 ## Önceki paket kayıtları
