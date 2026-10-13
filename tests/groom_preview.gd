@@ -22,6 +22,14 @@ func capture() -> void:
 			if root.get_texture().get_image().save_png("res://exports/groom-preview/%d-%d.png" % [variant, step]) != OK:
 				quit(1)
 				return
+		for boundary in ["entry", "raised", "recovery"]:
+			game.yumi_groom_time = {"entry": 0.001, "raised": 0.19, "recovery": game.yumi_groom_duration() - 0.001}[boundary]
+			game.queue_redraw()
+			await process_frame
+			await RenderingServer.frame_post_draw
+			if root.get_texture().get_image().save_png("res://exports/groom-preview/%d-%s.png" % [variant, boundary]) != OK:
+				quit(1)
+				return
 	game.free()
-	print("24 grooming previews saved")
+	print("33 grooming previews saved, including action boundaries")
 	quit()

@@ -73,6 +73,15 @@ func run_checks() -> void:
 	check(img.get_pixel(0, 0).a < 0.01, "Atlas preserves transparent background")
 	for variant in range(3):
 		game.yumi_groom_variant = variant
+		var duration: float = game.yumi_groom_duration()
+		game.yumi_groom_time = 0.001
+		check(game.yumi_groom_frame() == 5, "Every idle action starts with a neutral attentive pose")
+		game.yumi_groom_time = duration - 0.001
+		check(game.yumi_groom_frame() == 5, "Every idle action recovers to the neutral pose")
+		if variant < 2:
+			game.yumi_groom_time = 0.19
+			check(game.yumi_groom_frame() == 0, "Prepared action raises its paw after anticipation")
+		check(duration == [2.8, 2.4, 1.2][variant], "Anticipation adds no action duration")
 		for step in range(8):
 			game.yumi_groom_time = game.yumi_groom_duration() * (step + 0.1) / 8.0
 			var region: Rect2 = game.yumi_groom_region()

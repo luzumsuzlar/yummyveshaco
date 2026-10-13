@@ -1289,8 +1289,16 @@ func yumi_groom_duration() -> float:
 
 
 func yumi_groom_frame() -> int:
-	var frames: Array = [[0, 1, 0, 1, 0, 1, 4, 5], [0, 1, 2, 3, 2, 3, 4, 5], [5, 4, 4, 5]][yumi_groom_variant]
-	var fraction := clampf(yumi_groom_time / yumi_groom_duration(), 0.0, 0.999)
+	var frames: Array = [[0, 1, 0, 1, 0, 1, 4], [0, 1, 2, 3, 2, 3, 4], [5, 4, 4, 5]][yumi_groom_variant]
+	var action_time := yumi_groom_time
+	var action_duration := yumi_groom_duration()
+	if yumi_groom_variant < 2:
+		# Anticipation and recovery fit inside the existing action duration.
+		if action_time < 0.18 or action_time >= action_duration - 0.18:
+			return 5
+		action_time -= 0.18
+		action_duration -= 0.36
+	var fraction := clampf(action_time / action_duration, 0.0, 0.999)
 	return frames[int(fraction * frames.size())]
 
 
