@@ -64,6 +64,26 @@ func run_checks() -> void:
 	game.show_level_menu()
 	check(game.game_state == "menu" and not game.pause_panel.visible, "Menu return dismisses modal")
 	check(not ProjectSettings.get_setting("application/config/quit_on_go_back"), "Android back does not auto-quit")
+	for role in ["sleep", "walk", "memory", "groom"]:
+		game.start_level(0 if role == "sleep" else (4 if role == "memory" else 2))
+		game.shot_delay = 0
+		match role:
+			"walk": game.update_yumi_walk(0.1, 8.0)
+			"memory": game.memory_preview_left = 0
+			"groom":
+				game.yumi_groom_wait = 0
+				game.update_yumi_groom(0.1)
+		var texture: Texture2D = game.yumi_art_texture()
+		var rect: Rect2 = game.yumi_art_rect()
+		var phase: float = game.yumi_walk_phase
+		var groom_time: float = game.yumi_groom_time
+		var rng_state: int = game.rng.state
+		game.pause_game()
+		game._process(10)
+		check(game.yumi_art_texture() == texture and game.yumi_art_rect() == rect, "%s pose and baseline remain frozen on pause" % role)
+		check(game.yumi_walk_phase == phase and game.yumi_groom_time == groom_time and game.rng.state == rng_state, "%s pause preserves clocks and randomness" % role)
+		game.resume_game()
+		check(game.yumi_art_texture() == texture, "%s resumes the same pose before advancing" % role)
 	game.free()
 	await process_frame
 	print("Pause smoke: %d failures" % failures)

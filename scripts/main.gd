@@ -2013,7 +2013,7 @@ func draw_paw_impact(motion: Dictionary) -> void:
 
 func draw_yumi() -> void:
 	var p := yumi_position
-	var sleeping := not yumi_is_active() and game_state == "playing" and not is_memory_level()
+	var sleeping := not yumi_is_active() and yumi_visual_state() == "playing" and not is_memory_level()
 	var art := yumi_art_texture()
 	var reaching := art == YUMI_PAW_ART
 	var walking := art == YUMI_WALK_ART
@@ -2064,18 +2064,24 @@ func draw_yumi() -> void:
 		draw_string(font, visual_origin + Vector2(-70, -68), yumi_caption, HORIZONTAL_ALIGNMENT_CENTER, 140, 16, INK)
 
 
+func yumi_visual_state() -> String:
+	# Pausing freezes the role as well as its animation clock.
+	return paused_from_state if game_state == "paused" else game_state
+
+
 func yumi_art_texture() -> Texture2D:
-	if is_memory_level() and game_state == "playing":
+	var visual_state := yumi_visual_state()
+	if is_memory_level() and visual_state == "playing":
 		return YUMI_PAW_ART if memory_clue_hidden() else YUMI_IDLE_ART
 	if scatter_state == "warning" or (scatter_state == "scatter" and scatter_timer > 1.72):
 		return YUMI_PAW_ART
-	if not yumi_is_active() and game_state == "playing":
+	if not yumi_is_active() and visual_state == "playing":
 		return YUMI_SLEEP_ART
 	if yumi_warning_timer > 0.0 or yumi_swipe_flash > 0.0:
 		return YUMI_PAW_ART
 	if toy_play_pose()["playing"]:
 		return YUMI_PAW_ART
-	if game_state == "playing" and yumi_walk_moving:
+	if visual_state == "playing" and yumi_walk_moving:
 		return YUMI_WALK_ART
 	if yumi_groom_time > 0.0 and (yumi_can_groom() or game_state == "paused"):
 		return YUMI_GROOM_ART
