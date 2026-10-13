@@ -28,21 +28,21 @@ Aynı gün 0.1.1-test güncellemesi mevcut uygulama kaldırılmadan yüklendi; t
 
 - Uygulama adı: Yumi & Şako Test
 - Kimlik: `com.yumisako.prototype`
-- Hazırlanan ve son yüklenen telefon sürümü: `0.1.13-test`, kod `14`. Kullanıcı ilk beş bölümü denedi; ayrıntılı yaşam döngüsü/ergonomi kontrol listesi henüz bütünüyle doğrulanmadı.
+- Hazırlanan ve son yüklenen telefon sürümü: `0.1.15-test`, kod `16`. İlk beş bölümün önceki denemesi ve 0.1.14 karakter onayı var; 0.1.15 için kullanıcı sonucu henüz yok. Ayrıntılı yaşam döngüsü/ergonomi kontrol listesi bütünüyle doğrulanmadı.
 - Öğretici, mola, kayıt ve giriş/ses geçiş düzeltmeleri bu pakete dahildir. Sonraki farklı telefon güncellemesinde sürüm kodunu artırın.
 - Mimari: ARM64; eski 32-bit telefonlar bu paketin kapsamında değildir.
-- APK: `exports/android/yumi-sako-0.1.13-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
+- APK: `exports/android/yumi-sako-0.1.15-test.apk`. Eski paketler korunuyor; ilk `yumi-sako-test.apk` referans görselleri içerdiğinden yeni paylaşım için kullanılmamalı.
 - Debug imzalı yerel deneme; mağaza sürümü değildir. İnternet veya titreşim izni içermez.
 
 Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı; yeni kurulum veya global ayar değişikliği yapılmadı. Android için ETC2/ASTC doku içe aktarımı proje ayarında açıldı. APK, Git tarafından yok sayılan `exports/` altında tutulur.
 
 ## Yeniden üretme
 
-13 Ekim kaynak güncellemesi: yeni Yumi/Şako hareketleriyle paket kontrolünün varsayılan `Current` kümesi artık dokuz dokuyu zorunlu tutar. Telefonda bulunan 0.1.13 bu iki yeni dokuyu içermez; yalnız geçmiş paketi kontrol etmek için `& .\tests\prepare_android.ps1 -ResourceSet Legacy013` kullanın. Yeni üretimde Legacy013 kabul edilmez. Güncel kaynak paketlenecekse sürüm kodunu artırın; henüz bu görselleri içeren yeni APK hazırlanmadı. Dört sentetik kaynak kümesi ve eski kümeyle üretim yasağı `tests/package_resource_smoke.ps1` ile sınanır; bu test Android kurulumu veya çalışırlığı kanıtlamaz.
+13 Ekim kaynak güncellemesi: yeni Yumi/Şako hareketleriyle paket kontrolünün varsayılan `Current` kümesi dokuz dokuyu zorunlu tutar. 0.1.15 bu dokuları içerir. Tarihsel 0.1.13 kaynak kontrolü için `& .\tests\audit_apk.ps1 -ApkPath 'exports/android/yumi-sako-0.1.13-test.apk' -ResourceSet Legacy013` kullanın. prepare_android ayrıca güncel preset sürümünü aradığından eski sürümün kontrolü için uygun değildir. Yeni üretimde Legacy013 kabul edilmez. Güncel kaynakta sonraki pati efekti/molada delik titreşimi ve fare seçimine geçiş düzeltmeleri var; bunlar 0.1.15 APK'da yok. Yeni paket için önce sürüm kodunu/adını artırın. Dört sentetik kaynak kümesi ve eski kümeyle üretim yasağı `tests/package_resource_smoke.ps1` ile sınanır; bu test Android kurulumu veya çalışırlığı kanıtlamaz.
 
 Godot kullanıcı ayarlarında mevcut Android SDK, Java ve debug keystore yolları tanımlı olmalıdır. Depodaki export ayarı keystore parolası içermez.
 
-Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular. -Build ile önce güncel 23 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Yeni kaynak için export sürüm kodu ayrıca artırılmalıdır; mevcut 14 koduyla farklı bir telefon güncellemesi sunma. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
+Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular; güncel kaynakla aynı olduğunu kanıtlamaz. -Build ile önce güncel 25 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Yeni kaynak için export sürüm kodu ayrıca artırılmalıdır; mevcut 16 koduyla farklı bir telefon güncellemesi sunma. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
 
 ```powershell
 & .\tests\prepare_android.ps1
@@ -58,7 +58,7 @@ Başlatma bileşeni: `com.yumisako.prototype/com.godot.game.GodotAppLauncher`.
 
 Öncelikli kısa tur (tamamı doğrulanmadı):
 
-1. Önce denenen APK'nın sürümünü kaydet; eski paketlere dönme. Mevcut telefon paketi 0.1.13-test/kod 14'tür ve beş bölüm içerir. Dikey görünüm ve iki sayfalı menüden bölümlere giriş kontrolü yap; bu tur için tekrar kurulum gerekmez. Gelecekteki farklı güncelleme yeni kodla hazırlanır; kurulumda mevcut uygulamayı kaldırma, imza uyuşmazlığında dur.
+1. Önce denenen APK'nın sürümünü kaydet; eski paketlere dönme. Mevcut telefon paketi 0.1.15-test/kod 16'dır ve beş bölüm içerir. Dikey görünüm ve iki sayfalı menüden bölümlere giriş kontrolü yap; bu tur için tekrar kurulum gerekmez. Gelecekteki farklı güncelleme yeni kodla hazırlanır; kurulumda mevcut uygulamayı kaldırma, imza uyuşmazlığında dur.
 2. Birinci bölümde dokunmanın nişanı sıçratmadığını, sürükleme/bırakmanın tek atış yaptığını ve ikinci parmağın ekstra atış yapmadığını dene.
 3. Top uçarken uygulamayı arka plana al ve dön: top/süre mola halinde kalmalı, DEVAM ET ile sürmeli. Eski dokunuş bırakması atış yapmamalı. Aynısını ekran kilidi ve Android geri tuşuyla dene.
 4. Bir bölümü bitir; uygulamayı kapatıp açınca başarı/en iyi süre görünmeli. Yarım deneme uygulama tamamen kapanınca devam etmez; bu şu an desteklenmiyor. Test için uygulama verilerini silme.
