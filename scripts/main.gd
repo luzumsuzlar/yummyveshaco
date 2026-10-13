@@ -1902,7 +1902,7 @@ func draw_lock_panel() -> void:
 
 func hole_visual_position(index: int) -> Vector2:
 	var center := hole_positions[index]
-	if game_state == "playing" and scatter_state == "scatter" and index == paw_target_index:
+	if yumi_visual_state() == "playing" and scatter_state == "scatter" and index == paw_target_index:
 		var impact := float(yumi_paw_motion()["impact"])
 		center += Vector2(sin((2.2 - scatter_timer) * 90.0) * 5.0, cos((2.2 - scatter_timer) * 75.0) * 3.0) * impact
 	return center
@@ -1996,7 +1996,7 @@ func draw_animated_paw(rect: Rect2, arm_offset: Vector2) -> void:
 
 func draw_paw_impact(motion: Dictionary) -> void:
 	var impact := float(motion["impact"])
-	if impact <= 0.0 or game_state != "playing":
+	if impact <= 0.0 or yumi_visual_state() != "playing":
 		return
 	var point := paw_impact_position
 	var radius := (42.0 if motion["big"] else 25.0) * (1.5 - impact * 0.5)

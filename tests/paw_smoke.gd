@@ -39,6 +39,11 @@ func run_checks() -> void:
 	game.hole_visual_position(1)
 	game.yumi_paw_motion()
 	check(game.hole_positions == positions, "Shake never modifies target physics")
+	var shaken_center: Vector2 = game.hole_visual_position(1)
+	game.pause_game()
+	game._process(10)
+	check(game.hole_visual_position(1) == shaken_center and game.hole_positions == positions, "Pause preserves the visual shake without moving physical targets")
+	game.resume_game()
 	game.scatter_timer = 1.0
 	check(is_zero_approx(float(game.yumi_paw_motion().impact)), "Impact effect is short-lived")
 	game.start_level(2)
