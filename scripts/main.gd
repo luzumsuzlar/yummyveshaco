@@ -1799,6 +1799,17 @@ func toy_visual_is_visible() -> bool:
 	return state == "playing" and (toy_selecting or toy_active)
 
 
+func toy_play_pose() -> Dictionary:
+	# Cosmetic contact only: destination and distraction clocks remain unchanged.
+	var playing: bool = toy_visual_is_visible() and toy_feedback()["phase"] == "play"
+	var elapsed := maxf(0.0, 2.5 - toy_play_left)
+	var direction := 1.0 if toy_position.x <= SCREEN_SIZE.x * 0.5 else -1.0
+	var settle := smoothstep(0.0, 0.25, elapsed) if playing else 0.0
+	var tap := pow(maxf(0.0, sin(elapsed * TAU * 2.0)), 2.0) if playing else 0.0
+	var offset := Vector2(direction * (40.0 + tap * 6.0), -tap * 2.0) * settle
+	return {"playing": playing, "direction": direction, "tap": tap, "position": toy_position + offset}
+
+
 func draw_toy() -> void:
 	# Pause freezes the scene; it must not erase an active toy underneath the modal.
 	if not toy_visual_is_visible():
@@ -1808,7 +1819,7 @@ func draw_toy() -> void:
 		draw_rect(TOY_AREA, Color("9a70b8"), false, 3.0)
 	if not toy_active:
 		return
-	var p := toy_position
+	var p: Vector2 = toy_play_pose()["position"]
 	draw_soft_shadow(p + Vector2(3, 9), Vector2(22, 6), 0.25)
 	draw_arc(p + Vector2(-22, 0), 15, -0.6, 2.3, 16, Color("9873a6"), 3, true)
 	draw_set_transform(p, 0.0, Vector2(22, 13))
@@ -1924,6 +1935,9 @@ func draw_ground_shadows() -> void:
 
 
 func yumi_paw_motion() -> Dictionary:
+	var toy_pose := toy_play_pose()
+	if toy_pose["playing"] and yumi_warning_timer <= 0.0 and yumi_swipe_flash <= 0.0 and scatter_state.is_empty():
+		return {"arm": Vector2(-8, 12 + float(toy_pose["tap"]) * 18), "shift": Vector2.ZERO, "angle": 0.0, "impact": 0.0, "big": false}
 	# Render-only motion: no collision center, warning deadline or ball velocity changes.
 	var big_swipe := scatter_state == "warning" or scatter_state == "scatter"
 	var duration := 0.48 if big_swipe else 0.34
@@ -1985,6 +1999,8 @@ func draw_yumi() -> void:
 	var motion := yumi_paw_motion()
 	var shift: Vector2 = motion["shift"] if reaching else Vector2.ZERO
 	var direction := yumi_direction if reaching or walking else 1.0
+	if reaching and toy_play_pose()["playing"]:
+		direction = float(toy_play_pose()["direction"])
 	var visual_origin := p + Vector2(shift.x * direction, shift.y)
 	# Align each source pose around the unchanged gameplay center.
 	draw_set_transform(visual_origin, float(motion["angle"]) * direction if reaching else 0.0, Vector2(direction, 1))
@@ -2031,6 +2047,8 @@ func yumi_art_texture() -> Texture2D:
 	if not yumi_is_active() and game_state == "playing":
 		return YUMI_SLEEP_ART
 	if yumi_warning_timer > 0.0 or yumi_swipe_flash > 0.0:
+		return YUMI_PAW_ART
+	if toy_play_pose()["playing"]:
 		return YUMI_PAW_ART
 	if game_state == "playing" and yumi_walk_moving:
 		return YUMI_WALK_ART

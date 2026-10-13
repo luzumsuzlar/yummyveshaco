@@ -73,9 +73,27 @@ func run_checks() -> void:
 	check(is_equal_approx(game.toy_feedback()["remaining"], 0.7), "Earlier total timeout limits displayed play time")
 	check(game.ability_label.text.contains("0.7 sn kaldı"), "Last-second feedback reflects the limiting timer")
 	var feedback: Dictionary = game.toy_feedback()
+	game.toy_play_left = 2.125
+	var toy_position: Vector2 = game.toy_position
+	var pose: Dictionary = game.toy_play_pose()
+	check(pose["playing"] and Vector2(pose["position"]).distance_to(toy_position) > 30.0, "Caught mouse becomes visible beside the cat")
+	check(game.yumi_art_texture() == game.YUMI_PAW_ART, "Caught mouse gets a playful paw pose")
+	check(game.yumi_paw_motion()["impact"] == 0.0, "Toy taps never draw attack impact effects")
+	check(game.toy_position == toy_position, "Visual mouse motion cannot alter the gameplay destination")
+	var original_cat: Vector2 = game.yumi_position
+	for edge_x in [100.0, 440.0]:
+		game.toy_position.x = edge_x
+		game.yumi_position = game.toy_position - Vector2(0, 50)
+		var edge_pose: Dictionary = game.toy_play_pose()
+		check((float(edge_pose["direction"]) > 0) == (edge_x < 270), "Playful paw faces inward at both placement edges")
+		check(float(edge_pose["position"].x) > 60 and float(edge_pose["position"].x) < 480, "Toy stays visible inside portrait edges")
+	game.toy_position = toy_position
+	game.yumi_position = original_cat
+	feedback = game.toy_feedback()
 	game.pause_game()
 	game._process(20.0)
 	check(game.toy_feedback() == feedback, "Pause freezes toy and its feedback")
+	check(game.toy_play_pose() == pose, "Pause freezes synchronized paw and toy movement")
 	check(game.toy_visual_is_visible(), "Paused play retains the toy beneath the pause panel")
 	game.resume_game()
 	game.toy_time_left = 4.0

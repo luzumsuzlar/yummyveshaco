@@ -299,3 +299,13 @@ Son insan mesajı sıradaki işi soruyordu; sonraki görsel fikir fare etkileşi
 toy_smoke görünürlük, süre bitimi ve moladaki seçim alanıyla genişletildi ve geçti; pause_smoke geçti. Godot görüntülü önizlemede normal mola ve paneli yalnız tanı için gizlenen mola ekranları incelendi; 432x768 çıktının fare bölgesindeki pikseller mola öncesiyle birebir aynı çıktı. Süre/iki kullanım hakkı/atış fiziği değişmedi. Tüm 25 test bu dilimde yeniden çalıştırılmadı. Telefon/APK/GitHub işlemi yok; kullanıcı dosyaları ve kaynaklar korundu. Önceki grooming testlerine ait Godot UID dosyaları yerel kayda alındı.
 
 Sonraki görsel iş: yakalanan farenin kedinin ayakları altında kısmen örtülmesini dikkate alarak pati teması ve fare görünürlüğünü birlikte tasarlamak. Bu tur hareket seti veya oyalanma süresi değiştirilmedi. Gerçek telefon okunabilirliği kullanıcı uygun olduğunda değerlendirilecek.
+
+## Saatlik devam — 13 Ekim 2026, fareyle oyun teması
+
+Son insan yönlendirmesi karakterlerin görsel güçlendirmesi; dur isteği yok. ordinaryUsageAllowed=true; kredi/sıfırlama işlemi yapılmadı. 2c0f198 son güvenli noktadan mevcut pati çizimi ve kodla çizilen oyuncak kullanılarak küçük oyun tepkisi eklendi; yeni görsel üretim/servis gerekmedi.
+
+Fare yakalandıktan sonra ilk 0,25 sn içinde yalnız çizimi kedinin yanında, ekranın içine doğru 40 piksel kayar; patiyle ritimli küçük hareket eder. Yumi mevcut pati dokusunun kol hareketiyle fareye uzanır. Fizik konumu, yol bulma hedefi, 6 sn üst sınır, 2,5 sn oynama ve iki hak değişmez. Pati oyunu saldırı flaşı/çarpışması üretmez; mola aynı kareyi korur. Süre bitince eski devriye rolü döner. Bu sürüm yaklaşırken ayrı baş eğme veya bırakırken yeni bakış karesi içermez; temas ve görünürlük dilimidir.
+
+İlk kontrol Dictionary kaynaklı bool tür çıkarımı hatası verdi; tür açıkça belirtildi. 25 kontrolün tamamı geçti. Ardından sol/sağ yerleşim sınırları testi eklendi, toy_smoke yeniden geçti. Gerçek Godot önizlemelerinde havadaki pati ve temas karesi incelendi; moladaki fare bölgesi piksel eşitliği geçti. Yeni kareler exports/toy-preview altında. Fiziksel telefon testi, APK üretimi veya GitHub gönderimi yok. Kullanıcının senaryo değişikliği, ilişkisiz Excel/JPG ve sources korundu.
+
+Yumi/Şako/fare için biriken görsel dilim artık birlikte telefon değerlendirmesine hazır yerel adaydır. Sonraki adım kullanıcı uygun olduğunda yeni kodlu pakette iki yeni atlası denetleyip cihazda okunabilirlik/hareket hissini görmek. Aynı kaynak için tekrarlı paket üretme veya sırf süre geçirmek için yeni hareket ekleme; somut hata varsa önce onu ele al.

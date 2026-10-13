@@ -24,20 +24,24 @@ func capture() -> void:
 	game.toy_time_left = 4.0
 	game.toy_play_left = 2.5
 	game.update_interface()
+	await save_preview(game, "arrival")
+	game.toy_play_left = 2.125
 	await save_preview(game, "playing")
-	var before_pause: Image = root.get_texture().get_image().get_region(Rect2i(280, 436, 64, 36))
+	var before_pause: Image = root.get_texture().get_image().get_region(Rect2i(230, 410, 110, 80))
 	game.pause_game()
 	game._process(10.0)
 	await save_preview(game, "paused-playing")
 	# Hide only the modal for this diagnostic: compare the frozen toy pixels.
 	game.pause_panel.hide()
 	await save_preview(game, "paused-toy-diagnostic")
-	var during_pause: Image = root.get_texture().get_image().get_region(Rect2i(280, 436, 64, 36))
+	var during_pause: Image = root.get_texture().get_image().get_region(Rect2i(230, 410, 110, 80))
 	if before_pause.get_data() != during_pause.get_data():
 		push_error("Toy image changes on pause even with the modal hidden")
 		quit(1)
 		return
 	game.resume_game()
+	game.toy_play_left = 1.875
+	await save_preview(game, "paw-contact")
 	game.toy_play_left = 0.7
 	game.update_interface()
 	await save_preview(game, "expiring")
