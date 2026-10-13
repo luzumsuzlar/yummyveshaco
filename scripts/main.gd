@@ -1806,7 +1806,7 @@ func toy_play_pose() -> Dictionary:
 	var direction := 1.0 if toy_position.x <= SCREEN_SIZE.x * 0.5 else -1.0
 	var settle := smoothstep(0.0, 0.25, elapsed) if playing else 0.0
 	var tap := pow(maxf(0.0, sin(elapsed * TAU * 2.0)), 2.0) if playing else 0.0
-	var offset := Vector2(direction * (40.0 + tap * 6.0), -tap * 2.0) * settle
+	var offset := Vector2(direction * (40.0 + tap * 6.0), -14.0 - tap * 2.0) * settle
 	return {"playing": playing, "direction": direction, "tap": tap, "position": toy_position + offset}
 
 
@@ -1937,7 +1937,7 @@ func draw_ground_shadows() -> void:
 func yumi_paw_motion() -> Dictionary:
 	var toy_pose := toy_play_pose()
 	if toy_pose["playing"] and yumi_warning_timer <= 0.0 and yumi_swipe_flash <= 0.0 and scatter_state.is_empty():
-		return {"arm": Vector2(-8, 12 + float(toy_pose["tap"]) * 18), "shift": Vector2.ZERO, "angle": 0.0, "impact": 0.0, "big": false}
+		return {"arm": Vector2(-8, 4 + float(toy_pose["tap"]) * 8), "shift": Vector2.ZERO, "angle": 0.0, "impact": 0.0, "big": false}
 	# Render-only motion: no collision center, warning deadline or ball velocity changes.
 	var big_swipe := scatter_state == "warning" or scatter_state == "scatter"
 	var duration := 0.48 if big_swipe else 0.34
