@@ -1134,6 +1134,10 @@ func toggle_toy_selection() -> void:
 	if game_state != "playing" or toys_left <= 0 or toy_active:
 		return
 	toy_selecting = not toy_selecting
+	if toy_selecting:
+		# Interrupt during input, before a pause can preserve the old idle action.
+		yumi_groom_time = 0.0
+		yumi_groom_wait = 3.5
 	toy_touch_index = -1
 	active_touch_index = -1
 	touch_can_launch = false

@@ -10,8 +10,16 @@ func capture() -> void:
 	game.start_level(2)
 	game.shot_delay = 0.0
 	DirAccess.make_dir_recursive_absolute("res://exports/toy-preview")
+	game.yumi_groom_wait = 0
+	game.update_yumi_groom(0.01)
+	game.update_yumi_groom(0.5)
+	await save_preview(game, "groom-before-selection")
 	game.toggle_toy_selection()
 	await save_preview(game, "selection")
+	game.pause_game()
+	game.pause_panel.hide()
+	await save_preview(game, "selection-after-groom-paused")
+	game.resume_game()
 	game.place_toy(Vector2(390, 560))
 	game.move_yumi(0.3)
 	game.update_yumi_walk(0.3, 48.6)

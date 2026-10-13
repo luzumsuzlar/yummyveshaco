@@ -79,6 +79,22 @@ func run_checks() -> void:
 			check(Rect2(Vector2.ZERO, img.get_size()).encloses(region), "Animation frame stays inside the atlas")
 			var anchor: Vector2 = game.YUMI_GROOM_ANCHORS[game.yumi_groom_frame()] * (158.0 / 512.0)
 			check(is_equal_approx(game.yumi_art_rect().position.y + anchor.y, 67.0), "Feet remain on the same baseline")
+	for variant in range(3):
+		game.start_level(2)
+		game.shot_delay = 0
+		game.yumi_groom_variant = variant
+		game.yumi_groom_wait = 0
+		game.update_yumi_groom(0.01)
+		game.update_yumi_groom(0.5)
+		check(game.yumi_art_texture() == game.YUMI_GROOM_ART, "Toy interruption starts with a visible grooming pose")
+		rng_state = game.rng.state
+		game.toy_button.pressed.emit()
+		check(game.toy_selecting and game.yumi_groom_time == 0, "Toy selection interrupts grooming in the same input event")
+		game.pause_game()
+		check(game.yumi_art_texture() != game.YUMI_GROOM_ART, "Immediate pause cannot resurrect interrupted grooming")
+		game.resume_game()
+		game.toy_button.pressed.emit()
+		check(game.toys_left == 2 and game.can_launch_ball() and game.rng.state == rng_state, "Cancelling selection preserves charges, readiness and randomness")
 	game.show_level_menu()
 	check(game.yumi_groom_time == 0, "Menu clears action")
 	game.start_level(3)
