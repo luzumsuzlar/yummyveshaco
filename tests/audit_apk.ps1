@@ -1,6 +1,8 @@
 param(
     [string]$ApkPath = (Join-Path $PSScriptRoot '..\exports\android\yumi-sako-test.apk'),
-    [switch]$AuditOnly
+    [switch]$AuditOnly,
+    [ValidateSet('Current', 'Legacy013')]
+    [string]$ResourceSet = 'Current'
 )
 
 # Read-only ZIP entry inspection: never extract, install, or alter the APK.
@@ -35,12 +37,16 @@ try {
                 throw "Required current game script missing: $scriptName"
             }
         }
-        foreach ($textureName in @('kitchen-background-v1', 'cupboard-v1', 'yumi-idle-v1', 'yumi-sleep-v2', 'yumi-paw-v1', 'yumi-walk-v1', 'shako-idle-v1')) {
+        $requiredTextures = @('kitchen-background-v1', 'cupboard-v1', 'yumi-idle-v1', 'yumi-sleep-v2', 'yumi-paw-v1', 'yumi-walk-v1', 'shako-idle-v1')
+        if ($ResourceSet -eq 'Current') {
+            $requiredTextures += @('yumi-groom-v1', 'shako-reactions-v1')
+        }
+        foreach ($textureName in $requiredTextures) {
             if (-not ($entries -match ('^assets/\.godot/imported/' + [regex]::Escape($textureName) + '\.png-[^/]+\.ctex$'))) {
                 throw "Required game texture missing: $textureName"
             }
         }
-        Write-Host 'All three current game scripts and seven game textures are present.'
+        Write-Host "Three game scripts and $($requiredTextures.Count) required textures are present (resource set: $ResourceSet)."
     }
     if ($forbidden.Count -eq 0) {
         Write-Host 'No listed forbidden resources found. This is not a full privacy or playability guarantee.'

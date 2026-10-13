@@ -1,6 +1,8 @@
 param(
     [switch]$Build,
     [string]$ApkPath = '',
+    [ValidateSet('Current', 'Legacy013')]
+    [string]$ResourceSet = 'Current',
     [string]$GodotPath = 'D:\Works\Tetris\Godot\Godot_v4.7.2-stable_win64_console.exe',
     [string]$AaptPath = 'C:\Users\Zalman\AppData\Local\Android\Sdk\build-tools\36.0.0\aapt.exe',
     [string]$JavaPath = 'C:\Program Files\Android\Android Studio\jbr\bin\java.exe'
@@ -8,6 +10,7 @@ param(
 
 # Local preparation only. Never installs, uninstalls, uploads, or changes presets.
 $ErrorActionPreference = 'Stop'
+if ($Build -and $ResourceSet -ne 'Current') { throw 'New builds must use Current resources; Legacy013 is only for inspecting historical packages.' }
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $presetLines = Get-Content -LiteralPath (Join-Path $projectRoot 'export_presets.cfg')
 $versionCode = [regex]::Match(($presetLines -join "`n"), '(?m)^version/code=(\d+)\r?$').Groups[1].Value
@@ -49,7 +52,7 @@ if ($Build) {
     if ($exportProcess.ExitCode -ne 0) { throw "Android export failed; output is not approved. Logs: $logRoot" }
 }
 if (-not (Test-Path -LiteralPath $targetPath -PathType Leaf)) { throw 'APK missing. Use -Build with a new filename to prepare one.' }
-& (Join-Path $PSScriptRoot 'audit_apk.ps1') -ApkPath $targetPath
+& (Join-Path $PSScriptRoot 'audit_apk.ps1') -ApkPath $targetPath -ResourceSet $ResourceSet
 $badging = @(& $AaptPath dump badging $targetPath 2>&1)
 if ($LASTEXITCODE -ne 0) { throw 'Android manifest inspection failed.' }
 $packageLine = @($badging | Where-Object { $_ -match '^package:' })

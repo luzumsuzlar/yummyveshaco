@@ -32,6 +32,8 @@ Mevcut Godot 4.7.2 export şablonları, Android SDK ve Java ortamı kullanıldı
 
 ## Yeniden üretme
 
+13 Ekim kaynak güncellemesi: yeni Yumi/Şako hareketleriyle paket kontrolünün varsayılan `Current` kümesi artık dokuz dokuyu zorunlu tutar. Telefonda bulunan 0.1.13 bu iki yeni dokuyu içermez; yalnız geçmiş paketi kontrol etmek için `& .\tests\prepare_android.ps1 -ResourceSet Legacy013` kullanın. Yeni üretimde Legacy013 kabul edilmez. Güncel kaynak paketlenecekse sürüm kodunu artırın; henüz bu görselleri içeren yeni APK hazırlanmadı. Dört sentetik kaynak kümesi ve eski kümeyle üretim yasağı `tests/package_resource_smoke.ps1` ile sınanır; bu test Android kurulumu veya çalışırlığı kanıtlamaz.
+
 Godot kullanıcı ayarlarında mevcut Android SDK, Java ve debug keystore yolları tanımlı olmalıdır. Depodaki export ayarı keystore parolası içermez.
 
 Hazırlama betiği varsayılan olarak yalnız mevcut paketi doğrular. -Build ile önce güncel 23 oyun testi çalışır, sonra yeni APK üretilip içerik, manifest ve imza kontrol edilir. Yeni kaynak için export sürüm kodu ayrıca artırılmalıdır; mevcut 14 koduyla farklı bir telefon güncellemesi sunma. Mevcut dosyanın üzerine yazmaz; hedef proje exports/android altında olmalıdır. GodotPath/AaptPath/JavaPath parametreleri mevcut araçların konumunu seçer, kurulum veya sistem ayarı değişikliği yapmaz. Hata/timeout sonrasında kalan kısmi dosya paylaşım için onaylı sayılmaz. Fiziksel Android testi bu adımın dışında kalır.
