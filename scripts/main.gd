@@ -2029,8 +2029,9 @@ func draw_yumi() -> void:
 	var visual_origin := p + Vector2(shift.x * direction, shift.y)
 	var friendly_nod: float = shared_celebration_pose()["nod"]
 	visual_origin.y += friendly_nod * 2.0
+	var rest: Dictionary = yumi_rest_pose()
 	# Align each source pose around the unchanged gameplay center.
-	draw_set_transform(visual_origin, float(motion["angle"]) * direction if reaching else -friendly_nod * 0.055, Vector2(direction, 1))
+	draw_set_transform(visual_origin + Vector2(0, float(rest["offset_y"])), float(motion["angle"]) * direction if reaching else -friendly_nod * 0.055, Vector2(direction, float(rest["scale_y"])))
 	if walking:
 		draw_texture_rect_region(art, yumi_art_rect(), yumi_walk_region())
 	elif art == YUMI_GROOM_ART:
@@ -2071,6 +2072,13 @@ func draw_yumi() -> void:
 func yumi_visual_state() -> String:
 	# Pausing freezes the role as well as its animation clock.
 	return paused_from_state if game_state == "paused" else game_state
+
+
+func yumi_rest_pose() -> Dictionary:
+	# Subtle breathing in the existing curled pose; the floor stays anchored.
+	var sleeping := yumi_art_texture() == YUMI_SLEEP_ART
+	var scale_y := 1.0 + sin(level_time * TAU / 3.2) * 0.02 if sleeping else 1.0
+	return {"scale_y": scale_y, "offset_y": 71.0 * (1.0 - scale_y)}
 
 
 func yumi_art_texture() -> Texture2D:

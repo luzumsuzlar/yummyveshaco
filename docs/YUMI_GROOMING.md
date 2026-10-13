@@ -1,5 +1,7 @@
 # Yumi — sakin an hareketleri, 13 Ekim 2026
 
+Güncel durum: temizlenme seti 0.1.14 ve 0.1.15 APK'larda var; kullanıcı 0.1.14 karakter hareketlerini olumlu değerlendirdi. Son yerel dilimde uyuyan Yumi'ye 3,2 saniyelik, en fazla %2 dikey genişleme/daralma ile hafif nefes hareketi eklendi. Alt temas çıpası sabit kalır; başlık, gölge, oyun konumu ve çarpışma boyutu değişmez. Mola aynı nefes karesini korur, uyanma/kutlama normal ölçeğe döner. Bu mevcut uyku resminin kodla yapılan küçük deformasyonudur; yeni çizilmiş göğüs/kulak animasyonu değildir ve henüz telefonda yok.
+
 Yerel kaynakta ilk hareket seti: pati yalama (2,8 sn), aynı patiyle yüz temizleme (2,4 sn), göz kırpma/kulak eğme (1,2 sn). Altı farklı kareden üç küçük sekans oluşturulur. Bunlar yeni saldırı veya oyuncuyu bekleten bir kural değildir. İlk dört bölümde uyanık Yumi, top yokken 3,5 saniyelik uygun sakin zaman sonrası yerinde oturup hareketini yapar. Tamamlanan hareketlerden sonra 6–8 saniye ara verilir. Uyuyan Yumi ve beşinci bölümün şifre kapatma rolü önceliğini korur.
 
 Atış her zaman mevcut kuralla yapılabilir; fırlatıldığı anda temizlenme kesilir. Yumi'nin gezinmesi yalnız top yokken kısa süre durur, eski hız/yön ve hareket sayaçlarıyla devam eder. Bu sebeple bekleyip nişan alan oyuncu o an kediyi sabit görebilir; çarpışma boyutu, uçuş fiziği, pati uyarı süresi, delik düzeni ve atış sayıları değişmez. Fare, delik karıştırma, aşama geçişi ve saldırı uyarısı hareketi keser. Mola animasyonu dondurur; menü ve yeniden başlatma temizler. Kozmetik seçim oyun rastgelelik kaynağını tüketmez.
@@ -11,7 +13,7 @@ Atış her zaman mevcut kuralla yapılabilir; fırlatıldığı anda temizlenme 
 - `tests/groom_smoke.gd`: atış kesmesi, hareketin dönmesi, mola, önemli olayların önceliği, uyku/hafıza ayrımı, atlas/çıpa ve rastgelelik kontrolü. Toplam 24 kontrol geçti.
 - 13 Ekim devam kontrolü: gerçek viewport dokunma olayları 30/60/144 FPS adımlarıyla temizlenme başlangıcından geçirildi. Basılı nişan korunur; ikinci parmak ve tekrarlanan bırakma ek atış/havlama yapmaz. Uygulama arka planında animasyon donar; geri dönmek kendiliğinden devam ettirmez, eski bırakma ve iptal edilen dokunuş atış yapmaz; taze hareket çalışır. Genişletilen grooming testi geçti; fiziksel cihaz sonucu değildir.
 - `tests/groom_preview.gd`: üç sekans için 24 gerçek Godot görüntüsü; `exports/groom-preview/`. Pati yalama ve yüz temizleme kareleri oyun boyutunda görsel olarak incelendi. İlk iki üretim kare ayrımı nedeniyle seçilmedi; yalnız son seçilen atlas projeye alındı.
-- Android APK üretilmedi, telefona kurulmadı. Cihazdaki 0.1.13 bu hareketleri içermez. Yeni paket hazırlanırken yeni doku dahil edilip denetlenmeli.
+- İlk kaynak diliminde Android APK üretilmemişti. Ardından temizlenme dokusu dokuz dokulu paket kontrolüyle 0.1.14'e, daha sonra 0.1.15'e alındı. Son nefes hareketi ve fare seçiminin temizlenmeyi anında kesmesi yalnız yerel kaynaktadır.
 
 ## Son üretim yönergesi (yerleşik imagegen)
 

@@ -54,6 +54,25 @@ func run_checks() -> void:
 	game.start_level(0)
 	game.update_yumi_walk(0.1, 8.0)
 	check(not game.yumi_walk_moving and game.yumi_art_texture() == game.YUMI_SLEEP_ART, "Sleeping cat cannot walk")
+	var cat_position: Vector2 = game.yumi_position
+	var cat_velocity: Vector2 = game.yumi_velocity
+	var rng_state: int = game.rng.state
+	for time in [0.0, 0.8, 1.6, 2.4, 3.2]:
+		game.level_time = time
+		var rest: Dictionary = game.yumi_rest_pose()
+		check(float(rest["scale_y"]) >= 0.98 and float(rest["scale_y"]) <= 1.02, "Breathing stays within two percent of the existing silhouette")
+		check(is_equal_approx(71.0 * float(rest["scale_y"]) + float(rest["offset_y"]), 71.0), "Sleeping floor anchor never slides")
+	check(game.yumi_position == cat_position and game.yumi_velocity == cat_velocity and game.rng.state == rng_state, "Breathing cannot change physics or randomness")
+	game.level_time = 0.8
+	var held_rest: Dictionary = game.yumi_rest_pose()
+	game.pause_game()
+	game._process(10)
+	check(game.yumi_rest_pose() == held_rest, "Pause freezes the breathing pose")
+	game.resume_game()
+	game.progress = 4
+	check(game.yumi_rest_pose()["scale_y"] == 1.0, "Waking clears breathing immediately")
+	game.finish_game(true)
+	check(game.yumi_rest_pose()["scale_y"] == 1.0, "Celebration never inherits sleep deformation")
 	game.start_level(2)
 	game._process(0.05)
 	check(game.yumi_walk_moving and game.yumi_position != initial_position, "Actual process movement drives animation")
