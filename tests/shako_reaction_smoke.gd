@@ -61,6 +61,30 @@ func run_checks() -> void:
 	game.resume_game()
 	game._process(0.5)
 	check(game.game_state == "success", "Celebration still finishes after 2.2 seconds")
+	game.start_level(2)
+	game.progress = game.sequence.size() - 1
+	game.shot_delay = 0
+	game.level_time = 12.5
+	game.launch_ball()
+	game.deflect_ball_from_yumi()
+	check(game.yumi_swipe_flash > 0, "Final-shot regression begins with a real swipe")
+	game.ball_position = game.hole_positions[game.ball_type]
+	game.resolve_hole_hit(game.ball_type)
+	check(game.game_state == "celebrating" and game.yumi_help_count == 1, "Lucky final goal keeps Yumi's assistance credit")
+	check(game.yumi_swipe_flash == 0 and game.yumi_art_texture() == game.YUMI_IDLE_ART, "Final goal clears the attack pose before celebration")
+	game._process(1.8)
+	game.pause_game()
+	check(game.yumi_art_texture() == game.YUMI_IDLE_ART, "Paused lucky celebration cannot restore a stale attack")
+	game.resume_game()
+	game._process(0.5)
+	check(game.yumi_art_texture() == game.YUMI_IDLE_ART and game.level_time == 12.5, "Success stays neutral without adding celebration to play time")
+	game.start_level(2)
+	game.shot_delay = 0
+	game.launch_ball()
+	game.deflect_ball_from_yumi()
+	game.errors = 2
+	game.register_error("Regression: final error after a swipe")
+	check(game.game_state == "failed" and game.yumi_swipe_flash == 0, "Final error also clears the transient attack")
 	game.show_level_menu()
 	check(game.shako_joy_left == 0 and game.shako_surprise_left == 0 and game.shako_reaction_pose()["frame"] == -1, "Menu clears reactions")
 	game.start_level(0)

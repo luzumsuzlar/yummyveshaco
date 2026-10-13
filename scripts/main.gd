@@ -1587,6 +1587,8 @@ func finish_game(success: bool) -> void:
 	ball_active = false
 	bark_available = false
 	yumi_warning_timer = 0.0
+	# End-of-level states no longer tick the transient attack animation.
+	yumi_swipe_flash = 0.0
 	if success:
 		game_audio.play_effect("unlock")
 		game_state = "celebrating"
