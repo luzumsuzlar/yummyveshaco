@@ -1,5 +1,7 @@
 # Yumi ve Şako — karakter görselleri v1
 
+13 Ekim 2026: Şako'nun dikkat, Yumi patisine şaşkınlık ve doğru atış sevinci yerel kaynakta hazır. Altı poz, durum öncelikleri ve üretim yönergesi `docs/SHAKO_REACTIONS.md` içinde; henüz telefon sürümünde yok.
+
 13 Ekim 2026: yerel kaynağa altı karelik pati yalama, yüz temizleme ve göz kırpma/kulak tepkisi eklendi. Davranış, görsel, üretim yönergesi ve doğrulama `docs/YUMI_GROOMING.md` içinde. Henüz telefona yüklenmedi. Aşağıdaki eski sürüm/kurulum notları tarihsel kayıtlardır.
 
 ## Yürüyüş döngüsü

@@ -28,6 +28,8 @@ const YUMI_SLEEP_ART := preload("res://assets/art/characters/yumi-sleep-v2.png")
 const YUMI_PAW_ART := preload("res://assets/art/characters/yumi-paw-v1.png")
 const YUMI_WALK_ART := preload("res://assets/art/characters/yumi-walk-v1.png")
 const YUMI_GROOM_ART := preload("res://assets/art/characters/yumi-groom-v1.png")
+const SHAKO_REACTION_ART := preload("res://assets/art/characters/shako-reactions-v1.png")
+const SHAKO_REACTION_ANCHORS := [Vector2(256, 495), Vector2(256, 495), Vector2(265, 495), Vector2(245, 480), Vector2(264, 480), Vector2(274, 480)]
 const YUMI_GROOM_ANCHORS := [Vector2(250, 498), Vector2(235, 498), Vector2(250, 498), Vector2(242, 465), Vector2(244, 465), Vector2(251, 466)]
 const YUMI_WALK_ANCHORS := [Vector2(280, 476), Vector2(266, 480), Vector2(254, 480), Vector2(274, 444), Vector2(252, 448), Vector2(258, 452)]
 const SHAKO_IDLE_ART := preload("res://assets/art/characters/shako-idle-v1.png")
@@ -200,6 +202,9 @@ var yumi_walk_moving := false
 var yumi_groom_time := 0.0
 var yumi_groom_wait := 3.5
 var yumi_groom_variant := 0
+var shako_surprise_left := 0.0
+var shako_joy_left := 0.0
+var shako_look_direction := 1.0
 var yumi_move_timer := 0.0
 var yumi_pause_timer := 0.0
 var yumi_dash_timer := 0.0
@@ -529,6 +534,8 @@ func draw_level_thumbnail(canvas: Control, index: int) -> void:
 
 
 func show_level_menu() -> void:
+	shako_surprise_left = 0.0
+	shako_joy_left = 0.0
 	yumi_groom_time = 0.0
 	ball_drop_time = 0.0
 	ball_drop_hole = -1
@@ -675,6 +682,9 @@ func start_level(new_level_index: int = level_index) -> void:
 	touch_can_launch = false
 	last_pointer_position = Vector2(LAUNCH_POS.x, HOLE_Y)
 	yumi_position = YUMI_HOME
+	shako_surprise_left = 0.0
+	shako_joy_left = 0.0
+	shako_look_direction = 1.0
 	yumi_groom_time = 0.0
 	yumi_groom_wait = 3.5
 	yumi_groom_variant = 0
@@ -708,6 +718,9 @@ func start_level(new_level_index: int = level_index) -> void:
 
 
 func _process(delta: float) -> void:
+	if game_state in ["playing", "celebrating"]:
+		shako_surprise_left = maxf(0.0, shako_surprise_left - delta)
+		shako_joy_left = maxf(0.0, shako_joy_left - delta)
 	# Cosmetic only: scoring and existing shot delays are unchanged. Pause freezes it.
 	if game_state not in ["paused", "menu"] and ball_drop_time > 0.0:
 		ball_drop_time = maxf(0.0, ball_drop_time - delta)
@@ -1439,6 +1452,10 @@ func perform_yumi_swipe() -> void:
 
 
 func deflect_ball_from_yumi() -> void:
+	shako_surprise_left = 0.65
+	shako_joy_left = 0.0
+	# Atlas looks screen-left; mirror only the reaction toward the actual cat.
+	shako_look_direction = -1.0 if yumi_position.x > LAUNCH_POS.x else 1.0
 	game_audio.play_effect("paw")
 	paw_impact_position = ball_position
 	paw_target_index = -1
@@ -1489,6 +1506,8 @@ func resolve_hole_hit(target_index: int = -1) -> void:
 			register_error("Doğru delik, ama en az %d duvar sekmesi gerekiyor!" % required_wall_bounces())
 			return
 		var lucky_yumi_goal := ball_deflected_by_yumi
+		shako_joy_left = 0.45
+		shako_surprise_left = 0.0
 		if lucky_yumi_goal:
 			yumi_help_count += 1
 		progress += 1
@@ -1892,7 +1911,7 @@ func draw_soft_shadow(center: Vector2, radii: Vector2, opacity: float) -> void:
 func draw_ground_shadows() -> void:
 	var cat_shadow_radii := Vector2(58, 10) if yumi_art_texture() in [YUMI_SLEEP_ART, YUMI_WALK_ART] else Vector2(44, 12)
 	draw_soft_shadow(yumi_position + Vector2(7, 57), cat_shadow_radii, 0.30)
-	var shako_head := celebration_shako_position if game_state in ["celebrating", "success"] else LAUNCH_POS + Vector2(0, 18)
+	var shako_head := shako_visual_position()
 	draw_soft_shadow(shako_head + Vector2(6, 31), Vector2(40, 11), 0.30)
 	if ball_active:
 		draw_soft_shadow(ball_position + Vector2(6, 12), Vector2(21, 9), 0.28)
@@ -2035,9 +2054,15 @@ func yumi_walk_region() -> Rect2:
 	return Rect2(Vector2(frame % 3, frame / 3) * cell, cell)
 
 
+func shako_visual_position() -> Vector2:
+	if game_state in ["celebrating", "success"] or (game_state == "paused" and paused_from_state == "celebrating"):
+		return celebration_shako_position
+	return LAUNCH_POS + Vector2(0, 18)
+
+
 func draw_shako_launcher() -> void:
-	if game_state == "celebrating" or game_state == "success":
-		draw_shako_face(celebration_shako_position, true)
+	if game_state in ["celebrating", "success"] or (game_state == "paused" and paused_from_state == "celebrating"):
+		draw_shako_face(shako_visual_position(), true)
 		return
 	var direction := Vector2(sin(aim_angle), -cos(aim_angle))
 	var muzzle := LAUNCH_POS + direction * 58.0
@@ -2090,8 +2115,42 @@ func aim_preview_points() -> Array[Vector2]:
 	return points
 
 
+func shako_reaction_pose() -> Dictionary:
+	var state := paused_from_state if game_state == "paused" else game_state
+	var frame := -1
+	var lift := 0.0
+	var direction := 1.0
+	if state == "celebrating":
+		frame = 4 + int(celebration_time * 8.0) % 2
+		lift = absf(sin(celebration_time * PI * 4.0)) * 4.0
+	elif state == "playing":
+		if shako_joy_left > 0.0:
+			var phase := 1.0 - shako_joy_left / 0.45
+			frame = 4 + int(phase * 4.0) % 2
+			lift = sin(phase * PI) * 4.0
+		elif shako_surprise_left > 0.0:
+			frame = 2 if shako_surprise_left > 0.35 else 3
+			direction = shako_look_direction
+		elif not ball_active and shot_delay <= 0.0 and stage_rotation <= 0.0 and scatter_state.is_empty() and not toy_selecting:
+			frame = int(level_time * 1.8) % 2
+	return {"frame": frame, "lift": lift, "direction": direction}
+
+
+func shako_reaction_region(frame: int) -> Rect2:
+	var cell := Vector2(SHAKO_REACTION_ART.get_width() / 3.0, SHAKO_REACTION_ART.get_height() / 2.0)
+	return Rect2(Vector2(frame % 3, frame / 3) * cell, cell)
+
+
 func draw_shako_face(head: Vector2, celebrating: bool = false) -> void:
-	draw_texture_rect(SHAKO_IDLE_ART, Rect2(head + Vector2(-59, -77), Vector2(118, 118)), false)
+	var pose := shako_reaction_pose()
+	var frame: int = pose["frame"]
+	if frame >= 0:
+		var anchor: Vector2 = SHAKO_REACTION_ANCHORS[frame] * (118.0 / 512.0)
+		draw_set_transform(head + Vector2(0, -float(pose["lift"])), 0.0, Vector2(float(pose["direction"]), 1))
+		draw_texture_rect_region(SHAKO_REACTION_ART, Rect2(Vector2(-anchor.x, 30.0 - anchor.y), Vector2(118, 118)), shako_reaction_region(frame))
+		draw_set_transform(Vector2.ZERO)
+	else:
+		draw_texture_rect(SHAKO_IDLE_ART, Rect2(head + Vector2(-59, -77), Vector2(118, 118)), false)
 	var font := ThemeDB.fallback_font
 	var caption := "ŞAKO"
 	if celebrating:
