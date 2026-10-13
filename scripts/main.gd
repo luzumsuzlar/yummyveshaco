@@ -1794,8 +1794,14 @@ func _draw() -> void:
 	draw_tutorial()
 
 
+func toy_visual_is_visible() -> bool:
+	var state := paused_from_state if game_state == "paused" else game_state
+	return state == "playing" and (toy_selecting or toy_active)
+
+
 func draw_toy() -> void:
-	if game_state != "playing":
+	# Pause freezes the scene; it must not erase an active toy underneath the modal.
+	if not toy_visual_is_visible():
 		return
 	if toy_selecting:
 		draw_rect(TOY_AREA, Color(0.7, 0.5, 0.95, 0.16))

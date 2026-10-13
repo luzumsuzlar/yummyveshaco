@@ -25,6 +25,19 @@ func capture() -> void:
 	game.toy_play_left = 2.5
 	game.update_interface()
 	await save_preview(game, "playing")
+	var before_pause: Image = root.get_texture().get_image().get_region(Rect2i(280, 436, 64, 36))
+	game.pause_game()
+	game._process(10.0)
+	await save_preview(game, "paused-playing")
+	# Hide only the modal for this diagnostic: compare the frozen toy pixels.
+	game.pause_panel.hide()
+	await save_preview(game, "paused-toy-diagnostic")
+	var during_pause: Image = root.get_texture().get_image().get_region(Rect2i(280, 436, 64, 36))
+	if before_pause.get_data() != during_pause.get_data():
+		push_error("Toy image changes on pause even with the modal hidden")
+		quit(1)
+		return
+	game.resume_game()
 	game.toy_play_left = 0.7
 	game.update_interface()
 	await save_preview(game, "expiring")
@@ -32,6 +45,7 @@ func capture() -> void:
 	game.update_interface()
 	await save_preview(game, "expired")
 	game.free()
+	print("Toy previews saved; paused toy pixel comparison passed")
 	quit()
 
 func save_preview(game: Node2D, name: String) -> void:

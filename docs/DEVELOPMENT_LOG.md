@@ -291,3 +291,11 @@ Kullanıcı telefonda deneyemediğini söyledi; önerilen dikkat, şaşkınlık 
 Yeni testin ilk çalışması helper'da yanlış resolve_goal adı nedeniyle timeout oldu; gerçek resolve_hole_hit çağrısına düzeltildi. Ardından 25 toplu test geçti. Son gölge konumu ortaklaştırması sonrası ilgili Şako testi tekrar 0 hatayla geçti. Altı gerçek Godot ekranı üretildi; dikkat, şaşkınlık, kutlama ve moladaki görünüm incelendi. Önizleme sentetik durumudur, fiziksel oyuncu sonucu değildir. Ayrıntı/son üretim yönergesi SHAKO_REACTIONS.md içinde.
 
 Değişiklikler yalnız yerelde kaydediliyor. Kullanıcının senaryo değişikliği ve ilişkisiz dosyalar korunuyor. APK/telefon/GitHub işlemi yok. Sıradaki ihtiyaç kullanıcı uygun olduğunda Yumi ve Şako hareketlerini birlikte telefonda görmek; yeni sürüm hazırlanırken iki yeni atlasın paket içinde bulunduğunu doğrulamak. Beklerken aynı kaynak için paket tekrarı üretme.
+
+## Saatlik devam — 13 Ekim 2026, oyuncak farenin mola görünümü
+
+Son insan mesajı sıradaki işi soruyordu; sonraki görsel fikir fare etkileşimi, dur isteği yok. Kullanım denetimi ordinaryUsageAllowed=true; bu çalışmada sıfırlama/kredi işlemi yapılmadı. 933acb7 güvenli noktasından devam edildi. İncelemede draw_toy yalnız playing durumunda çizildiği için molada aktif oyuncağın ve süre halkasının kaybolduğu görüldü. Mola artık playing sahnesinin oyuncak/seçim görünümünü koruyor; sonuç/menüde veya süresi dolunca görünmüyor. Bu küçük hata düzeltmesidir, yeni pati/fare animasyonu tamamlandı sayılmaz.
+
+toy_smoke görünürlük, süre bitimi ve moladaki seçim alanıyla genişletildi ve geçti; pause_smoke geçti. Godot görüntülü önizlemede normal mola ve paneli yalnız tanı için gizlenen mola ekranları incelendi; 432x768 çıktının fare bölgesindeki pikseller mola öncesiyle birebir aynı çıktı. Süre/iki kullanım hakkı/atış fiziği değişmedi. Tüm 25 test bu dilimde yeniden çalıştırılmadı. Telefon/APK/GitHub işlemi yok; kullanıcı dosyaları ve kaynaklar korundu. Önceki grooming testlerine ait Godot UID dosyaları yerel kayda alındı.
+
+Sonraki görsel iş: yakalanan farenin kedinin ayakları altında kısmen örtülmesini dikkate alarak pati teması ve fare görünürlüğünü birlikte tasarlamak. Bu tur hareket seti veya oyalanma süresi değiştirilmedi. Gerçek telefon okunabilirliği kullanıcı uygun olduğunda değerlendirilecek.
