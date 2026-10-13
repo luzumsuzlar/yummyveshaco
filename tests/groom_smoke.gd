@@ -10,10 +10,25 @@ func check(value: bool, message: String) -> void:
 func _initialize() -> void:
 	call_deferred("run_checks")
 
+func touch(position: Vector2, pressed: bool, index: int = 0, canceled: bool = false) -> void:
+	var event := InputEventScreenTouch.new()
+	event.position = position
+	event.pressed = pressed
+	event.index = index
+	event.canceled = canceled
+	root.push_input(event, true)
+
+func drag(position: Vector2) -> void:
+	var event := InputEventScreenDrag.new()
+	event.index = 0
+	event.position = position
+	root.push_input(event, true)
+
 func run_checks() -> void:
 	var game = load("res://scenes/main.tscn").instantiate()
 	root.add_child(game)
 	game.set_process(false)
+	await process_frame
 	game.start_level(3)
 	game.shot_delay = 0
 	var rng_state: int = game.rng.state
@@ -68,6 +83,45 @@ func run_checks() -> void:
 	check(game.yumi_groom_time == 0, "Menu clears action")
 	game.start_level(3)
 	check(game.yumi_groom_variant == 0 and game.yumi_groom_wait == 3.5, "Restart resets the idle sequence")
+	# Route real viewport events across the transition, not only launch_ball().
+	for rate in [30, 60, 144]:
+		game.start_level(3)
+		game.shot_delay = 0
+		game.yumi_groom_wait = 0.1
+		touch(Vector2(270, 400), true)
+		for step in range(int(rate * 0.5)):
+			game._process(1.0 / rate)
+		check(game.yumi_groom_time > 0, "Held aim survives grooming start at %d FPS" % rate)
+		drag(Vector2(300, 400))
+		var angle: float = game.aim_angle
+		touch(Vector2(400, 400), true, 1)
+		touch(Vector2(400, 400), false, 1)
+		check(not game.ball_active and is_equal_approx(angle, game.aim_angle), "Second finger cannot shoot or steer during grooming")
+		touch(Vector2(300, 400), false)
+		check(game.ball_active and game.yumi_groom_time == 0, "Held gesture fires across animation start at %d FPS" % rate)
+		var velocity_before_repeat: Vector2 = game.ball_velocity
+		touch(Vector2(300, 400), false)
+		check(game.ball_velocity == velocity_before_repeat and game.barks_left == 3, "Duplicate release cannot fire or bark")
+	game.start_level(3)
+	game.shot_delay = 0
+	game.update_yumi_groom(3.6)
+	touch(Vector2(270, 400), true)
+	drag(Vector2(310, 400))
+	var angle_before_pause: float = game.aim_angle
+	var groom_before_pause: float = game.yumi_groom_time
+	game._notification(Node.NOTIFICATION_APPLICATION_PAUSED)
+	game._process(10.0)
+	game._notification(Node.NOTIFICATION_APPLICATION_FOCUS_IN)
+	check(game.game_state == "paused" and game.yumi_groom_time == groom_before_pause, "Background/foreground cannot run or resume grooming automatically")
+	game.resume_game()
+	touch(Vector2(310, 400), false)
+	check(not game.ball_active and game.aim_angle == angle_before_pause, "Old held gesture after background cannot shoot")
+	touch(Vector2(270, 400), true)
+	touch(Vector2(310, 400), false, 0, true)
+	check(not game.ball_active and game.yumi_groom_time > 0, "Canceled gesture leaves grooming and ball intact")
+	touch(Vector2(270, 400), true)
+	touch(Vector2(300, 400), false)
+	check(game.ball_active and game.yumi_groom_time == 0, "Fresh gesture after background/cancel fires normally")
 	game.free()
 	print("Groom smoke tests: %d failures" % failures)
 	quit(1 if failures else 0)

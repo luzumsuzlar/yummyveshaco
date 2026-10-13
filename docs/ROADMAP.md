@@ -4,6 +4,8 @@
 
 Son kullanıcı kararı: ilk dört bölümün temposu normal bulundu; süreyi artırmak için değer değiştirme. Kullanıcı kendisi dur diyene kadar mantıklı yerel geliştirmeye yeniden yetki verdi. Ayrıntılı oyuncu verisi hâlâ kısmi; bunu kesin denge doğrulaması olarak sunmadan, mevcut bölümleri koruyan altyapı/Yumi cilası ve tek fikirli beşinci bölüm hazırlığına ilerlenebilir.
 
+13 Ekim güncel yönlendirme: kullanıcı yeni bölümler yerine görsel güçlendirmeyi seçti ve özellikle Yumi'nin pati yalama gibi hareketlerini istedi. İlk yerel set hazır: yalama, yüz temizleme, göz kırpma/kulak tepkisi. Öncelik bu hareketlerin geçişleri ve mevcut karakterlerin görsel ifadesidir; aşağıdaki eski aşama sırası bu yeni yönlendirmeyi geçersiz kılmaz. Beşinci bölümün Kapak Oyunu önerisi henüz uygulanmadı. Telefonda 0.1.13 var; yeni hareketler henüz yalnız kaynakta.
+
 ## 1. Dört bölümlük sürümü doğrula — şu anki aşama
 
 - Son bekleme mesajları, kullanıcı tarafından beğenilen düşüş ve mevcut dört bölüm aynı APK'da olsun.
