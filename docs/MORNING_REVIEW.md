@@ -2,16 +2,16 @@
 
 ## Hangi sürüm?
 
-Telefonda **0.1.15-test / kod 16** var. Ortak mama kutlaması, Şako tepkileri, Yumi temizlenmesi ve oyuncak fareyle pati oyunu bu pakette. Son telefon güncellemesinden sonra kullanıcı deneme sonucu henüz gelmedi.
+14 Ekim kullanıcı telefon bağlı isteğiyle **0.1.16-test / kod 17** kuruldu ve başlatıldı. Ortak mama kutlaması, Şako tepkileri, Yumi temizlenmesi ve oyuncak fareyle pati oyunu korunuyor. Yeni paket için henüz oyuncu deneme sonucu yok.
 
-Şu yenilikler **yalnız bilgisayardaki güncel kaynakta**:
+Gece hazırlanıp **0.1.16 ile telefona da alınan** yenilikler:
 
 - Uyuyan Yumi'nin hafif nefes alıp vermesi; zemin teması sabit.
 - Pati yalama/yüz temizleme öncesi ve sonrası kısa nötr bakış; toplam hareket süreleri aynı.
 - Molada pati çarpma parıltısı ve deliğin görsel titreşiminin korunması.
 - FARE seçimine girince temizlenmenin anında kesilmesi; hemen mola verilince eski pozun dönmemesi.
 
-Bu farkları telefonda görmek için yeni kodlu güncelleme gerekir; gece otomatik yükleme yapılmadı. Eski APK son kaynakla aynı değildir.
+Bu farklar artık telefonda denenebilir; gece otomatik yükleme yapılmadı, sabah kullanıcı isteği üzerine güncellendi. Eski 0.1.15 APK bu yenilikleri içermez.
 
 ## Bilgisayarda kısa kontrol
 
@@ -31,4 +31,4 @@ Güncel kaynağın 25 otomatik testi geçti. Yedi Yumi mola durumu için karakte
 
 Örnek görüntüler bilgisayarda `exports/yumi-rest-preview`, `exports/groom-preview`, `exports/yumi-pause-preview` altında. Bunlar test düzenekleridir, gerçek oyuncu başarısı/süre ölçümü değil. Görsellerin incelenmesi telefon ergonomisini, gerçek ses duyulmasını veya bütün cihaz yaşam döngüsünü kanıtlamaz.
 
-Yeni APK üretimi, telefon kurulumu, GitHub gönderimi ve yeni bölüm yapılmadı. Detaylı geçmiş: `docs/DEVELOPMENT_LOG.md`. Sonraki karar önce bu kısa turun geri bildirimine göre verilmeli; sırf içerik artsın diye yeni mekanik eklenmemeli.
+0.1.16 APK üretimi ve telefon kurulumu sabah kullanıcı isteğiyle tamamlandı. GitHub gönderimi veya yeni bölüm yok. Detaylı geçmiş: `docs/DEVELOPMENT_LOG.md`. Sonraki karar önce bu kısa turun geri bildirimine göre verilmeli; sırf içerik artsın diye yeni mekanik eklenmemeli.
