@@ -2158,8 +2158,7 @@ func draw_shako_launcher() -> void:
 				draw_line(start, start + direction * 13.0, CREAM, 5.0, true)
 				draw_line(start, start + direction * 13.0, Color("24616b"), 2.0, true)
 
-	draw_line(LAUNCH_POS, muzzle, Color("5d7898"), 30.0, true)
-	draw_circle(muzzle, 18, Color("9db8cf"))
+	# The loaded ball belongs to Shako; no mechanical muzzle remains after launch.
 	draw_shako_face(LAUNCH_POS + Vector2(0, 18))
 	if not ball_active and game_state == "playing" and progress < sequence.size():
 		if memory_clue_hidden():
