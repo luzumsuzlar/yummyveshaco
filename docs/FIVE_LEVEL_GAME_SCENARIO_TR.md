@@ -1,165 +1,286 @@
-# Yumi & Şako — İlk beş bölümün uygulama senaryosu
+# Yumi & Şako — İlk Beş Bölümün Uygulama ve Tasarım Senaryosu
 
-13 Ekim 2026 · Mevcut uygulama: 0.1.13-test / Android sürüm kodu 14.
+**Sürüm:** 0.1.13-test / Android Sürüm Kodu 14  
+**Tarih:** 13 Ekim 2026  
+**Hedef Kitle:** Projeyi devralacak oyun yazılımcısı, oyun tasarımcısı (Game Designer) ve test mühendisi.
 
-Bu belge mevcut çalışan prototipi başka bir yazılımcıya devretmek için hazırlanmıştır. Oyuncunun gördüğü akış, oyun kuralları, durum geçişleri ve doğrulama ölçütlerini tanımlar. Henüz yapılmamış fikirler mevcut özellik gibi anlatılmaz. Sayısal değerler mevcut kaynak kodundan alınmıştır; nihai denge hedefi değildir.
+Bu belge, çalışan Godot 4 prototipinin teknik mimarisini, oyun kurallarını, durum makinelerini, kullanıcı geri bildirimleriyle şekillenen tasarım kararlarını ve 5. bölüm için planlanan geliştirme alternatiflerini eksiksiz tanımlar. Belgede **mevcut çalışan mekanikler** ile **önerilen geliştirme alternatifleri** açık bir şekilde birbirinden ayrılmıştır.
 
-## 1. Oyun fikri ve karakterler
+---
 
-Şako köpek, mama dolabını açmak ister. Dolabın kilidi balık, pati ve yumak sembollerinden oluşur. Şako her atışta sıradaki sembolü taşıyan bir top gönderir; oyuncu topu aynı sembollü deliğe yönlendirir. Kilit dizisi tamamlanınca dolap açılır ve karakterler mamaya koşar.
+## 1. Oyun Fikri, Karakterler ve Tema
 
-Yumi kedi, bu işi bir oyuna çevirir. Bazen uyur, bazen yumağın peşine düşer, bazen topa pati atar, bazen delikleri karıştırır. Yumi'nin rastgele sektirdiği top doğru deliğe girerse bu yardım olarak sayılır. Kedi her durumda yalnızca zarar veren bir engel değildir.
+* **Şako (Köpek):** Mama dolabını açmak için dolap kilidine doğru sembol taşıyan topları fırlatır. Sabırlı, hedef odaklı ancak refleksleri oyuncunun nişan hassasiyetine bağlıdır.
+* **Yumi (Kedi):** Kendi kurallarıyla oynayan, meraklı bir sabotajcı ve fırsatçı yardımcıdır. Uyur, topun peşine düşer, pati atarak yönünü saptırır veya hedefleri dağıtır. Yumi'nin sektirdiği top doğru deliğe girerse bu bir "kaza eseri yardım" sayılır; Yumi salt kötü niyetli bir düşman değil, yaşayan bir kedi karakteridir.
+* **Mama Dolabı Kilidi:** Üç temel sembolden oluşur:
+  * `0 = BALIK` (Mavi - `#57d9ff`, sembol: `◆`)
+  * `1 = PATİ` (Mercan/Kırmızı - `#ff8b74`, sembol: `●`)
+  * `2 = YUMAK` (Mor - `#b98cff`, sembol: `✦`)
+* **Mekân Bütünlüğü:** İlk beş bölüm mutfak/mama dolabı sahnesinde (`kitchen-background-v1.png`, `cupboard-v1.png`) geçer. Bölümler arası fark oda değişimiyle değil; fizik kuralları, hedef dinamikleri ve Yumi'nin davranış katmanlarıyla sağlanır.
 
-Mevcut beş bölümün hepsi aynı mutfak/mama dolabı sahnesini kullanır. Farklı odalar, balkon veya buzdolabı hedefleri henüz uygulanmadı. Bölümler yeni mekânla değil, oyun kuralıyla ayrılır.
+---
 
-## 2. Ortak sahne ve oyuncu kontrolü
+## 2. Ortak Sahne, Koordinat Sistemi ve Girdi Yaşam Döngüsü
 
-- Dikey telefon düzeni, mantıksal çözünürlük 540 × 960. Masaüstü pencere 432 × 768. Farklı ekranlarda oran korunur.
-- Başlangıçta üç delik soldan sağa BALIK, PATİ, YUMAK. Renkleri sırasıyla mavi, mercan/kırmızı ve mor. Semboller renk dışında da ayırt edilebilir.
-- Başlangıç delik merkezleri `(116,250)`, `(270,250)`, `(424,250)`; görsel yarıçap 48. Normal yakalama toleransı merkezden 44 birimdir. Top yarıçapı 18.
-- Şako/fırlatıcı altta `(270,790)`; Yumi'nin ev konumu `(180,510)`.
-- Üstte bölüm, süre, şifre sırası ve ilerleme; altta sıradaki hedef, durum mesajı ve eylem düğmeleri bulunur.
-- Telefonda dokunmak nişanı o noktaya sıçratmaz. Yatay sürükleme, mevcut açıyı piksel başına 0,0045 radyan değiştirir; dikey hareket açıyı değiştirmez. Geçerli bırakma tek top atar.
-- Nişan alındıktan sonra AT! düğmesi de kullanılabilir. Masaüstünde fareyle nişan ve tık; A/D veya oklarla açı; Boşluk/Enter ile atış vardır.
-- İkinci parmak nişanı/atışı devralamaz. İptal edilen, dışarıda veya başka eylem düğmesi üzerinde biten hareket atış yapmaz.
-- Atışın kapalı olduğu anda başlayan hareket, kilit kalkınca bırakıldığı için geçerli hale gelmez. Yeni bir dokunuş gerekir. Şifreyi gizlemek ise atış kilidi değildir.
+### 2.1 Ekran ve Koordinat Düzeni
+* **Mantıksal Çözünürlük:** Dikey (Portrait) `540 × 960`. Masaüstü test penceresi `432 × 768`. Farklı ekran en-boy oranlarında dikey eksen ve oranlar korunur (`keep_width` / `viewport` ölçekleme).
+* **Fırlatıcı (Şako):** Ekranın alt-orta noktasında: `(270, 790)`.
+* **Delikler (Hedefler):** Başlangıç konumu `HOLE_Y = 250.0`. Merkezler:
+  * Balık: `(116, 250)`
+  * Pati: `(270, 250)`
+  * Yumak: `(424, 250)`
+  * Görsel yarıçap: `48.0` px, Yakalama toleransı: Merkezden `44.0` px, Hedef aralığı sınırı: en az `112.0` px.
+* **Top:** Yarıçapı `18.0` px.
+* **Yumi Ev Konumu:** `(180, 510)`, Gezinme yatay sınırları: `X = 100.0` ile `440.0` arası.
+* **Yan Duvarlar:** Sol sınır `X = 24.0 + 18.0 = 42.0`, Sağ sınır `X = 540.0 - 24.0 - 18.0 = 498.0`.
 
-### Ortak atış ve sonuç kuralları
+### 2.2 Nişan Alma ve Dokunmatik Girdi (Touch & Drag)
+1. **Piksel Başına Radyan Oranı:** Yatay parmak hareketi açıyı `0.0045 rad/px` hassasiyetle değiştirir. Dikey parmak hareketi açıyı etkilemez.
+2. **Sıçrama Koruması:** Ekrana dokunmak nişangâhı anında dokunulan noktaya sıçratmaz (absolute değil, relative/delta takip).
+3. **Tek Dokunuş Kuralı:** İkinci parmak veya çoklu dokunuş nişanı devralamaz, ek atış tetikleyemez.
+4. **İptal Alanları:** Üst menü, mola ve ses düğmeleri (`AIM_AREA` dışı veya HUD elemanları) üzerine bırakılan hareket atış yapmaz; iptal sayılır.
+5. **Gecikmiş Dokunuş Koruması:** Fırlatıcının kapalı olduğu (hazırlık, hedef karışması, kasa dönüşü) anda başlayan dokunma hareketi, kilit açılsa dahi geçerli atışa dönüşemez; oyuncunun temiz, yeni bir dokunuş yapması zorunludur.
 
-1. Atışa izin varsa topun türünü şifre dizisinin mevcut elemanından al. Oyuncu top türünü seçmez.
-2. Topu nişan doğrultusunda gönder; aynı anda yalnız bir uçan top olabilir.
-3. Doğru sembollü deliğe giriş ve varsa sekme şartının sağlanması ilerlemeyi bir artırır. Yanlış delik, ıskalama veya izin verilmeyen duvar teması hata sayılır.
-4. İlk iki hatada aynı hedef tekrar denenir; üçüncü hatada KİLİT SIKIŞTI ekranı açılır. Hatalar aşama değişiminde sıfırlanmaz.
-5. Başlangıçta 0,35 sn hazırlık, doğru girişten sonra 0,45 sn, hatadan sonra 0,55 sn atış aralığı vardır. Özel geçişler daha uzun kilit uygulayabilir.
-6. Deliğe girişte puanlama hemen yapılır. Görsel düşüş 0,44 sn sürer: top merkeze yerleşir, hızlanarak aşağı iner ve ön kenarın arkasında örtülür. Yaklaşık %16 küçülür; doğrudan silinme veya tamamen kararma hissi verilmez. Görsel efekt çarpışma/puan kuralını değiştirmez.
-7. Dizinin tamamlanması başarıdır. Yaklaşık 2,2 sn kutlama akışında dolap açılır, karakterler mamaya gider; ardından sonuç ekranı görünür. Kutlama süresi tamamlanma kaydına eklenmez.
+### 2.3 HAV (Bark) Mekaniği
+* Bölüm başına **3 HAV hakkı** bulunur.
+* **Tek Uçuş / Tek Kullanım:** Havada top varken en fazla bir kez basılabilir.
+* **İşlevi:** Topun yönünü fırlatıldığı son nişan doğrultusuna anında hizalar ve eğer Yumi o anda pati uyarısı veriyorsa Yumi'yi irkilterek atağı iptal eder.
+* Bölüm 2'de (Duvar Oyunu) HAV, kalan zorunlu sekme yörüngesini bozmadan yatay doğrultuyu korumaya çalışır.
 
-### HAV ve Yumi'nin topa müdahalesi
+### 2.4 Yumi'nin Pati Saldırı Döngüsü
+```
+Top Yaklaşımı (Mesafe ≤ 178 px) 
+       ↓
+Telegraph / Uyarı (0.24s – 0.42s ünlem + pati hazırlığı)
+       ↓
+Mesafe Kontrolü (Süre bittiğinde top hâlâ ≤ 155 px mi?)
+   ├── EVET → Pati Darbesi (Hız: 420–620 aralığında, 0.92–1.08x çarpan, yukarı yönlü sapma)
+   └── HAYIR → Iskalama (Pati boşa savrulur, toparlanma durumuna geçer)
+```
+* Aynı uçuşta ikinci bir pati saldırısı yapılamaz.
+* Yumi'nin saptırdığı top doğru deliğe girerse bu hata değil, "Yumi Yardımı" (Help counter) olarak kaydedilir.
 
-Her bölümde üç HAV hakkı, her uçuşta en fazla bir kullanım vardır. HAV yalnız uçan top üzerinde kullanılabilir; hem topun yatay yönünü düzeltir hem de sürmekte olan pati uyarısını iptal eder. Hedef, son nişan doğrultusudur; HAV düğmesinin ekran konumu değildir. İkinci bölümde yön düzeltmesi kalan zorunlu sekmeleri korumaya çalışır.
+---
 
-Aktif Yumi top 178 birim yakınına geldiğinde ünlem/pati hazırlığı gösterir. Uyarı bittiğinde top hâlâ 155 birim yakındaysa pati atar; uzaklaştıysa ıskalar. Aynı uçuşta ikinci pati saldırısı yapılmaz. Pati topu sınırlı, rastgele yukarı yönlü bir doğrultuya saptırır. Yeni doğrultu mevcut hızın yaklaşık 0,92–1,08 katını kullanır, hız 420–620 aralığına sınırlandırılır. Doğru deliğe tesadüfi giriş normal başarıdır, ayrıca Yumi yardımı sayılır.
+## 3. Merkezi Durum Makinesi (Game State Machine)
 
-HAV şu an mevcut bir özelliktir; kullanıcının talebiyle yeni HAV çeşitleri veya ek HAV zorlukları geliştirilmiyor.
+Yazılımcının `main.gd` içerisindeki durum geçişlerini doğru yönetebilmesi için tanımlı durum akışı:
 
-## 3. Bölümlerin özeti
+```
+[INIT / BÖLÜM YÜKLE]
+       ↓
+[STATE_PREPARING] (0.35s hazırlık, atış kapalı)
+       ↓
+[STATE_AIMING_READY] (Atış açık, HUD: "ATIŞ HAZIR")
+       ├── Dokunma + Bırakma / "AT!" düğmesi
+       ↓
+[STATE_BALL_FLYING] (Top fizik hareketi, tek uçan top kuralı)
+       ├── Yumi Etki Alanına Giriş → [STATE_YUMI_WARNING] → [STATE_YUMI_ATTACK]
+       ├── HAV Butonu Kullanımı → Top açısı düzeltilir + Yumi saldırısı iptal edilir
+       ├── Yanlış Delik / Iska / Duvar Hatası → [STATE_FAIL_COOLDOWN] (0.55s)
+       │         └── 3. Hata → [STATE_GAME_OVER] ("KİLİT SIKIŞTI")
+       └── Doğru Delik → [STATE_HOLE_DROP] (0.44s video referanslı düşüş)
+                 ├── Ara Aşama Sonu → [STATE_STAGE_TRANSITION] (1.2s delik kayması)
+                 ├── Özel Aşama (Bölüm 4) → [STATE_SCATTER_SEQUENCE] (2.2s dağılma + dönüş)
+                 └── Şifre Tamamlandı → [STATE_CELEBRATION] (2.2s dolap açılma + mamaya koşu)
+                           ↓
+                 [STATE_LEVEL_VICTORY] (Sonuç ekranı, süre ve başarı kaydı)
+```
 
-| Bölüm | Ana fikir | Doğru atış | Yapı | Top hızı | Yumi |
-|---|---|---:|---|---:|---|
-| 1 — Mama Dolabı | Nişan, kilit ve pati uyarısı | 12 | 3 × 4 eşleşme | 420 | İlk 4 uyur, sonra yavaş/yatay |
-| 2 — Duvar Oyunu | Zorunlu bilardo sekmesi | 12 | 3 × 4 eşleşme | 460 | İlk 8 uyur, son 4 aktif |
-| 3 — Kayan Kilit | Hareketli hedef ve fareyle oyalama | 5 | Tek dizi | 520 | Hızlı, sekiz yönlü |
-| 4 — Yumi'nin Yaramazlığı | Delikleri dağıtıp yeni düzene nişan | 8 | 2. ve 5. başarıda karışma | 520 | Dört yönlü, iki karıştırma |
-| 5 — Gizli Şifre | Sembol gizlenince hatırlama | 8 | Her hedefte kısa gösterim | 460 | Uyanık görünür, topa saldırmaz |
+---
 
-Hızlar mantıksal birim/sn, zamanlar saniyedir. Bölüm numaraları oyuncuya 1–5, kodda indeksler 0–4'tür. Sembol indeksleri `0=BALIK`, `1=PATİ`, `2=YUMAK`.
+## 4. Beş Bölümün Karşılaştırmalı Parametre Matrisi
 
-## 4. Bölüm 1 — Mama Dolabı
+| Parametre | Bölüm 1: Mama Dolabı | Bölüm 2: Duvar Oyunu | Bölüm 3: Kayan Kilit | Bölüm 4: Yumi'nin Yaramazlığı | Bölüm 5: Gizli Şifre |
+|---|---|---|---|---|---|
+| **Ana Mekanik** | Temel nişan ve pati uyarısı | Bilardo duvar sekmesi | Salınan delikler + Fare | Hedeflerin dağıtılması | Hafıza / Sembol gizleme |
+| **Toplam Başarı Hedefi** | 12 (3 × 4 aşama) | 12 (3 × 4 aşama) | 5 (Tek dizi) | 8 (2. ve 5. başarıda karışma) | 8 (Tek dizi) |
+| **Top Hızı (px/s)** | 420.0 | 460.0 | 520.0 | 520.0 | 460.0 |
+| **Yumi Hızı (px/s)** | 72.0 | 100.0 | 162.0 | 115.0 | 72.0 (Pasif) |
+| **Yumi Hareket Serbestliği** | 2 Yön (Yatay) | 4 Yön | 8 Yön + Kısa Atılma | 4 Yön | 2 Yön (Saldırmaz) |
+| **Pati Uyarı Süresi (s)** | 0.42 | 0.40 | 0.24 | 0.24 | Saldırı yok |
+| **Özel Donanım / Kural** | Kasa değişimi (1.2s) | Min/Max sekme koşulu | Oyuncak Fare (2 hak) | Dağılma alanı + Dönüş kilidi | 2.5s sonra sembol gizleme |
+| **HAV Bütçesi** | 3 | 3 | 3 | 3 | 3 |
 
-**Açılış:** Şako dolabın önündedir; Yumi kıvrılıp uyuklar. “İlk 4 atışta Yumi uyukluyor” mesajı ve nişan öğreticisi görünür.
+---
 
-**Şifre:** `BALIK, PATİ, YUMAK, BALIK | YUMAK, BALIK, PATİ, YUMAK | PATİ, YUMAK, BALIK, PATİ`.
+## 5. Bölüm 1 — Mama Dolabı (Temel Eğitim ve Kasa Döngüsü)
 
-**Aşama 1 — dört eşleşme:** Oyuncu sabit deliklere nişan alır. Yumi hareket etmez ve saldırmaz. Dördüncü başarıda kasa geçişi başlar: delikler 1,2 sn animasyonla bir sonraki konuma taşınır, sembol kimlikleri değişmez. Bu sırada atış kapalıdır.
+* **Öğretici Akışı:**
+  * **Aşama 1 (1–4. Atışlar):** Yumi `(180, 510)` noktasında uyur, mırlama sesi aktiftir. Topa asla dokunmaz. Sabit deliklere temel nişan öğretilir.
+  * **Kasa Geçişi 1:** 4. başarıda delikler `1.2 sn` yumuşak animasyonla yer değiştirir. Atış kilitlidir.
+  * **Aşama 2 (5–8. Atışlar):** Yumi uyanır. Sadece yatay eksende (`Hız = 72.0`, `Dönüş = 2.4–3.6s`) hareket eder. Pati öncesi `0.42 sn` ünlem gösterir. HAV ile kurtarma öğretilir.
+  * **Kasa Geçişi 2:** 8. başarıda ikinci `1.2 sn` geçiş.
+  * **Aşama 3 (9–12. Atışlar):** Yumi uyanık kalır; 12. başarıda dolap kilidi açılır.
+* **Şifre Dizisi:** `0, 1, 2, 0 | 2, 0, 1, 2 | 1, 2, 0, 1` (Balık, Pati, Yumak kombinasyonları).
+* **Doğrulama Ölçütleri:**
+  * İlk 4 atışta Yumi kesinlikle uyanmamalıdır.
+  * Geçiş animasyonunda bırakılan dokunuşlar atış tetiklememelidir.
 
-**Aşama 2 — dört eşleşme:** Yumi uyanır. Yalnız yatay hareket eder; hız 72, yön değiştirme aralığı 2,4–3,6 sn. Yumak topuna yaklaşabilir. Pati öncesinde 0,42 sn uyarı verir. Oyuncu nişan ve HAV müdahalesini birleştirir. Sekizinci toplam başarıda ikinci kasa geçişi yapılır.
+---
 
-**Aşama 3 — dört eşleşme:** Aynı kurallar, aynı denemenin kalan hata/HAV haklarıyla devam eder. Ayrı bir yeni mekanik eklenmez. On ikinci başarı dolabı açar.
+## 6. Bölüm 2 — Duvar Oyunu (Zorunlu Sekme Fiziği)
 
-**Doğrulama:** İlk dört atışta saldırı olmamalı; dördüncüden sonra uyanmalı; hedef kimliği yer değişiminde korunmalı; geçişte başlayan eski dokunuş geçiş sonrası top atmamalı.
+* **Temel Kural:** Doğrudan deliğe giden atışlar doğru sembol olsa bile **hata** sayılır.
+  * **Aşama 1 (1–4. Hedef):** En az 1 yan duvar sekmesi zorunludur. (2 sekme de geçerlidir).
+  * **Aşama 2 (5–8. Hedef):** Tam olarak 2 yan duvar sekmesi zorunludur.
+  * **Aşama 3 (9–12. Hedef):** En az 1 sekme zorunludur; Yumi uyanır (4 yönlü, `Hız = 100.0`, `Dikey Aralık = ±42 px`).
+* **Sekme Fiziği:** Yan duvara çarpan topun yatay hız vektörü ters çevrilir (`vx = -vx`), dikey hız ve skaler hız korunur. 3. duvar teması ıskalama/hata sayılır.
+* **Şifre Dizisi:** `0, 2, 1, 0 | 1, 2, 0, 2 | 2, 0, 1, 2`.
+* **Hata Mesajı Ayrımı:** Sekme şartı sağlanmadan giren topta oyuncuya net geri bildirim verilir: *"Doğru delik, ama en az 2 sekme gerekiyor!"*
 
-## 5. Bölüm 2 — Duvar Oyunu
+---
 
-**Açılış:** Nişan çizgisi yan duvarlardan yansıyan yolu gösterir. Yumi uyur. Doğrudan doğru deliğe göndermek tek başına yeterli değildir.
+## 7. Bölüm 3 — Kayan Kilit (Sinüzoidal Salınım ve Oyuncak Fare)
 
-**Şifre:** `BALIK, YUMAK, PATİ, BALIK | PATİ, YUMAK, BALIK, YUMAK | YUMAK, BALIK, PATİ, YUMAK`.
+* **Hedef Hareketi:** Her delik kendi fazında yatay olarak salınır:
+  $$\Delta x = \sin(\text{süre} \times 1.18 + \text{sembol\_indeksi} \times 1.65) \times 22.0$$
+* **Yumi Dinamiği:** 8 yönlü hareket, yüksek hız (`162.0 px/s`), `%16` olasılıkla `1.48x` hızda kısa atılma (`0.20–0.34s`), reaksiyon süresi daralmış (`0.24s`).
+* **Oyuncak Fare Alt Sistemi:**
+  * Bölüm başında **2 fare hakkı** verilir.
+  * `FARE` düğmesine basılınca mor yerleştirme alanı (`X: 100–440, Y: 498–622`) belirir.
+  * Geçerli alana bırakıldığında Yumi farenin `50 px` üstüne yönelir ve topu tamamen görmezden gelir.
+  * **Çift Zamanlayıcı Güvencesi:** Fare yerleştirildikten sonra toplam maksimum süre `6.0 sn`, Yumi fareye ulaştıktan sonraki oyalama süresi maksimum `2.5 sn`'dir. Hangisi önce biterse fare kaybolur.
+  * HUD üzerinde farenin kalan süresi azalan radyal halka ile gösterilir; son 1 saniyede halka rengi kırmızıya döner.
 
-- Aşama 1: Her hedef için en az bir yan duvar sekmesi gerekir; iki sekmeyle doğru giriş de kabul edilir.
-- Aşama 2: Her hedef için iki yan duvar sekmesi gerekir.
-- Aşama 3: Yeniden en az bir sekme gerekir; Yumi artık aktiftir. Dört yönde dolaşır, hız 100, yön değiştirme 0,9–1,8 sn, dikey hareket aralığı ev konumunun ±42 birimidir. Pati uyarısı 0,40 sn.
+---
 
-Her dört başarıda birinci bölümdeki 1,2 sn kasa yer değişimi vardır. Üçüncü duvar teması atışı hatayla bitirir. Yansıma yatay hızın işaretini değiştirir, toplam hızı korur. Duvarlar top yarıçapı dikkate alınarak hesaplanır; sonsuz pinball sekmesi yoktur. Diğer dört bölümde yan duvar teması sektirmez, hata oluşturur.
+## 8. Bölüm 4 — Yumi'nin Yaramazlığı (Kaotik Dağılma)
 
-**Örnek:** Aşama 2'de top bir kez sekip doğru deliğe girerse ilerleme artmaz; “doğru delik, ama en az 2 sekme gerekiyor” hatası gösterilir.
+* **Olay Tetikleyicisi:** 2. ve 5. doğru atıştan hemen sonra zorunlu ara sahne (Scatter Event) başlar. Bu olay HAV ile engellenemez.
+* **Dağılma Durum Zinciri:**
+  1. **Yaklaşma:** Yumi `300 px/s` hızla rastgele bir deliğin altına koşar. Girdi kilitlenir.
+  2. **Telegraph:** `0.65 sn` ünlem ve pati kaldırma animasyonu.
+  3. **Dağılma (Fizik):** Delikler `340–460 px/s` başlangıç hızıyla `2.2 sn` boyunca birbirlerinden ve sınırlardan (`X: 82–458, Y: 242–412`) sekerek savrulur. Sürtünmeyle yavaşlarlar.
+  4. **Güvenli Yuvalanma (Anti-Blocking):** Hiçbir delik bir diğerinin arkasında kalarak doğrudan atış yolunu kapatamaz. Merkez mesafesi en az `112 px` olacak şekilde hafifçe düzeltilir.
+  5. **Yumi'nin Dönüşü:** Delikler dursa dahi Yumi ev konumuna dönene kadar atış kapalıdır (HUD: `YUMI DÖNÜYOR`).
+  6. **Hazır Olma:** Yumi oturduktan sonra `0.25 sn` hazırlık payı verilir, ardından yeşil `ATIŞ HAZIR` yanar.
+* **Şifre Dizisi:** `0, 1, 2, 0, 2, 1, 0, 2`.
 
-**Doğrulama:** Asgari sekme sayısı her aşamada doğru olmalı; Yumi ilk sekiz başarıda uyumalı; HAV kullanımı sekme şartını kaldırmamalı.
+---
 
-## 6. Bölüm 3 — Kayan Kilit
+## 9. Bölüm 5 — Gizli Şifre: İnceleme, Eleştiri ve Geliştirme Tasarımı
 
-**Açılış:** Delikler yavaşça yatay kayar, Yumi aktiftir. Oyuncuya FARE düğmesiyle oyalama öğretilir.
+### 9.1 Mevcut Prototip Kuralı
+* Sembol fırlatıcı hazır olduktan sonra `2.5 sn` gösterilir.
+* Süre bitince üst şifre satırında sembol `[?]` olur, sol hedef kutusu nötr renkte `HATIRLA` yazar, bekleyen top nötr gri ve soru işaretli olur (bilgi sızıntısı önleme).
+* Atış yapıldıktan sonra top gerçek rengini ve sembolünü geri kazanır.
+* Yumi bu bölümde topa müdahale etmez; delikler sabittir.
 
-**Şifre:** `BALIK, YUMAK, PATİ, BALIK, YUMAK`.
+### 9.2 Kullanıcı Geri Bildirimi Analizi: Neden "Fark Hissedilmedi"?
+0.1.13-test APK denemesinde oyuncu: *"Beşinci bölüme kadar sorunsuz geldim, sembol gizlendikten sonra attım ama oyunda pek bir fark hissetmedim"* geri bildirimini vermiştir. Yapılan oyun tasarımı incelemesinde bu durumun kök nedenleri şunlardır:
 
-Her delik kendi fazıyla yatay salınır: `x = başlangıç_x + sin(oyun_süresi × 1,18 + sembol_indeksi × 1,65) × 22`. Dikey delik konumu sabittir. Oyuncu yalnız mevcut konuma değil, top varana kadar kayacağı yere nişan alır.
+1. **Gereksiz Uzun Gösterim Süresi (2.5 sn):** Mobil ekranda tek bir sembolü (ör. Mavi Balık) hafızaya almak insan beyni için `0.4 - 0.6 sn` sürer. Oyuncu nişan alırken zaten sembolü çoktan zihnine kazımış olur; gizlenmesi bilişsel bir yük veya gerilim oluşturmaz.
+2. **Yumi'nin Sıfırlanan Tehdidi:** İlk 4 bölümde kademeli olarak canavarlaşan ve hızlanan Yumi, 5. bölümde tamamen etkisizleştirilmiştir. Bu durum oyunun zirve (final) noktasında tansiyonun aniden düşmesine neden olur.
+3. **Mekânsal Sabitlik:** Delikler sabit olduğu için oyuncu sembol gizlenmeden önce parmağını doğru deliğin hizasına koyup bekleyebilmektedir.
 
-Yumi sekiz yönde hareket eder; hız 162, yön değiştirme 0,45–1,15 sn, dikey aralık ±62. Kısa durma olasılığı 0,14, atılma olasılığı 0,16; atılma yaklaşık 1,48 hız çarpanı ve 0,20–0,34 sn sürer. Pati uyarısı varsayılan 0,24 sn'dir.
+### 9.3 Bölüm 5 İçin Geliştirme Seçenekleri (Tasarım Önerileri)
 
-**Oyuncak fare alt senaryosu:**
+Mevcut çalışan kod tabanını (`main.gd`) bozmadan uygulanabilecek 3 farklı geliştirme modeli:
 
-1. Bölüm başlangıcında iki fare hakkı vardır. FARE'ye basınca mor yerleştirme alanı açılır: `(100,498)` başlangıçlı `340×124` dikdörtgen.
-2. Aynı düğmeye tekrar basmak iptaldir; hak harcanmaz. Geçersiz yer veya iptal edilen dokunuş da ücretsizdir.
-3. Geçerli bırakmada bir hak harcanır, fare seçilen yerde görünür. Bu bırakma top atmaz.
-4. Yumi'nin hedefi farenin 50 birim üstündeki karakter konumudur. Normal dolaşma/yumak takibi yerine oraya gider. Fare aktif olduğu sürece topa saldırmaz.
-5. Toplam oyalama üst sınırı yerleştirmeden itibaren 6 sn; hedefe ulaştıktan sonra oyun süresi en fazla 2,5 sn. Önce biten zamanlayıcı oyalamayı sonlandırır. Dolayısıyla “her kullanım tam 6 sn” garantisi yoktur.
-6. Gidiş, yakalama ve bırakma farklı geri bildirim verir. Yakalama sonrası gerçek kalan süre ve azalan halka görünür; son saniye rengi değişir. Aktifken düğme FARE AKTİF yazar ve tekrar kullanım kapalıdır.
-7. Süre bitince fare kaybolur; Yumi yeniden dolaşıp topa müdahale edebilir. Yeniden başlatmada iki hak geri gelir.
+#### Seçenek A (Tavsiye Edilen): "Fincan Oyunu / Üç Kâğıt" (Hafıza + Mekânsal Takip)
+* **Kural:** Semboller 1.5 sn boyunca deliklerin üzerinde açıkça görünür. Ardından deliklerin kapakları kapanır (üçü de soru işareti olur).
+* **Yumi'nin Hareketi:** Yumi deliklerin önüne gelir ve iki deliğin yerini patiyle hızlıca kaydırarak değiştirir (klasik fincan oyunu mekaniği).
+* **Görev:** Oyuncu sadece "Balık" sembolünü değil, "Balık deliğinin nereye kaydığını" gözleriyle takip etmek zorundadır.
+* **Avantajı:** Hem hafıza hem dikkat unsuru birleşir; Yumi pasif bir heykel olmaktan çıkıp bölümün ana hilesi haline gelir.
 
-**Doğrulama:** Fare saldırıyı engellemeli ama deliklerin kaymasını durdurmamalı; ikinci parmak fare yerleştirmemeli; mola fare zamanlayıcılarını dondurmalı.
+#### Seçenek B: Çift Sembol Kombinasyonu (Bellek Yükü Artırımı)
+* **Kural:** Şako fırlatıcıya ardışık iki top yükler (ör. önce `BALIK`, hemen ardından `PATİ`).
+* **Uygulama:** Her iki sembol 2.0 sn gösterilip aynı anda gizlenir. Oyuncu birinciyi attıktan hemen sonra beklemeden ikinciyi doğru deliğe atmak zorundadır.
+* **Avantajı:** Tekil sembol ezberini kırar, gerçek kısa süreli çalışma belleğini (working memory) zorlar.
 
-## 7. Bölüm 4 — Yumi'nin Yaramazlığı
+#### Seçenek C: Yumi'nin Dikkat Dağıtması (Sahte İpucu)
+* **Kural:** Gerçek sembol 1.8 sn sonra gizlenir. Yumi gizleme anında elinde sahte bir sembol tabelası kaldırır (örneğin hedef `PATİ` iken Yumi sevimli bir ifadeyle `BALIK` tabelası sallar).
+* **Avantajı:** Oyuncunun hafızasıyla algısal çeldirici (Stroop etkisi) arasında eğlenceli bir psikolojik çatışma yaratır.
 
-**Açılış:** Hedefler sabittir, Yumi dört yönde dolaşır. Hız 115, yön değiştirme 1,0–1,8 sn, dikey aralık ±42. Normal pati uyarısı 0,24 sn. Fare yoktur.
+### 9.4 Doğrulama ve Geçiş Stratejisi
+* Mevcut 0.1.13 APK'daki temel kod korunmalı; Seçenek A prototipi önce ayrı bir test fonksiyonuyla (`memory_shuffle_preview.gd`) doğrulanmalı, ardından kullanıcı onayına sunulmalıdır.
 
-**Şifre:** `BALIK, PATİ, YUMAK, BALIK, YUMAK, PATİ, BALIK, YUMAK`.
+---
 
-İkinci ve beşinci toplam başarıdan sonra Yumi deliklere pati atarak düzeni dağıtır. Bu normal uçuş patisinden ayrı, bölümün zorunlu ara olayıdır; HAV ile iptal edilmez.
+## 10. Görsel Efektler, Ses Mimarisi ve Haptik (Game Feel)
 
-**Karıştırma durum zinciri:** `yaklaşma → uyarı → hareket → gerekiyorsa güvenli yerleşme → Yumi'nin dönüşü → kısa hazırlık → atış hazır`.
+### 10.1 Video Referanslı Delik Derinliği ve Düşüş Dinamiği
+`Mobile_game_ball_falling_hole` referansına göre uygulanan düşüş parametreleri:
+* **Düşüş Süresi:** `0.44 sn`.
+* **Mekânsal Hareket:** Top merkeze çekildikten sonra hızlanarak `86 px` aşağı iner.
+* **Örtülme (Maskeleme):** Top deliğe girerken deliğin ön kenarı (`lip`) topun altını örter.
+* **Ölçek ve Kararma:** Top aniden yok olmaz; sadece `%16` küçülür ve maksimum `%22` kararır.
 
-1. Yaklaşma: Yumi rastgele bir deliğin altına 300 birim/sn hızla gider. Atış kapalı, eski nişan dokunuşu temizlenir.
-2. Uyarı: Ünlem ve pati hazırlığı 0,65 sn gösterilir.
-3. Hareket: Delikler rastgele yönlerde 340–460 başlangıç hızıyla 2,2 sn hareket eder. Sınır ve birbirleriyle temaslarda seker, sürtünmeyle yavaşlar. Hareket alanı delik merkezleri için x=82–458, y=242–412; en az 112 birim merkez aralığı korunur.
-4. Yerleşme: Hedefler durur; hiçbir delik başka bir deliğin doğrudan atış yolunu kapatmamalıdır. Yol kapalıysa x konumları güvenli yuvalara kısa yerleşme hareketiyle düzeltilir; sembol kimlikleri korunur.
-5. Dönüş: Yumi ev konumuna döner. Delikler durmuş olsa bile bu aşamada atış hâlâ kapalıdır; mesaj “Yumi geri dönüyor” der.
-6. Hazırlık: Dönüş tamamlanınca 0,25 sn bekleme kalır. Ancak sonra yeşil ATIŞ HAZIR görünür; yeni dokunuşla atılabilir.
+### 10.2 Ses Efektleri Tetikleme Matrisi (`game_audio.gd`)
 
-Karışma şifreyi veya mevcut hedefi değiştirmez. Oyuncu sıradaki sembolün yeni yerini bulur. Delikler farklı yüksekliklerde kaldığı için çarpışma eski sabit hedef çizgisine göre değil, gerçek delik konumlarına süpürülmüş hareket hesabıyla yapılır.
+| Olay / Durum | Ses Efekti | Karakter / Davranış | Notlar |
+|---|---|---|---|
+| Atış Bırakma | `launch` (Fırlatma) | Şako fırlatır | Temiz, tok tıkırtı sesi |
+| Duvar Teması | `bounce` (Sekme) | Top duvardan seker | Yalnız Bölüm 2'de aktif |
+| Yumi Pati Uyarısı | `growl / alert` | Yumi ünlem çıkarır | Kısa ikaz |
+| Yumi Pati Vuruşu | `paw` (Pati darbesi) | Yumi topa vurur | Boğuk tokat efekti |
+| Uyuyan Yumi | `purr` (Mırlama döngüsü) | Yumi uyurken | Bölüm 1 ve Bölüm 2 (Aşama 1-2); mola durdurur |
+| Delik Girişi | `drop / catch` | Top deliğe düşer | Video referanslı tok düşüş sesi |
+| Kilit Açılma | `unlock` (Başarı) | Dolap açılır | Şık kilit sesi |
+| Hata / Kilit Sıkışma | `fail` (Hata) | Yanlış delik veya 3. hata | Kırılma / kilitlenme sesi |
 
-**Doğrulama:** İki karışma olmalı; dönüş sırasında hazır mesajı çıkmamalı; bütün delikler erişilebilir kalmalı; top yeni delik konumlarında yakalanmalı; yanlış sembol hata olmaya devam etmeli.
+### 10.3 Dokunsal Geri Bildirim (Haptics Blueprint)
+*Mobil cihaz ergonomisi için önerilen titreşim haritası:*
+* **Nişan Başlangıcı:** Hafif tık (Light tick - `10ms`).
+* **Atış Bırakma:** Orta darbe (Medium impact - `25ms`).
+* **Pati Darbesi:** Çift sert titreşim (Heavy impact - `40ms + 40ms`).
+* **Doğru Delik:** Başarılı onay titreşimi (Success haptic).
+* **Hata / Iska:** İki kısa hata titreşimi (Error haptic).
 
-## 8. Bölüm 5 — Gizli Şifre
+---
 
-**Açılış:** Sabit delikler, uyanık ama topa müdahale etmeyen Yumi. Oyuncu yeni hafıza kuralını tek başına öğrenir; fare/karıştırma/zorunlu sekme yoktur.
+## 11. Menü, Kayıt Sistemi ve Güvenilirlik
 
-**Şifre:** `BALIK, YUMAK, PATİ, PATİ, BALIK, YUMAK, BALIK, PATİ`.
+* **Dinamik Sayfalı Menü:** Sayfa başına 4 kart gösterilir (`MENU_CARDS_PER_PAGE = 4`). Sayfa 1: Bölüm 1–4; Sayfa 2: Bölüm 5 (ve gelecekteki 6–8). Sayfa geçişleri alt kısımdaki `Önceki / Sonraki` düğmeleriyle yapılır.
+* **Atomik Kayıt Güvenliği (`game_progress.gd`):**
+  * Veri önce `.tmp` geçici dosyasına yazılır ve doğrulanır.
+  * Mevcut sağlam dosya `.bak` olarak yedeklenir.
+  * `.tmp` dosyası ana kayıt dosyasına taşınır.
+  * Bozuk veya eksik veri durumunda otomatik olarak `.bak` yedeğinden dönülür.
+* **Mola (Pause) Yönetimi:** `P`, `Esc` veya Android arka plana geçiş (`MainLoop.NOTIFICATION_APPLICATION_FOCUS_OUT`) oyunu ve tüm zamanlayıcıları dondurur. Ön plana dönüldüğünde oyun otomatik başlamaz; oyuncunun `DEVAM` düğmesine basması gerekir.
 
-1. Her hedef başlangıçta 2,5 sn görünür. Sayaç yalnız oyuncunun atış yapabilecek durumda olduğu zaman azalır; hazırlık, uçuş, mola ve menü süreyi tüketmez.
-2. Süre dolunca üstte mevcut sembol `[?]` olur, gelecekteki semboller kapalı kalır. Hedef kutusu nötr renkte HATIRLA yazar. Bekleyen top da nötr/soru işaretlidir; rengi cevabı ele vermez.
-3. Yumi pati pozunda “ŞİFRE BENİM!” der. Bu bilgi gizleme olayıdır; atış veya nişan kilidi değildir. O anda başlamış sürükleme bozulmaz.
-4. Oyuncu hatırladığı deliğe atar. Atıştan sonra uçan top normal sembol/rengiyle görünür; karar sonrası geri bildirim gizlenmez. Sembol henüz görünürken erken atış da serbesttir.
-5. Doğru girişte sonraki hedef 2,5 sn yeniden gösterilir. Yanlış delik/ıskalamada aynı hedef tekrar gösterilir; hata sayısı artar. Üç hatada kayıp, sekiz başarıda dolap açılır.
+---
 
-**Doğrulama:** Gizlenince nişan/atış çalışmalı; üst sıra, metin ve bekleyen top cevabı sızdırmamalı; mola sayacı dondurmalı; hata sonraki sembole geçmemeli.
+## 12. Yeni Bölüm Ekleme Rehberi (Veri Odaklı Mimari)
 
-**Mevcut tasarım değerlendirmesi:** Kullanıcı beşinci bölümde sembol gizlendikten sonra atış yaptığını, buna rağmen “çok da bir şey fark etmedi”ğini söyledi. Bu, erken atışla kuralı atlamaktan farklıdır: hafıza kuralı kullanılmış ama bu oyuncuya belirgin deneyim farkı vermemiştir. Mekanik çalışıyor; eğlence/özgünlük bakımından başarı kanıtlanmış değildir. Bu bölüm yeniden tasarım adayıdır. Bu belgede yeni bir kural uygulanmış gibi gösterilmez, gösterim süresi kendiliğinden kısaltılmaz.
+Yeni bir yazılımcı sisteme 6. veya 7. bölümü eklemek istediğinde `main.gd` içindeki `LEVELS` dizisine aşağıdaki şemaya uygun bir veri sözlüğü eklemelidir:
 
-## 9. Menü, mola, kayıt ve ses
+```gdscript
+{
+    "name": "6 · BALKON MACERASI",               # Menü ve başlık adı
+    "menu_description": "Açıklama metni.\nİkinci satır.",
+    "sequence": [0, 1, 2, 0, 1, 2],             # Kilit sembol sırası (0: Balık, 1: Pati, 2: Yumak)
+    "stage_size": 3,                             # Kasa dönüşü gerekiyorsa aşama büyüklüğü
+    "ball_speed": 480.0,                         # Top fırlatma hızı (px/s)
+    "yumi_active": true,                         # Yumi devrede mi?
+    "yumi_speed": 120.0,                         # Yumi dolaşma hızı
+    "move_directions": 4,                        # 2, 4 veya 8 yönlü hareket
+    "turn_min": 1.0, "turn_max": 2.0,            # Yön değiştirme süre aralığı (s)
+    "vertical_range": 40.0,                      # Ev konumundan dikey sapma payı (px)
+    "warning_time": 0.30,                        # Pati uyarı süresi (s)
+    "bark_budget": 3,                            # HAV hakkı
+    "toy_budget": 0,                             # Varsa oyuncak fare hakkı
+    "moving_holes": false,                       # Kayan delik kuralı açık mı?
+    "scatter_targets": false,                    # Delik dağılma kuralı açık mı?
+    "max_wall_bounces": 0,                       # 0: Duvar yasak, >0: Duvar zorunlu
+    "memory_preview": 0.0,                       # >0: Gösterim süresi sonrası gizleme kuralı
+    "intro": "Bölüm açılış alt bilgi mesajı."
+}
+```
 
-- Bütün bölümler test için açıktır; kilit açma/ilerlemeye bağlı erişim yoktur. Menü sayfa başına dört kart gösterir: ilk sayfa 1–4, ikinci sayfa 5. Gizli kartlar tıklanamaz. Bölümden menüye dönüş o bölümün sayfasını açar.
-- Başarı ekranında 1–4 için Sonraki Bölüm, 5 için Başa Dön vardır. Kayıpta Tekrar Dene aynı bölümü sıfırlar. Bölümler düğmesi menüye götürür.
-- Mola düğmesi/P/Esc veya telefonda arka plana geçiş oyun hareketini ve zamanlayıcıları dondurur. Ön plana dönüş kendiliğinden devam ettirmez; oyuncu devam eder. Önceki dokunuş bırakması atış yapmaz.
-- Android geri: oyun/kutlamada mola; molada devam; başarı/kayıpta menü.
-- Başarıda bölümün en iyi süresi ve tamamlanma sayısı saklanır; mola/kutlama süreleri sonucu şişirmez. Kayıp başarı kaydı oluşturmaz. Yarım deneme uygulama tamamen kapanınca devam etmez.
-- Yazma başarısızlığında sonuç oturum belleğinde kalır; sonuç ve menü “kayıt yazılamadı” uyarısı gösterir. Diskte kayıt varmış gibi davranılmaz. Yedekten kurtarma da bildirilir.
-- Ses açık/kapalı tercihi saklanır. Atış, sekme, pati, kilit açma ve uyuyan Yumi'nin mırlaması vardır. Mola, menü ve sonuç geçişleri eski sesleri temizler. Beşinci bölümde Yumi uyanık olduğundan mırlama başlamaz.
+---
 
-## 10. Yazılımcı için kaynak ve doğrulama rehberi
+## 13. Test, Doğrulama ve Devir Kontrol Listesi
 
-- Ana sahne: [main.tscn](D:/Works/kedikopek/scenes/main.tscn).
-- Bölüm verileri, durum makinesi, giriş/fizik ve çizimler: [main.gd](D:/Works/kedikopek/scripts/main.gd). Mevcut çizim Node2D içinde yapılır; her bölüm ayrı sahne değildir.
-- Kayıt: [game_progress.gd](D:/Works/kedikopek/scripts/game_progress.gd). Ses: [game_audio.gd](D:/Works/kedikopek/scripts/game_audio.gd).
-- Toplu test: [run_checks.ps1](D:/Works/kedikopek/tests/run_checks.ps1), şu anda 23 test. Özellikle `portrait_smoke`, `wall_smoke`, `toy_smoke`, `scatter_smoke`, `memory_smoke`, `menu_smoke`, kayıt ve ses testleri bölüm kurallarını kontrol eder.
-- Testte ilerlemeyi elle başarıya taşımak menü/kayıt akışını sınar, oynanabilirliği kanıtlamaz. Gerçek top uçuş testleri ayrıca vardır. Hiçbiri insanın hatırlama başarısı veya telefon ergonomisi yerine geçmez.
-- Mevcut kaynak paket dışından beş bölüm olarak da açılarak kontrol edildi. Android 0.1.13-test telefona veri silmeden yüklendi. Kullanıcı beşinci bölüme kadar oynayıp sorun olmadığını bildirdi; bütün cihaz kenar durumlarının geçtiği iddia edilmez.
-- İlk dört bölümün temposu kullanıcı tarafından normal bulundu; korunmalıdır. Eski 47,5 sn bildiriminin tek bölüm/toplam kapsamı belirsizdir; bölüm bazlı ölçüm uydurulmaz.
-- Bu belge mevcut davranışı devreder. Yeni odalar, iki top, yeni top türleri, zorunlu oyuncak fare veya geliştirilmiş hafıza/boss kuralı ayrı tasarım ve onay gerektirir.
+Projeyi devralan yazılımcının her değişiklikte çalıştırması gereken kontroller:
+
+1. **Toplu Regresyon Testi:** Terminalde `pwsh tests/run_checks.ps1` komutunu çalıştırın. Mevcut 23 kontrolün (fizik, dokunmatik girdi, kayıt kurtarma, menü sayfalaması, ses durumu vb.) tamamı **yeşil (PASS)** olmalıdır.
+2. **Android Paket Bütünlüğü:** `pwsh tests/prepare_android.ps1` ile export alınırken:
+   * APK içinde yasaklı kaynak/tablo/çıktı kalıntısı olmamalı (Audit kontrolü).
+   * Manifest sürüm kodu ve arm64 mimarisi eksiksiz doğrulanmalıdır.
+3. **Fiziksel Cihaz Doğrulama Protokolü:**
+   * Telefon ekranında çoklu dokunma kilitleri test edilmeli.
+   * Delik düşüş animasyonunda topun ön kenarın arkasında kaybolduğu gözlemlenmeli.
+   * 4. Bölümde Yumi yerine dönmeden önce atış yapılamadığı doğrulanmalı.
+   * 5. Bölüm için yeni tasarım kararı uygulanmadan önce kullanıcıyla Seçenek A/B/C üzerinde mutabık kalınmalıdır.
